@@ -421,16 +421,16 @@
         <h2>Task log</h2>
         <div class="filters">
           <span class="fl">Filter:</span>
-          <select id="sfil" onchange="applyFilter()">
+          <select id="sfil">
             <option value="All">All statuses</option>
             <option value="Completed">Completed</option>
             <option value="Blocked">Blocked</option>
             <option value="In progress">In progress</option>
           </select>
-          <select id="tfil" onchange="applyFilter()">
+          <select id="tfil">
             <option value="All">All types</option>
           </select>
-          <select id="afil" onchange="applyFilter()">
+          <select id="afil">
             <option value="All">All assignees</option>
           </select>
           <span class="row-chip" id="rCnt"></span>
@@ -525,6 +525,13 @@ document.addEventListener('DOMContentLoaded', () => {
     setStatus('err', 'Not configured');
     return;
   }
+
+  // Wire filter dropdowns via addEventListener (not inline onchange)
+  ['sfil','tfil','afil'].forEach(id => {
+    const el = $(id);
+    if (el) el.addEventListener('change', applyFilter);
+  });
+
   fetchData();
   startTimer();
 });
@@ -557,15 +564,22 @@ async function fetchData() {
 
 // ── TABS ──────────────────────────────────────────────────
 function renderTabs() {
+  // Build tabs — no inline onclick, use data-sheet attribute instead
   $('tabsRow').innerHTML = sheetNames.map(n => {
     const mc  = getMonthColor(n);
     const act = n === activeSheet;
-    // Set CSS custom properties per-button so hover + active both use month color
     const vars = `--tab-main:${mc.main};--tab-light:${mc.light};--tab-bd:${mc.border}`;
-    return `<button class="tab${act ? ' active' : ''}" style="${vars}"
-      onclick="switchSheet('${n.replace(/'/g,"\\'")}'">${n}</button>`;
+    return `<button class="tab${act ? ' active' : ''}" style="${vars}" data-sheet="${n}">${n}</button>`;
   }).join('');
+
+  // Attach click listeners AFTER innerHTML is set
+  $('tabsRow').querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', function() {
+      switchSheet(this.dataset.sheet);
+    });
+  });
 }
+
 function switchSheet(name) {
   activeSheet = name;
   setMonthTheme(name);

@@ -16,30 +16,23 @@
       --text      : #1c1917;
       --muted     : #78716c;
       --faint     : #f5f5f4;
-
       --teal      : #0d9488;
       --teal-lt   : #f0fdfa;
       --teal-bd   : #99f6e4;
-
       --ok        : #16a34a;
       --ok-lt     : #dcfce7;
       --ok-bd     : #86efac;
-
       --err       : #dc2626;
       --err-lt    : #fee2e2;
       --err-bd    : #fca5a5;
-
       --warn      : #d97706;
       --warn-lt   : #fffbeb;
       --warn-bd   : #fcd34d;
-
       --info      : #2563eb;
       --info-lt   : #eff6ff;
       --info-bd   : #93c5fd;
-
       --purple    : #7c3aed;
       --purple-lt : #ede9fe;
-
       --mono      : 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
       --radius    : 10px;
       --shadow    : 0 1px 4px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
@@ -57,48 +50,36 @@
 
     /* ─── HEADER ─────────────────────────────────────────────── */
     .hdr {
-      position      : sticky;
-      top           : 0;
-      z-index       : 100;
-      background    : var(--card);
-      border-bottom : 1px solid var(--border);
-      padding       : .75rem 1.5rem;
-      display       : flex;
-      justify-content: space-between;
-      align-items   : center;
-      box-shadow    : var(--shadow);
+      position: sticky; top: 0; z-index: 100;
+      background: var(--card); border-bottom: 1px solid var(--border);
+      padding: .75rem 1.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: var(--shadow);
     }
-    .hdr-left  { display: flex; align-items: center; gap: 10px; }
+    .hdr-left { display: flex; align-items: center; gap: 10px; }
     .hdr-brand {
-      width: 34px; height: 34px; border-radius: 9px;
-      background: var(--teal);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
+      width: 34px; height: 34px; border-radius: 9px; background: var(--teal);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .hdr-brand svg { width: 18px; height: 18px; fill: #fff; }
     .hdr-title { font-size: 15px; font-weight: 600; }
     .hdr-sub   { font-size: 11px; color: var(--muted); margin-top: 1px; }
     .hdr-right { display: flex; align-items: center; gap: 8px; }
 
-    /* Animated live badge */
+    /* Live pulse badge */
     .live-badge {
       display: flex; align-items: center; gap: 7px;
       background: var(--faint); border: 1px solid var(--border);
-      border-radius: 20px; padding: 4px 12px;
-      font-size: 12px; color: var(--muted);
+      border-radius: 20px; padding: 4px 12px; font-size: 12px; color: var(--muted);
     }
     .pr { position: relative; width: 10px; height: 10px; flex-shrink: 0; }
-    .pr .ring {
-      position: absolute; inset: -3px; border-radius: 50%;
-      border: 1.5px solid transparent;
-    }
+    .pr .ring { position: absolute; inset: -3px; border-radius: 50%; border: 1.5px solid transparent; }
     .pr .dot  { position: absolute; inset: 0; border-radius: 50%; }
-
-    .pr.ok  .dot { background: var(--ok); }
+    .pr.ok  .dot  { background: var(--ok); }
     .pr.ok  .ring { border-color: var(--ok);   animation: expand 1.8s ease-out infinite; }
-    .pr.err .dot { background: var(--err); }
+    .pr.err .dot  { background: var(--err); }
     .pr.err .ring { border-color: transparent; }
-    .pr.ld  .dot { background: var(--warn); animation: blink 1s infinite; }
+    .pr.ld  .dot  { background: var(--warn); animation: blink 1s infinite; }
     .pr.ld  .ring { border-color: var(--warn); animation: expand 1.2s ease-out infinite; }
     @keyframes expand { 0%{transform:scale(.7);opacity:.9} 100%{transform:scale(2);opacity:0} }
     @keyframes blink  { 0%,100%{opacity:1} 50%{opacity:.25} }
@@ -114,12 +95,8 @@
 
     /* ─── ALERTS ─────────────────────────────────────────────── */
     .alert {
-      border-radius : var(--radius);
-      padding       : 1rem 1.25rem;
-      font-size     : 13px;
-      margin-bottom : 1.1rem;
-      border        : 1px solid;
-      line-height   : 1.7;
+      border-radius: var(--radius); padding: 1rem 1.25rem; font-size: 13px;
+      margin-bottom: 1.1rem; border: 1px solid; line-height: 1.7;
     }
     .a-setup { background: var(--info-lt); border-color: var(--info-bd); color: #1e40af; }
     .a-err   { background: var(--err-lt);  border-color: var(--err-bd);  color: #991b1b; }
@@ -133,42 +110,27 @@
     /* ─── SHEET TABS ─────────────────────────────────────────── */
     .tabs { display: flex; gap: 4px; margin-bottom: 1.1rem; flex-wrap: wrap; }
     .tab {
-      padding     : 5px 16px; border-radius: 7px; font-size: 13px; cursor: pointer;
-      border      : 1px solid var(--border);
-      background  : var(--card); color: var(--muted);
-      transition  : all .15s;
-      font-family : inherit;
+      padding: 5px 16px; border-radius: 7px; font-size: 13px; cursor: pointer;
+      border: 1px solid var(--border); background: var(--card); color: var(--muted);
+      transition: all .15s; font-family: inherit;
     }
-    .tab.active {
-      background: var(--teal); border-color: var(--teal);
-      color: #fff; font-weight: 500;
-    }
-    .tab:hover:not(.active) {
-      background: var(--teal-lt); color: var(--teal); border-color: var(--teal-bd);
-    }
+    .tab.active { background: var(--teal); border-color: var(--teal); color: #fff; font-weight: 500; }
+    .tab:hover:not(.active) { background: var(--teal-lt); color: var(--teal); border-color: var(--teal-bd); }
 
     /* ─── KPI GRID ───────────────────────────────────────────── */
     .kpi-grid {
-      display               : grid;
-      grid-template-columns : repeat(auto-fit, minmax(148px, 1fr));
-      gap                   : 10px;
-      margin-bottom         : 1.1rem;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+      gap: 10px; margin-bottom: 1.1rem;
     }
     .kpi {
-      background    : var(--card);
-      border        : 1px solid var(--border);
-      border-radius : var(--radius);
-      padding       : .9rem 1.1rem .9rem 1.3rem;
-      position      : relative;
-      overflow      : hidden;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: .9rem 1.1rem .9rem 1.3rem;
+      position: relative; overflow: hidden;
     }
     .kpi::before {
-      content       : '';
-      position      : absolute;
-      left          : 0; top: 0; bottom: 0;
-      width         : 3px;
-      background    : var(--stripe, var(--teal));
-      border-radius : 3px 0 0 3px;
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: var(--stripe, var(--teal));
+      border-radius: 3px 0 0 3px;
     }
     .kpi-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
     .kpi-val { font-size: 26px; font-weight: 700; line-height: 1; font-family: var(--mono); }
@@ -176,17 +138,12 @@
 
     /* ─── CHARTS ROW ─────────────────────────────────────────── */
     .charts-row {
-      display               : grid;
-      grid-template-columns : 1.55fr .95fr;
-      gap                   : 12px;
-      margin-bottom         : 1.1rem;
-      align-items           : start;
+      display: grid; grid-template-columns: 1.55fr .95fr;
+      gap: 12px; margin-bottom: 1.1rem; align-items: start;
     }
     .card {
-      background    : var(--card);
-      border        : 1px solid var(--border);
-      border-radius : var(--radius);
-      padding       : 1.1rem 1.25rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.1rem 1.25rem;
     }
     .card-title { font-size: 13px; font-weight: 500; margin-bottom: .9rem; }
     .chart-box  { position: relative; }
@@ -204,52 +161,92 @@
     .s-sq  { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
     .s-val { font-size: 12px; font-weight: 600; font-family: var(--mono); }
 
+    /* ─── PEOPLE SECTION ─────────────────────────────────────── */
+    .people-row {
+      display: grid; grid-template-columns: 1fr 1.3fr;
+      gap: 12px; margin-bottom: 1.1rem; align-items: start;
+    }
+
+    /* Assignee summary cards inside the assignee card */
+    .who-cards { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; }
+    .who-card {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--faint); border: 1px solid var(--border);
+      border-radius: 8px; padding: 7px 10px; flex: 1; min-width: 110px;
+    }
+    .who-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .who-name  { font-size: 12px; font-weight: 500; color: var(--text); }
+    .who-stats { font-size: 11px; color: var(--muted); margin-top: 1px; font-family: var(--mono); }
+
+    /* Daily resource log */
+    .dl-wrap { max-height: 220px; overflow-y: auto; }
+    .dl-head {
+      display: grid; grid-template-columns: 78px 80px 14px 1fr 60px;
+      gap: 6px; padding: 4px 0 6px;
+      border-bottom: 2px solid var(--border-s); margin-bottom: 2px;
+    }
+    .dl-head span { font-size: 10px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: .05em; }
+    .dl-row {
+      display: grid; grid-template-columns: 78px 80px 14px 1fr 60px;
+      align-items: center; gap: 6px;
+      padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 12px;
+    }
+    .dl-row:last-child { border-bottom: none; }
+    .dl-date { color: var(--muted); font-family: var(--mono); font-size: 11px; }
+    .dl-res  { color: var(--teal); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+    .dl-arr  { color: var(--border-s); font-size: 12px; text-align: center; }
+    .dl-who  { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+    .dl-qty  { color: var(--muted); font-family: var(--mono); font-size: 11px; text-align: right; }
+    .who-pip {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 11px; color: var(--text);
+    }
+    .who-dot {
+      display: inline-block; width: 7px; height: 7px;
+      border-radius: 50%; flex-shrink: 0;
+    }
+
     /* ─── TABLE CARD ─────────────────────────────────────────── */
     .tbl-card {
-      background    : var(--card);
-      border        : 1px solid var(--border);
-      border-radius : var(--radius);
-      overflow      : hidden;
-      margin-bottom : 1rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; margin-bottom: 1rem;
     }
     .tbl-top {
-      padding         : .8rem 1.25rem;
-      border-bottom   : 1px solid var(--border);
-      display         : flex;
-      justify-content : space-between;
-      align-items     : center;
-      flex-wrap       : wrap;
-      gap             : 8px;
+      padding: .8rem 1.25rem; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 8px;
     }
     .tbl-top h2 { font-size: 13px; font-weight: 500; }
     .filters { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .fl { font-size: 12px; color: var(--muted); }
     select {
-      border: 1px solid var(--border); border-radius: 6px;
-      padding: 4px 8px; font-size: 12px;
-      color: var(--text); background: var(--card);
+      border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px;
+      font-size: 12px; color: var(--text); background: var(--card);
       cursor: pointer; outline: none; font-family: inherit;
     }
     select:focus { border-color: var(--teal); }
     .row-chip {
-      font-size: 11px; color: var(--muted);
-      background: var(--faint); border: 1px solid var(--border);
-      border-radius: 20px; padding: 2px 9px; font-family: var(--mono);
+      font-size: 11px; color: var(--muted); background: var(--faint);
+      border: 1px solid var(--border); border-radius: 20px; padding: 2px 9px;
+      font-family: var(--mono);
     }
     .tbl-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 680px; }
+    table { width: 100%; border-collapse: collapse; min-width: 780px; }
     th {
-      font-size: 11px; color: var(--muted); font-weight: 500;
-      padding: 8px 12px; text-align: left;
-      border-bottom: 1px solid var(--border); white-space: nowrap;
+      font-size: 11px; color: var(--muted); font-weight: 500; padding: 8px 10px;
+      text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap;
     }
-    td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
     tr:last-child td { border-bottom: none; }
     tbody tr:hover td { background: var(--faint); }
 
     /* Badges */
     .badge {
-      display: inline-block; padding: 2px 9px; border-radius: 20px;
+      display: inline-block; padding: 2px 8px; border-radius: 20px;
       font-size: 11px; font-weight: 500; white-space: nowrap; border: 1px solid transparent;
     }
     .b-done  { background: var(--ok-lt);   color: #15803d; border-color: var(--ok-bd);   }
@@ -257,20 +254,34 @@
     .b-prog  { background: var(--info-lt); color: #1d4ed8; border-color: var(--info-bd); }
     .b-def   { background: var(--faint);   color: var(--muted); border-color: var(--border); }
 
-    /* Task type colouring */
-    .tc-a { color: var(--teal);  font-weight: 500; }
-    .tc-s { color: var(--ok);    font-weight: 500; }
-    .tc-b { color: var(--warn);  font-weight: 500; }
+    /* Task types */
+    .tc-a { color: var(--teal); font-weight: 500; }
+    .tc-s { color: var(--ok);   font-weight: 500; }
+    .tc-b { color: var(--warn); font-weight: 500; }
+
+    /* Resource tag in table */
+    .res-tag {
+      display: inline-flex; align-items: center; gap: 4px; font-size: 11px;
+      background: var(--teal-lt); color: var(--teal);
+      border: 1px solid var(--teal-bd); border-radius: 20px; padding: 1px 7px;
+    }
+    .res-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
 
     /* Qty inline bar */
-    .qw { display: flex; align-items: center; gap: 6px; min-width: 110px; }
-    .qn { min-width: 32px; font-weight: 600; text-align: right; font-family: var(--mono); font-size: 13px; }
+    .qw { display: flex; align-items: center; gap: 6px; min-width: 100px; }
+    .qn { min-width: 28px; font-weight: 600; text-align: right; font-family: var(--mono); font-size: 13px; }
     .qt { flex: 1; height: 4px; background: var(--faint); border-radius: 2px; overflow: hidden; }
     .qf { height: 100%; border-radius: 2px; background: var(--teal); }
 
+    /* Assignee pill in table */
+    .who-pill {
+      display: inline-flex; align-items: center; gap: 5px; font-size: 12px;
+    }
+
     /* ─── RESPONSIVE ─────────────────────────────────────────── */
-    @media (max-width: 900px) {
-      .charts-row { grid-template-columns: 1fr; }
+    @media (max-width: 960px) {
+      .charts-row  { grid-template-columns: 1fr; }
+      .people-row  { grid-template-columns: 1fr; }
       .r-col { flex-direction: row; flex-wrap: wrap; }
       .r-col .card { flex: 1; min-width: 200px; }
     }
@@ -284,7 +295,7 @@
 </head>
 <body>
 
-<!-- ── HEADER ─────────────────────────────────────────────────── -->
+<!-- ── HEADER ───────────────────────────────────────────────── -->
 <header class="hdr">
   <div class="hdr-left">
     <div class="hdr-brand">
@@ -309,37 +320,29 @@
   </div>
 </header>
 
-<!-- ── MAIN ───────────────────────────────────────────────────── -->
+<!-- ── MAIN ─────────────────────────────────────────────────── -->
 <div class="main">
 
-  <!-- Setup notice (shown when URL is not yet set) -->
   <div class="alert a-setup" id="setupBox" style="display:none">
     <strong>One step required — paste your Apps Script URL</strong>
     Open <code>index.html</code> in any text editor. Near the top of the
-    <code>&lt;script&gt;</code> block find the line:<br>
-    <code>const SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HER';</code><br>
-    Replace the placeholder with the Web App URL you copied after deploying
-    <code>Code.gs</code>. Save, commit to GitHub, and this message disappears.
+    <code>&lt;script&gt;</code> block find <code>const SCRIPT_URL = 'PASTE...'</code>
+    and replace it with your Web App URL.
   </div>
-
-  <!-- Fetch error -->
   <div class="alert a-err" id="errBox" style="display:none"></div>
-
-  <!-- Loading -->
   <div class="state" id="ldBox">Loading data from Google Sheets…</div>
 
-  <!-- ── DASHBOARD CONTENT ──────────────────────────────────── -->
+  <!-- DASHBOARD -->
   <div id="content" style="display:none">
 
-    <!-- Sheet selector tabs -->
+    <!-- Sheet tabs -->
     <div class="tabs" id="tabsRow"></div>
 
     <!-- KPI cards -->
     <div class="kpi-grid" id="kpiGrid"></div>
 
-    <!-- Charts row -->
+    <!-- Charts: production bar + type doughnut + status -->
     <div class="charts-row">
-      <!-- Daily production bar chart -->
       <div class="card">
         <div class="card-title">Daily production output</div>
         <div class="chart-box" style="height:210px">
@@ -351,8 +354,6 @@
           <div class="leg-i"><span class="leg-sq" style="background:#d4d4d4"></span>No output</div>
         </div>
       </div>
-
-      <!-- Right column: doughnut + status -->
       <div class="r-col">
         <div class="card">
           <div class="card-title">Task type split</div>
@@ -364,6 +365,30 @@
           <div class="card-title">Status overview</div>
           <div id="sOver"></div>
         </div>
+      </div>
+    </div>
+
+    <!-- ── PEOPLE SECTION ─────────────────────────────────── -->
+    <div class="people-row">
+      <!-- Assignee workload chart -->
+      <div class="card">
+        <div class="card-title">Assignee — production workload</div>
+        <div id="whoCards" class="who-cards"></div>
+        <div class="chart-box" style="height:140px">
+          <canvas id="achart" role="img" aria-label="Horizontal bar chart showing production by assignee"></canvas>
+        </div>
+      </div>
+      <!-- Daily resource & assignee log -->
+      <div class="card">
+        <div class="card-title">Daily resource &amp; assignee log</div>
+        <div class="dl-head">
+          <span>Date</span>
+          <span>Resource</span>
+          <span></span>
+          <span>Assignee(s)</span>
+          <span style="text-align:right">Items</span>
+        </div>
+        <div class="dl-wrap" id="dailyLog"></div>
       </div>
     </div>
 
@@ -382,6 +407,9 @@
           <select id="tfil" onchange="applyFilter()">
             <option value="All">All types</option>
           </select>
+          <select id="afil" onchange="applyFilter()">
+            <option value="All">All assignees</option>
+          </select>
           <span class="row-chip" id="rCnt"></span>
         </div>
       </div>
@@ -391,28 +419,37 @@
   </div><!-- /#content -->
 </div><!-- /.main -->
 
-<!-- ── SCRIPTS ────────────────────────────────────────────────── -->
+<!-- ── SCRIPTS ──────────────────────────────────────────────── -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ════════════════════════════════════════════════════════════════
-//  CONFIG  — paste your Apps Script Web App URL on the line below
-// ════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+//  CONFIG  — paste your Apps Script Web App URL below
+// ═══════════════════════════════════════════════════════════
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycbx-CV008VAXhT8skoUX9DA6Cy5GR3jEuUiKAtUr7QEwaZMHCvSnS4PM-E0gsp0MwOU/exec';
-const REFRESH_SEC = 30;   // auto-refresh interval in seconds
-// ════════════════════════════════════════════════════════════════
+const REFRESH_SEC = 30;
+// ═══════════════════════════════════════════════════════════
 
-// ── LOOKUPS ────────────────────────────────────────────────────
-const TASK_CLS  = { 'Annotations': 'tc-a', 'Supervision': 'tc-s', 'Brand sessions': 'tc-b' };
-const BADGE_CLS = { 'Completed': 'b-done', 'Blocked': 'b-block', 'In progress': 'b-prog' };
-const TYPE_CLR  = { 'Annotations': '#0d9488', 'Supervision': '#16a34a', 'Brand sessions': '#d97706' };
-const STAT_CFG  = {
-  'Completed'  : { color: '#16a34a' },
-  'In progress': { color: '#2563eb' },
-  'Blocked'    : { color: '#dc2626' }
-};
+// ── LOOKUP TABLES ─────────────────────────────────────────
+const TASK_CLS  = { 'Annotations':'tc-a', 'Supervision':'tc-s', 'Brand sessions':'tc-b' };
+const BADGE_CLS = { 'Completed':'b-done', 'Blocked':'b-block', 'In progress':'b-prog' };
+const TYPE_CLR  = { 'Annotations':'#0d9488', 'Supervision':'#16a34a', 'Brand sessions':'#d97706' };
+const STAT_CFG  = { 'Completed':{color:'#16a34a'}, 'In progress':{color:'#2563eb'}, 'Blocked':{color:'#dc2626'} };
 
-// ── STATE ──────────────────────────────────────────────────────
-let charts      = { p: null, t: null };
+// Assignee color palette — extends automatically for new names
+const WHO_PALETTE = ['#0d9488','#7c3aed','#d97706','#2563eb','#16a34a','#e11d48'];
+const WHO_MAP     = {};   // built dynamically: name → color
+function whoColor(name) {
+  if (!name) return '#a8a29e';
+  if (!WHO_MAP[name]) {
+    WHO_MAP[name] = WHO_PALETTE[Object.keys(WHO_MAP).length % WHO_PALETTE.length];
+  }
+  return WHO_MAP[name];
+}
+// Pre-assign known names for consistency
+['Evan','Abtahi','Rafiqa apu'].forEach(n => whoColor(n));
+
+// ── STATE ─────────────────────────────────────────────────
+let charts      = { p: null, t: null, a: null };
 let activeSheet = null;
 let allData     = {};
 let sheetNames  = [];
@@ -420,7 +457,7 @@ let currentRows = [];
 let countdown   = REFRESH_SEC;
 let timerID     = null;
 
-// ── INIT ───────────────────────────────────────────────────────
+// ── INIT ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   if (!SCRIPT_URL || SCRIPT_URL.includes('PASTE')) {
     show('setupBox'); hide('ldBox');
@@ -431,121 +468,122 @@ document.addEventListener('DOMContentLoaded', () => {
   startTimer();
 });
 
-// ── FETCH ──────────────────────────────────────────────────────
+// ── FETCH ─────────────────────────────────────────────────
 async function fetchData() {
   setStatus('ld', 'Loading...');
   try {
-    // Append cache-busting param so Apps Script always reads fresh data
     const res  = await fetch(SCRIPT_URL + '?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
-    if (!json.success) throw new Error(json.error || 'Script returned an error');
+    if (!json.success) throw new Error(json.error || 'Script error');
 
     allData    = json.sheets     || {};
     sheetNames = json.sheetNames || Object.keys(allData);
-
-    if (!activeSheet || !allData[activeSheet]) {
-      activeSheet = sheetNames[0];
-    }
+    if (!activeSheet || !allData[activeSheet]) activeSheet = sheetNames[0];
 
     renderTabs();
     renderSheet(activeSheet);
     hide('ldBox'); hide('errBox'); show('content');
     setStatus('ok', 'Live · ' + fmtTime(json.updatedAt));
-
   } catch (err) {
-    const msg = 'Could not load: ' + err.message
-      + '  —  Verify SCRIPT_URL and re-deploy Apps Script with "Anyone" access.';
-    $('errBox').textContent = msg;
+    $('errBox').textContent = 'Could not load: ' + err.message
+      + ' — Check SCRIPT_URL and re-deploy Apps Script with "Anyone" access.';
     show('errBox'); hide('ldBox');
     setStatus('err', err.message);
   }
 }
 
-// ── SHEET TABS ─────────────────────────────────────────────────
+// ── TABS ──────────────────────────────────────────────────
 function renderTabs() {
   $('tabsRow').innerHTML = sheetNames.map(n =>
     `<button class="tab${n === activeSheet ? ' active' : ''}"
-       onclick="switchSheet('${n.replace(/'/g, "\\'")}')">${n}</button>`
+       onclick="switchSheet('${n.replace(/'/g,"\\'")}')">${n}</button>`
   ).join('');
 }
-function switchSheet(name) {
-  activeSheet = name;
-  renderTabs();
-  renderSheet(name);
-}
+function switchSheet(name) { activeSheet = name; renderTabs(); renderSheet(name); }
 
-// ── RENDER ONE SHEET ───────────────────────────────────────────
+// ── RENDER SHEET ──────────────────────────────────────────
 function renderSheet(name) {
   const raw = (allData[name] || {}).rows || [];
 
-  // Keep only real task rows — skip Weekend markers, Total rows, blanks
   const rows = raw
-    .filter(r => {
-      const t = (r['Task'] || '').trim();
-      return t && t !== 'Weekend' && t !== 'Total';
-    })
+    .filter(r => { const t=(r['Task']||'').trim(); return t && t!=='Weekend' && t!=='Total'; })
     .map(r => ({
-      _task  : (r['Task']               || '').trim(),
-      _prio  : (r['Priority']           || '').trim(),
+      _task  : (r['Task']                          || '').trim(),
+      _prio  : (r['Priority']                      || '').trim(),
       _qty   : Math.round(parseFloat(r['Production Quantity']) || 0),
-      _res   : (r['Resources']          || '').trim(),
-      _stat  : (r['Status']             || '').trim(),
+      _res   : (r['Resources']                     || '').trim(),
+      _stat  : (r['Status']                        || '').trim(),
       _start : (r['Start date'] || r['Start Date'] || '').trim(),
       _end   : (r['End date']   || r['End Date']   || '').trim(),
-      _who   : (r['Assignee']           || '').trim(),
-      _note  : (r['Notes']              || '').trim(),
+      _who   : (r['Assignee']                      || '').trim(),
+      _note  : (r['Notes']                         || '').trim(),
     }));
 
-  // Empty sheet state
+  // Empty state
   if (!rows.length) {
     $('kpiGrid').innerHTML = '';
     $('tWrap').innerHTML =
       `<div class="state">No tasks in "${name}" yet.<br>
-       Add tasks in Google Sheets — they will appear here automatically on the next refresh.</div>`;
-    ['p', 't'].forEach(k => { if (charts[k]) { charts[k].destroy(); charts[k] = null; } });
+       Add data in Google Sheets — it will appear here automatically.</div>`;
+    ['p','t','a'].forEach(k => { if(charts[k]){charts[k].destroy();charts[k]=null;} });
     $('sOver').innerHTML = '';
+    $('whoCards').innerHTML = '';
+    $('dailyLog').innerHTML = '';
     return;
   }
 
   currentRows = rows;
-  const s     = calcStats(rows);
+  // Pre-warm color map for all assignees in data
+  rows.forEach(r => { if(r._who) whoColor(r._who); });
+
+  const s = calcStats(rows);
 
   renderKPIs(s);
   renderPChart(rows);
   renderTChart(s.byType);
   renderStatusOver(s.byStatus, rows.length);
+  renderWhoCards(s.byAssignee);
+  renderAChart(s.byAssignee);
+  renderDailyLog(rows);
   populateTypeFilter(s.byType);
+  populateAssigneeFilter(s.byAssignee);
   applyFilter();
 }
 
-// ── STATISTICS ─────────────────────────────────────────────────
+// ── STATISTICS ────────────────────────────────────────────
 function calcStats(rows) {
-  const byStatus = {}, byType = {}, byDate = {};
+  const byStatus = {}, byType = {}, byDate = {}, byAssignee = {};
   let total = 0;
 
   rows.forEach(r => {
     total += r._qty;
     byStatus[r._stat] = (byStatus[r._stat] || 0) + 1;
 
-    if (!byType[r._task]) byType[r._task] = { count: 0, qty: 0 };
+    if (!byType[r._task]) byType[r._task] = { count:0, qty:0 };
     byType[r._task].count++;
     byType[r._task].qty += r._qty;
 
     if (r._start) byDate[r._start] = (byDate[r._start] || 0) + r._qty;
+
+    if (r._who) {
+      if (!byAssignee[r._who]) byAssignee[r._who] = { count:0, qty:0 };
+      byAssignee[r._who].count++;
+      byAssignee[r._who].qty += r._qty;
+    }
   });
 
-  return { total, byStatus, byType, byDate, n: rows.length };
+  return { total, byStatus, byType, byDate, byAssignee, n: rows.length };
 }
 
-// ── KPI CARDS ──────────────────────────────────────────────────
+// ── KPI CARDS ─────────────────────────────────────────────
 function renderKPIs(s) {
   const done = s.byStatus['Completed']   || 0;
   const blk  = s.byStatus['Blocked']     || 0;
   const prog = s.byStatus['In progress'] || 0;
-  const rate = s.n ? Math.round(done / s.n * 100) : 0;
-  const ann  = s.byType['Annotations'] || { qty: 0, count: 0 };
-  const sup  = s.byType['Supervision'] || { qty: 0, count: 0 };
+  const rate = s.n ? Math.round(done/s.n*100) : 0;
+  const ann  = s.byType['Annotations'] || {qty:0,count:0};
+  const sup  = s.byType['Supervision'] || {qty:0,count:0};
 
   const k = (stripe, label, val, sub) =>
     `<div class="kpi" style="--stripe:${stripe}">
@@ -556,58 +594,47 @@ function renderKPIs(s) {
 
   $('kpiGrid').innerHTML =
     k('var(--teal)', 'Total production', s.total.toLocaleString(), 'items this month') +
-    k('var(--text)', 'Total tasks',      s.n,                      Object.keys(s.byType).join(' · ')) +
-    k('var(--ok)',   'Completed',        done,                     rate + '% completion rate') +
-    k('var(--err)',  'Blocked',          blk,                      prog + ' task' + (prog !== 1 ? 's' : '') + ' in progress') +
-    k('var(--teal)', 'Annotation qty',   ann.qty.toLocaleString(), ann.count + ' tasks') +
-    k('var(--ok)',   'Supervision qty',  sup.qty.toLocaleString(), sup.count + ' tasks');
+    k('var(--text)', 'Total tasks',      s.n,   Object.keys(s.byType).join(' · '))      +
+    k('var(--ok)',   'Completed',        done,  rate + '% completion rate')              +
+    k('var(--err)',  'Blocked',          blk,   prog + ' task'+(prog!==1?'s':'')+' in progress') +
+    k('var(--teal)', 'Annotation qty',   ann.qty.toLocaleString(), ann.count+' tasks')  +
+    k('var(--ok)',   'Supervision qty',  sup.qty.toLocaleString(), sup.count+' tasks');
 }
 
-// ── PRODUCTION BAR CHART ───────────────────────────────────────
+// ── PRODUCTION BAR CHART ──────────────────────────────────
 function renderPChart(rows) {
-  // Aggregate qty by date, preserve row order
   const map = {};
   rows.forEach(r => {
     if (!r._start) return;
-    if (!map[r._start]) map[r._start] = { qty: 0, sun: isSun(r._start) };
+    if (!map[r._start]) map[r._start] = { qty:0, sun:isSun(r._start) };
     map[r._start].qty += r._qty;
   });
-
   const labels = Object.keys(map);
   const data   = labels.map(l => map[l].qty);
-  const bg     = labels.map(l =>
-    map[l].qty === 0 ? '#d4d4d4' : map[l].sun ? '#7c3aed' : '#0d9488'
-  );
+  const bg     = labels.map(l => map[l].qty===0?'#d4d4d4': map[l].sun?'#7c3aed':'#0d9488');
 
   if (charts.p) charts.p.destroy();
   charts.p = new Chart($('pchart').getContext('2d'), {
-    type : 'bar',
-    data : { labels, datasets: [{ data, backgroundColor: bg, borderRadius: 5, borderSkipped: 'bottom' }] },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: {
-          title : i => i[0].label + (map[i[0].label].sun ? '  (Sunday — worked)' : ''),
-          label : i => 'Output: ' + i.raw.toLocaleString() + ' items'
+    type:'bar',
+    data:{ labels, datasets:[{ data, backgroundColor:bg, borderRadius:5, borderSkipped:'bottom' }] },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{
+          title: i => i[0].label+(map[i[0].label].sun?' (Sunday — worked)':''),
+          label: i => 'Output: '+i.raw.toLocaleString()+' items'
         }}
       },
-      scales: {
-        x: {
-          grid : { display: false },
-          ticks: { font: { size: 10 }, maxRotation: 45, autoSkip: false }
-        },
-        y: {
-          beginAtZero: true,
-          ticks : { font: { size: 11 } },
-          grid  : { color: '#f0ede8' }
-        }
+      scales:{
+        x:{ grid:{display:false}, ticks:{font:{size:10},maxRotation:45,autoSkip:false} },
+        y:{ beginAtZero:true, ticks:{font:{size:11}}, grid:{color:'#f0ede8'} }
       }
     }
   });
 }
 
-// ── TASK TYPE DOUGHNUT ─────────────────────────────────────────
+// ── TYPE DOUGHNUT ─────────────────────────────────────────
 function renderTChart(byType) {
   const labels = Object.keys(byType);
   const data   = labels.map(l => byType[l].qty);
@@ -615,82 +642,164 @@ function renderTChart(byType) {
 
   if (charts.t) charts.t.destroy();
   charts.t = new Chart($('tchart').getContext('2d'), {
-    type : 'doughnut',
-    data : {
-      labels   : labels.map(l => l + '  ' + byType[l].qty.toLocaleString()),
-      datasets : [{ data, backgroundColor: colors, borderWidth: 2, borderColor: '#fff', hoverOffset: 6 }]
+    type:'doughnut',
+    data:{
+      labels: labels.map(l => l+'  '+byType[l].qty.toLocaleString()),
+      datasets:[{ data, backgroundColor:colors, borderWidth:2, borderColor:'#fff', hoverOffset:6 }]
     },
-    options: {
-      responsive: true, maintainAspectRatio: false, cutout: '68%',
-      plugins: {
-        legend: {
-          position : 'bottom',
-          labels   : { font: { size: 11 }, padding: 10, boxWidth: 10, boxHeight: 10 }
-        }
+    options:{
+      responsive:true, maintainAspectRatio:false, cutout:'68%',
+      plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:10,boxWidth:10,boxHeight:10}}}
+    }
+  });
+}
+
+// ── STATUS PROGRESS ───────────────────────────────────────
+function renderStatusOver(byStatus, total) {
+  const order = ['Completed','In progress','Blocked'];
+  const all   = [...order, ...Object.keys(byStatus).filter(k=>!order.includes(k))];
+  const items = all
+    .filter(k => byStatus[k])
+    .map(k => ({
+      label: k, color:(STAT_CFG[k]||{color:'#a8a29e'}).color,
+      count:byStatus[k], pct:Math.round(byStatus[k]/total*100)
+    }));
+
+  const segs = items.map(i=>`<div class="pb-s" style="width:${i.pct}%;background:${i.color}"></div>`).join('');
+  const rows = items.map(i=>
+    `<div class="s-row">
+       <span class="s-lbl"><span class="s-sq" style="background:${i.color}"></span>${i.label}</span>
+       <span class="s-val" style="color:${i.color}">${i.count}</span>
+     </div>`
+  ).join('');
+  $('sOver').innerHTML = `<div class="pbar">${segs}</div>${rows}`;
+}
+
+// ── ASSIGNEE SUMMARY CARDS ────────────────────────────────
+function renderWhoCards(byAssignee) {
+  const el = $('whoCards');
+  if (!el) return;
+  el.innerHTML = Object.entries(byAssignee).map(([name, d]) => {
+    const color  = whoColor(name);
+    const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    return `<div class="who-card">
+      <div class="who-avatar" style="background:${color}">${initials}</div>
+      <div>
+        <div class="who-name">${name}</div>
+        <div class="who-stats">${d.qty.toLocaleString()} items · ${d.count} tasks</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── ASSIGNEE HORIZONTAL BAR CHART ────────────────────────
+function renderAChart(byAssignee) {
+  const labels = Object.keys(byAssignee);
+  const data   = labels.map(l => byAssignee[l].qty);
+  const colors = labels.map(l => whoColor(l));
+
+  if (charts.a) charts.a.destroy();
+  charts.a = new Chart($('achart').getContext('2d'), {
+    type:'bar',
+    data:{ labels, datasets:[{ data, backgroundColor:colors, borderRadius:5, borderSkipped:'bottom' }] },
+    options:{
+      indexAxis:'y',
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{
+          label: i => 'Output: '+i.raw.toLocaleString()+' items ('+byAssignee[i.label].count+' tasks)'
+        }}
+      },
+      scales:{
+        x:{ beginAtZero:true, ticks:{font:{size:11}}, grid:{color:'#f0ede8'} },
+        y:{ grid:{display:false}, ticks:{font:{size:12},color:'#1c1917'} }
       }
     }
   });
 }
 
-// ── STATUS PROGRESS BARS ───────────────────────────────────────
-function renderStatusOver(byStatus, total) {
-  // Fixed order: Completed → In progress → Blocked → others
-  const order = ['Completed', 'In progress', 'Blocked'];
-  const all   = [...order, ...Object.keys(byStatus).filter(k => !order.includes(k))];
-  const items = all
-    .filter(k => byStatus[k])
-    .map(k => ({
-      label : k,
-      color : (STAT_CFG[k] || { color: '#a8a29e' }).color,
-      count : byStatus[k],
-      pct   : Math.round(byStatus[k] / total * 100)
-    }));
+// ── DAILY RESOURCE & ASSIGNEE LOG ────────────────────────
+function renderDailyLog(rows) {
+  // Aggregate by start date
+  const dayMap = {};
+  rows.forEach(r => {
+    if (!r._start) return;
+    if (!dayMap[r._start]) dayMap[r._start] = { res:new Set(), who:new Set(), qty:0 };
+    if (r._res) dayMap[r._start].res.add(r._res);
+    if (r._who) dayMap[r._start].who.add(r._who);
+    dayMap[r._start].qty += r._qty;
+  });
 
-  const segs = items.map(i =>
-    `<div class="pb-s" style="width:${i.pct}%;background:${i.color}"></div>`
-  ).join('');
+  const el = $('dailyLog');
+  if (!el) return;
 
-  const rows = items.map(i =>
-    `<div class="s-row">
-       <span class="s-lbl">
-         <span class="s-sq" style="background:${i.color}"></span>${i.label}
-       </span>
-       <span class="s-val" style="color:${i.color}">${i.count}</span>
-     </div>`
-  ).join('');
+  const html = Object.entries(dayMap).map(([date, d]) => {
+    // Compact date: "Jun 01, 2026" → "Jun 01"
+    const shortDate = date.length > 6 ? date.slice(0,6) : date;
 
-  $('sOver').innerHTML = `<div class="pbar">${segs}</div>${rows}`;
+    // Resource label
+    const resHtml = [...d.res].join(', ') || '—';
+
+    // Assignees with colored dots
+    const whoHtml = [...d.who].map(w =>
+      `<span class="who-pip">
+         <span class="who-dot" style="background:${whoColor(w)}"></span>${w}
+       </span>`
+    ).join('<span style="color:var(--border-s);margin:0 2px">·</span>') || '<span style="color:var(--muted)">—</span>';
+
+    const qtyStr = d.qty > 0 ? d.qty.toLocaleString() : '—';
+
+    return `<div class="dl-row">
+      <span class="dl-date">${shortDate}</span>
+      <span class="dl-res">${resHtml}</span>
+      <span class="dl-arr">&#8594;</span>
+      <span class="dl-who">${whoHtml}</span>
+      <span class="dl-qty">${qtyStr}</span>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = html || '<div style="color:var(--muted);padding:.5rem;font-size:12px">No data.</div>';
 }
 
-// ── TABLE ──────────────────────────────────────────────────────
+// ── FILTERS ───────────────────────────────────────────────
 function populateTypeFilter(byType) {
   const sel = $('tfil');
-  // Remove options for types that no longer exist
-  Array.from(sel.options).forEach(o => {
-    if (o.value !== 'All' && !byType[o.value]) o.remove();
-  });
-  // Add new types
-  const existing = Array.from(sel.options).map(o => o.value);
+  Array.from(sel.options).forEach(o => { if(o.value!=='All'&&!byType[o.value]) o.remove(); });
+  const existing = Array.from(sel.options).map(o=>o.value);
   Object.keys(byType).forEach(t => {
     if (!existing.includes(t)) {
-      const o = document.createElement('option');
-      o.value = o.textContent = t;
-      sel.appendChild(o);
+      const o = document.createElement('option'); o.value=o.textContent=t; sel.appendChild(o);
+    }
+  });
+}
+
+function populateAssigneeFilter(byAssignee) {
+  const sel = $('afil');
+  if (!sel) return;
+  Array.from(sel.options).forEach(o => { if(o.value!=='All'&&!byAssignee[o.value]) o.remove(); });
+  const existing = Array.from(sel.options).map(o=>o.value);
+  Object.keys(byAssignee).forEach(a => {
+    if (a && !existing.includes(a)) {
+      const o = document.createElement('option'); o.value=o.textContent=a; sel.appendChild(o);
     }
   });
 }
 
 function applyFilter() {
-  const sf = ($('sfil') || {}).value || 'All';
-  const tf = ($('tfil') || {}).value || 'All';
+  const sf = ($('sfil')||{}).value||'All';
+  const tf = ($('tfil')||{}).value||'All';
+  const af = ($('afil')||{}).value||'All';
   let rows = currentRows;
-  if (sf !== 'All') rows = rows.filter(r => r._stat === sf);
-  if (tf !== 'All') rows = rows.filter(r => r._task === tf);
+  if (sf!=='All') rows = rows.filter(r=>r._stat===sf);
+  if (tf!=='All') rows = rows.filter(r=>r._task===tf);
+  if (af!=='All') rows = rows.filter(r=>r._who===af);
   renderTable(rows);
 }
 
+// ── TABLE ─────────────────────────────────────────────────
 function renderTable(rows) {
-  const maxQ = Math.max(...currentRows.map(r => r._qty), 1);
+  const maxQ = Math.max(...currentRows.map(r=>r._qty), 1);
   $('rCnt').textContent = rows.length + ' rows';
 
   if (!rows.length) {
@@ -699,23 +808,37 @@ function renderTable(rows) {
   }
 
   const body = rows.map(r => {
+    // Qty bar
     const qCell = r._qty > 0
       ? `<div class="qw">
            <span class="qn">${r._qty}</span>
-           <div class="qt"><div class="qf" style="width:${Math.round(r._qty / maxQ * 100)}%"></div></div>
+           <div class="qt"><div class="qf" style="width:${Math.round(r._qty/maxQ*100)}%"></div></div>
          </div>`
       : `<span style="color:#d4d4d4">—</span>`;
 
-    const note = r._note.length > 50 ? r._note.slice(0, 50) + '…' : (r._note || '—');
+    // Resource pill
+    const resCell = r._res
+      ? `<span class="res-tag"><span class="res-dot"></span>${r._res}</span>`
+      : `<span style="color:#d4d4d4">—</span>`;
+
+    // Assignee with colored dot
+    const whoCell = r._who
+      ? `<span class="who-pill">
+           <span class="who-dot" style="background:${whoColor(r._who)}"></span>${r._who}
+         </span>`
+      : `<span style="color:#d4d4d4">—</span>`;
+
+    const note = r._note.length>50 ? r._note.slice(0,50)+'…' : (r._note||'—');
 
     return `<tr>
-      <td><span class="${TASK_CLS[r._task] || ''}">${r._task}</span></td>
-      <td style="color:var(--muted)">${r._prio || '—'}</td>
+      <td><span class="${TASK_CLS[r._task]||''}">${r._task}</span></td>
+      <td style="color:var(--muted)">${r._prio||'—'}</td>
+      <td>${resCell}</td>
       <td>${qCell}</td>
-      <td><span class="badge ${BADGE_CLS[r._stat] || 'b-def'}">${r._stat || '—'}</span></td>
-      <td style="color:var(--muted);font-size:12px">${r._start || '—'}</td>
-      <td style="color:var(--muted);font-size:12px">${r._end   || '—'}</td>
-      <td style="color:var(--muted)">${r._who || '—'}</td>
+      <td><span class="badge ${BADGE_CLS[r._stat]||'b-def'}">${r._stat||'—'}</span></td>
+      <td style="color:var(--muted);font-size:12px">${r._start||'—'}</td>
+      <td style="color:var(--muted);font-size:12px">${r._end||'—'}</td>
+      <td>${whoCell}</td>
       <td style="color:#a8a29e;font-size:12px" title="${r._note}">${note}</td>
     </tr>`;
   }).join('');
@@ -725,7 +848,8 @@ function renderTable(rows) {
       <thead><tr>
         <th>Task</th>
         <th>Priority</th>
-        <th style="min-width:120px">Production qty</th>
+        <th>Resources</th>
+        <th style="min-width:110px">Production qty</th>
         <th>Status</th>
         <th>Start</th>
         <th>End</th>
@@ -736,34 +860,27 @@ function renderTable(rows) {
     </table>`;
 }
 
-// ── AUTO-REFRESH TIMER ─────────────────────────────────────────
+// ── TIMER ─────────────────────────────────────────────────
 function startTimer() {
   countdown = REFRESH_SEC;
   if (timerID) clearInterval(timerID);
   timerID = setInterval(() => {
     countdown--;
-    const chip = $('cChip');
-    if (chip) chip.textContent = countdown + 's';
+    const c = $('cChip'); if(c) c.textContent = countdown+'s';
     if (countdown <= 0) { countdown = REFRESH_SEC; fetchData(); }
   }, 1000);
 }
 
-// ── UTILITY ────────────────────────────────────────────────────
-function isSun(dateStr) {
-  try { const d = new Date(dateStr); return !isNaN(d) && d.getDay() === 0; }
-  catch { return false; }
-}
+// ── HELPERS ───────────────────────────────────────────────
+function isSun(s) { try{const d=new Date(s);return !isNaN(d)&&d.getDay()===0;}catch{return false;} }
 function $(id)    { return document.getElementById(id); }
-function show(id) { const e = $(id); if (e) e.style.removeProperty('display'); }
-function hide(id) { const e = $(id); if (e) e.style.display = 'none'; }
-function fmtTime(iso) {
-  try { return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
-  catch { return ''; }
-}
+function show(id) { const e=$(id); if(e) e.style.removeProperty('display'); }
+function hide(id) { const e=$(id); if(e) e.style.display='none'; }
+function fmtTime(iso) { try{return new Date(iso).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}catch{return '';} }
 function setStatus(type, txt) {
-  const r = $('pRing'), s = $('sTxt');
-  if (r) r.className = 'pr ' + (type === 'ok' ? 'ok' : type === 'err' ? 'err' : 'ld');
-  if (s) s.textContent = txt;
+  const r=$('pRing'),s=$('sTxt');
+  if(r) r.className='pr '+(type==='ok'?'ok':type==='err'?'err':'ld');
+  if(s) s.textContent=txt;
 }
 </script>
 </body>

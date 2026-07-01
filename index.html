@@ -446,7 +446,7 @@
 // ═══════════════════════════════════════════════════════
 //  CONFIG
 // ═══════════════════════════════════════════════════════
-const SCRIPT_URL  = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycbx-CV008VAXhT8skoUX9DA6Cy5GR3jEuUiKAtUr7QEwaZMHCvSnS4PM-E0gsp0MwOU/exec';
 const REFRESH_SEC = 30;
 
 // ── MONTH COLOR PALETTE ────────────────────────────────
@@ -515,29 +515,73 @@ document.addEventListener('DOMContentLoaded', () => {
   startTimer();
 });
 
-// ── FETCH ─────────────────────────────────────────────
-async function fetchData() {
-  setStatus('ld','Loading...');
-  try {
-    const res  = await fetch(SCRIPT_URL + '?t=' + Date.now());
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
-    if (!json.success) throw new Error(json.error || 'Script error');
+// ── FETCH via JSONP (bypasses CORS — required for Apps Script) ──
+// fetch() is blocked by browsers for cross-origin Apps Script URLs.
+// JSONP injects a <script> tag instead — no CORS restrictions.
+let jsonpTimer = null;
 
-    allData    = json.sheets     || {};
-    sheetNames = json.sheetNames || Object.keys(allData);
-    if (!activeSheet || !allData[activeSheet]) activeSheet = sheetNames[0];
+function fetchData() {
+  setStatus('ld', 'Loading...');
 
-    setMonthTheme(activeSheet);
-    renderTabs();
-    renderSheet(activeSheet);
-    hide('ldBox'); hide('errBox'); show('content');
-    setStatus('ok', 'Live · ' + fmtTime(json.updatedAt));
-  } catch(err) {
-    $('errBox').textContent = 'Could not load: ' + err.message + ' — Verify SCRIPT_URL and re-deploy with "Anyone" access.';
-    show('errBox'); hide('ldBox');
-    setStatus('err', err.message);
-  }
+  // Remove any leftover JSONP script tag from a previous call
+  const old = document.getElementById('_wfJsonp');
+  if (old) old.remove();
+
+  // Unique callback name per request
+  const cbName = '_wfData_' + Date.now();
+
+  // Timeout: if Apps Script doesn't respond in 12 seconds, show an error
+  if (jsonpTimer) clearTimeout(jsonpTimer);
+  jsonpTimer = setTimeout(function() {
+    if (window[cbName]) {
+      delete window[cbName];
+      const s = document.getElementById('_wfJsonp');
+      if (s) s.remove();
+      showErr('Timeout — Apps Script did not respond within 12 seconds. Check your deployment URL and access settings.');
+    }
+  }, 12000);
+
+  // The callback function Apps Script will call with the data
+  window[cbName] = function(json) {
+    clearTimeout(jsonpTimer);
+    delete window[cbName];
+    const s = document.getElementById('_wfJsonp');
+    if (s) s.remove();
+
+    try {
+      if (!json.success) throw new Error(json.error || 'Script returned success:false');
+
+      allData    = json.sheets     || {};
+      sheetNames = json.sheetNames || Object.keys(allData);
+      if (!activeSheet || !allData[activeSheet]) activeSheet = sheetNames[0];
+
+      setMonthTheme(activeSheet);
+      renderTabs();
+      renderSheet(activeSheet);
+      hide('ldBox'); hide('errBox'); show('content');
+      setStatus('ok', 'Live · ' + fmtTime(json.updatedAt));
+    } catch(err) {
+      showErr('Data error: ' + err.message);
+    }
+  };
+
+  // Inject JSONP script tag — browser loads it like a script, no CORS check
+  const script = document.createElement('script');
+  script.id  = '_wfJsonp';
+  script.src = SCRIPT_URL + '?callback=' + cbName + '&t=' + Date.now();
+  script.onerror = function() {
+    clearTimeout(jsonpTimer);
+    delete window[cbName];
+    script.remove();
+    showErr('Network error — could not reach Apps Script. Verify your SCRIPT_URL is correct, the script is deployed, and access is set to "Anyone".');
+  };
+  document.head.appendChild(script);
+}
+
+function showErr(msg) {
+  $('errBox').textContent = msg;
+  show('errBox'); hide('ldBox');
+  setStatus('err', 'Error');
 }
 
 // ── MONTH THEME ────────────────────────────────────────

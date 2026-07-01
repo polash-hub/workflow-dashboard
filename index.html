@@ -5,540 +5,519 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Workflow Dashboard — AI Annotation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* ─── DESIGN TOKENS ──────────────────────────────────────── */
-    :root {
-      --bg        : #fafaf9;
-      --card      : #ffffff;
-      --border    : #e7e5e4;
-      --border-s  : #d6d3d1;
-      --text      : #1c1917;
-      --muted     : #78716c;
-      --faint     : #f5f5f4;
-      --teal      : #0d9488;
-      --teal-lt   : #f0fdfa;
-      --teal-bd   : #99f6e4;
-      --ok        : #16a34a;
-      --ok-lt     : #dcfce7;
-      --ok-bd     : #86efac;
-      --err       : #dc2626;
-      --err-lt    : #fee2e2;
-      --err-bd    : #fca5a5;
-      --warn      : #d97706;
-      --warn-lt   : #fffbeb;
-      --warn-bd   : #fcd34d;
-      --info      : #2563eb;
-      --info-lt   : #eff6ff;
-      --info-bd   : #93c5fd;
-      --purple    : #7c3aed;
-      --purple-lt : #ede9fe;
-      --mono      : 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
-      --radius    : 10px;
-      --shadow    : 0 1px 4px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-
-      /* Active month theme — overridden by JS on tab switch */
-      --active-month    : #0d9488;
-      --active-month-lt : #f0fdfa;
-      --active-month-bd : #99f6e4;
-    }
-
-    /* ─── RESET ──────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family : -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background  : var(--bg);
-      color       : var(--text);
-      font-size   : 14px;
-      line-height : 1.5;
+
+    :root {
+      --sb-bg   : #1c1845;
+      --sb-w    : 224px;
+      --pg-bg   : #edeaf8;
+      --card    : #ffffff;
+      --text    : #1a1928;
+      --muted   : #7a788e;
+      --border  : #e8e5f4;
+      --shadow  : 0 2px 12px rgba(28,24,69,.07);
+      --shad-md : 0 4px 24px rgba(28,24,69,.13);
+      --radius  : 16px;
+      --rad-sm  : 10px;
+      --mono    : 'JetBrains Mono', monospace;
+      --ok:#16a34a; --ok-lt:#dcfce7; --ok-bd:#86efac;
+      --err:#dc2626; --err-lt:#fee2e2; --err-bd:#fca5a5;
+      --warn:#d97706; --warn-lt:#fffbeb; --warn-bd:#fcd34d;
+      --info:#2563eb; --info-lt:#eff6ff; --info-bd:#93c5fd;
+      /* Active month — overridden by JS */
+      --am:#0d9488; --am-dk:#0f766e; --am-lt:#f0fdfa; --am-bd:#99f6e4;
+    }
+    body { font-family:'Inter',-apple-system,sans-serif; background:var(--pg-bg); color:var(--text); font-size:14px; line-height:1.5; }
+
+    /* ── APP SHELL ── */
+    .app { display:flex; min-height:100vh; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width:var(--sb-w); background:var(--sb-bg);
+      display:flex; flex-direction:column;
+      position:sticky; top:0; height:100vh; flex-shrink:0;
+    }
+    .sb-top { padding:1.5rem 1.25rem 1.1rem; }
+    .sb-logo-row { display:flex; align-items:center; gap:10px; margin-bottom:1.5rem; }
+    .sb-logo {
+      width:40px; height:40px; border-radius:11px; background:var(--am);
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+      transition:background .35s;
+    }
+    .sb-logo svg { width:21px; height:21px; fill:#fff; }
+    .sb-app-name { font-size:15px; font-weight:700; color:#fff; }
+    .sb-app-sub  { font-size:10px; color:rgba(255,255,255,.4); margin-top:1px; }
+    .sb-welcome {
+      background:rgba(255,255,255,.07); border-radius:var(--rad-sm);
+      padding:.7rem .9rem;
+    }
+    .sb-wlc-tag  { font-size:10px; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.07em; }
+    .sb-wlc-name { font-size:15px; font-weight:600; color:#fff; margin-top:3px; }
+
+    .sb-divider { height:1px; background:rgba(255,255,255,.08); margin:1rem 0; }
+    .sb-section { font-size:10px; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:.09em; padding:0 1.25rem .5rem; }
+
+    /* Month nav — single delegated listener on #tabsRow */
+    #tabsRow { flex:1; overflow-y:auto; padding:.25rem .75rem; }
+    #tabsRow::-webkit-scrollbar { width:3px; }
+    #tabsRow::-webkit-scrollbar-thumb { background:rgba(255,255,255,.12); border-radius:2px; }
+
+    .sb-nav-item {
+      display:flex; align-items:center; gap:10px; padding:.58rem .75rem;
+      border-radius:var(--rad-sm); cursor:pointer;
+      color:rgba(255,255,255,.5); transition:all .18s;
+      margin:1px 0; user-select:none;
+    }
+    .sb-nav-item:hover { background:rgba(255,255,255,.07); color:rgba(255,255,255,.82); }
+    .sb-nav-item.active { background:rgba(255,255,255,.13); color:#fff; font-weight:500; }
+    .sb-nav-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; transition:box-shadow .2s; }
+    .sb-nav-item.active .sb-nav-dot { box-shadow:0 0 0 3px rgba(255,255,255,.2); }
+    .sb-nav-lbl { font-size:13px; }
+
+    .sb-footer {
+      padding:1rem 1.25rem; border-top:1px solid rgba(255,255,255,.07);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .sb-status { display:flex; align-items:center; gap:7px; font-size:11px; color:rgba(255,255,255,.4); }
+    .tmr { font-family:var(--mono); font-size:11px; color:rgba(255,255,255,.3); background:rgba(255,255,255,.07); border-radius:20px; padding:2px 9px; }
+
+    .pr { position:relative; width:9px; height:9px; flex-shrink:0; }
+    .pr .ring { position:absolute; inset:-3px; border-radius:50%; border:1.5px solid transparent; }
+    .pr .dot  { position:absolute; inset:0; border-radius:50%; }
+    .pr.ok  .dot { background:var(--ok); }
+    .pr.ok  .ring { border-color:var(--ok); animation:expand 1.8s ease-out infinite; }
+    .pr.err .dot  { background:var(--err); }
+    .pr.ld  .dot  { background:var(--warn); animation:blink 1s infinite; }
+    .pr.ld  .ring { border-color:var(--warn); animation:expand 1.2s ease-out infinite; }
+    @keyframes expand { 0%{transform:scale(.7);opacity:.9} 100%{transform:scale(2.2);opacity:0} }
+    @keyframes blink  { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+    /* ── MAIN WRAP ── */
+    .main-wrap { flex:1; display:flex; flex-direction:column; min-width:0; overflow:hidden; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background:var(--card); border-bottom:1px solid var(--border);
+      padding:.8rem 1.75rem;
+      display:flex; justify-content:space-between; align-items:center;
+      flex-shrink:0; box-shadow:0 1px 0 var(--border);
+    }
+    .topbar-title { font-size:19px; font-weight:700; color:var(--am); transition:color .35s; }
+    .topbar-sub   { font-size:11px; color:var(--muted); margin-top:2px; }
+    .topbar-right { display:flex; align-items:center; gap:14px; }
+    .topbar-notif {
+      width:36px; height:36px; border-radius:50%; background:var(--pg-bg);
+      border:1px solid var(--border); display:flex; align-items:center; justify-content:center;
+      cursor:pointer; color:var(--muted);
+    }
+    .topbar-notif svg { width:16px; height:16px; }
+    .topbar-avatar {
+      width:36px; height:36px; border-radius:50%; background:var(--am);
+      color:#fff; display:flex; align-items:center; justify-content:center;
+      font-size:13px; font-weight:700; transition:background .35s;
     }
 
-    /* ─── HEADER ─────────────────────────────────────────────── */
-    .hdr {
-      position: sticky; top: 0; z-index: 100;
-      background: var(--card); border-bottom: 1px solid var(--border);
-      padding: .75rem 1.5rem;
-      display: flex; justify-content: space-between; align-items: center;
-      box-shadow: var(--shadow);
-    }
-    .hdr-left { display: flex; align-items: center; gap: 10px; }
-    .hdr-brand {
-      width: 34px; height: 34px; border-radius: 9px; background: var(--active-month);
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-      transition: background .35s ease;
-    }
-    .hdr-brand svg { width: 18px; height: 18px; fill: #fff; }
-    .hdr-title { font-size: 15px; font-weight: 600; }
-    .hdr-sub   { font-size: 11px; color: var(--muted); margin-top: 1px; }
-    .hdr-right { display: flex; align-items: center; gap: 8px; }
+    /* ── PAGE ── */
+    .page { flex:1; overflow-y:auto; padding:1.5rem 1.75rem 2.5rem; }
 
-    /* Live pulse badge */
-    .live-badge {
-      display: flex; align-items: center; gap: 7px;
-      background: var(--faint); border: 1px solid var(--border);
-      border-radius: 20px; padding: 4px 12px; font-size: 12px; color: var(--muted);
-    }
-    .pr { position: relative; width: 10px; height: 10px; flex-shrink: 0; }
-    .pr .ring { position: absolute; inset: -3px; border-radius: 50%; border: 1.5px solid transparent; }
-    .pr .dot  { position: absolute; inset: 0; border-radius: 50%; }
-    .pr.ok  .dot  { background: var(--ok); }
-    .pr.ok  .ring { border-color: var(--ok);   animation: expand 1.8s ease-out infinite; }
-    .pr.err .dot  { background: var(--err); }
-    .pr.err .ring { border-color: transparent; }
-    .pr.ld  .dot  { background: var(--warn); animation: blink 1s infinite; }
-    .pr.ld  .ring { border-color: var(--warn); animation: expand 1.2s ease-out infinite; }
-    @keyframes expand { 0%{transform:scale(.7);opacity:.9} 100%{transform:scale(2);opacity:0} }
-    @keyframes blink  { 0%,100%{opacity:1} 50%{opacity:.25} }
+    /* ── ALERTS ── */
+    .alert { border-radius:var(--rad-sm); padding:1rem 1.25rem; font-size:13px; margin-bottom:1.2rem; border:1px solid; line-height:1.7; }
+    .a-setup { background:var(--info-lt); border-color:var(--info-bd); color:#1e40af; }
+    .a-err   { background:var(--err-lt);  border-color:var(--err-bd);  color:#991b1b; }
+    .alert strong { font-weight:600; display:block; margin-bottom:.3rem; }
+    code { background:rgba(0,0,0,.07); border-radius:4px; padding:1px 5px; font-family:var(--mono); font-size:12px; }
+    .state-msg { text-align:center; padding:5rem 2rem; color:var(--muted); font-size:13px; line-height:1.9; }
 
-    .timer {
-      font-family: var(--mono); font-size: 11px; color: var(--muted);
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 20px; padding: 3px 10px; min-width: 38px; text-align: center;
+    /* ── HERO BANNER ── */
+    .hero {
+      border-radius:var(--radius); margin-bottom:1.4rem;
+      background:linear-gradient(135deg, var(--am) 0%, var(--am-dk) 100%);
+      padding:1.8rem 2rem; display:flex; justify-content:space-between; align-items:center;
+      position:relative; overflow:hidden; min-height:150px;
+      box-shadow:var(--shad-md); transition:background .4s;
     }
+    .hero-left  { position:relative; z-index:1; }
+    .hero-right { position:relative; z-index:1; }
+    .hero-eye   { font-size:10px; color:rgba(255,255,255,.6); text-transform:uppercase; letter-spacing:.1em; margin-bottom:.5rem; }
+    .hero-title { font-size:27px; font-weight:700; color:#fff; line-height:1.2; margin-bottom:.5rem; }
+    .hero-sub   { font-size:12px; color:rgba(255,255,255,.65); margin-bottom:1.1rem; }
+    .hero-pills { display:flex; gap:10px; flex-wrap:wrap; }
+    .hero-pill  { display:flex; flex-direction:column; background:rgba(255,255,255,.15); backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,.2); border-radius:10px; padding:.55rem .85rem; min-width:80px; }
+    .hero-pill-val { font-size:19px; font-weight:700; color:#fff; font-family:var(--mono); line-height:1; }
+    .hero-pill-lbl { font-size:10px; color:rgba(255,255,255,.6); margin-top:3px; text-transform:uppercase; }
+    .hero-badge {
+      background:rgba(255,255,255,.16); backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.22); border-radius:14px;
+      padding:1rem 1.4rem; text-align:center; min-width:150px;
+    }
+    .hero-badge-num { font-size:36px; font-weight:700; color:#fff; font-family:var(--mono); line-height:1; }
+    .hero-badge-lbl { font-size:11px; color:rgba(255,255,255,.65); margin-top:5px; }
+    .hero-deco { position:absolute; right:0; top:0; bottom:0; width:300px; pointer-events:none; z-index:0; }
 
-    /* ─── LAYOUT ─────────────────────────────────────────────── */
-    .main { padding: 1.25rem 1.5rem; max-width: 1320px; margin: 0 auto; }
+    /* ── KPI ROW ── */
+    .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:12px; margin-bottom:1.4rem; }
+    .kpi { background:var(--card); border-radius:var(--radius); padding:1.1rem 1.2rem; box-shadow:var(--shadow); }
+    .kpi-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:.4rem; }
+    .kpi-lbl  { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+    .kpi-pill { font-size:10px; font-weight:600; border-radius:20px; padding:2px 7px; }
+    .kpi-pill.up   { background:var(--ok-lt);   color:var(--ok);  }
+    .kpi-pill.down { background:var(--err-lt);  color:var(--err); }
+    .kpi-pill.neu  { background:var(--info-lt); color:var(--info); }
+    .kpi-val  { font-size:30px; font-weight:700; font-family:var(--mono); line-height:1; margin:.4rem 0 .3rem; }
+    .kpi-sub  { font-size:11px; color:var(--muted); }
+    .kpi-wave { margin-top:.6rem; overflow:hidden; }
+    .kpi-wave svg { width:100%; height:30px; display:block; }
 
-    /* ─── ALERTS ─────────────────────────────────────────────── */
-    .alert {
-      border-radius: var(--radius); padding: 1rem 1.25rem; font-size: 13px;
-      margin-bottom: 1.1rem; border: 1px solid; line-height: 1.7;
-    }
-    .a-setup { background: var(--info-lt); border-color: var(--info-bd); color: #1e40af; }
-    .a-err   { background: var(--err-lt);  border-color: var(--err-bd);  color: #991b1b; }
-    .alert strong { font-weight: 600; display: block; margin-bottom: .3rem; font-size: 14px; }
-    code {
-      background: rgba(0,0,0,.08); border-radius: 4px;
-      padding: 1px 5px; font-family: var(--mono); font-size: 12px;
-    }
-    .state { text-align: center; padding: 3.5rem; color: var(--muted); font-size: 13px; line-height: 1.8; }
+    /* ── MID SECTION ── */
+    .mid { display:grid; grid-template-columns:1.5fr 1fr; gap:14px; margin-bottom:1.4rem; }
+    .mid-l { display:flex; flex-direction:column; gap:14px; }
+    .mid-r { display:flex; flex-direction:column; gap:14px; }
+    .card { background:var(--card); border-radius:var(--radius); padding:1.15rem 1.3rem; box-shadow:var(--shadow); }
+    .card-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+    .card-title { font-size:13px; font-weight:600; color:var(--text); }
+    .chart-wrap { position:relative; }
+    .legend { display:flex; flex-wrap:wrap; gap:12px; margin-top:.65rem; }
+    .leg-i  { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--muted); }
+    .leg-sq { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
 
-    /* ─── SHEET TABS ─────────────────────────────────────────── */
-    .tabs { display: flex; gap: 4px; margin-bottom: 1.1rem; flex-wrap: wrap; }
-    .tab {
-      padding: 5px 16px; border-radius: 7px; font-size: 13px; cursor: pointer;
-      border: 1px solid var(--border); background: var(--card); color: var(--muted);
-      transition: all .2s; font-family: inherit;
-      /* Per-tab color vars — overridden inline by JS with month colors */
-      --tab-main : var(--teal);
-      --tab-light: var(--teal-lt);
-      --tab-bd   : var(--teal-bd);
-    }
-    .tab.active {
-      background: var(--tab-main); border-color: var(--tab-main);
-      color: #fff; font-weight: 500;
-      box-shadow: 0 2px 8px rgba(0,0,0,.15);
-    }
-    .tab:hover:not(.active) { background: var(--tab-light); color: var(--tab-main); border-color: var(--tab-bd); }
+    /* Status bars */
+    .pbar { height:7px; background:var(--border); border-radius:4px; overflow:hidden; display:flex; margin:.5rem 0 .85rem; }
+    .pb-s { height:100%; transition:width .4s; }
+    .s-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
+    .s-lbl { display:flex; align-items:center; gap:6px; font-size:12px; }
+    .s-sq  { width:7px; height:7px; border-radius:2px; flex-shrink:0; }
+    .s-val { font-size:12px; font-weight:600; font-family:var(--mono); }
 
-    /* Active month color strip shown below tabs */
-    .month-strip {
-      height: 3px; border-radius: 2px; margin: -.5rem 0 1.1rem;
-      background: var(--active-month); transition: background .35s ease;
-      opacity: .7;
-    }
+    /* Assignee cards */
+    .who-grid { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:1rem; }
+    .who-card { display:flex; align-items:center; gap:8px; background:var(--pg-bg); border-radius:var(--rad-sm); padding:7px 10px; flex:1; min-width:100px; }
+    .who-av   { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0; }
+    .who-name { font-size:12px; font-weight:500; }
+    .who-stat { font-size:11px; color:var(--muted); font-family:var(--mono); }
 
-    /* ─── KPI GRID ───────────────────────────────────────────── */
-    .kpi-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
-      gap: 10px; margin-bottom: 1.1rem;
-    }
-    .kpi {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: .9rem 1.1rem .9rem 1.3rem;
-      position: relative; overflow: hidden;
-    }
-    .kpi::before {
-      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-      width: 3px; background: var(--stripe, var(--teal));
-      border-radius: 3px 0 0 3px;
-    }
-    .kpi-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; }
-    .kpi-val { font-size: 26px; font-weight: 700; line-height: 1; font-family: var(--mono); }
-    .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    /* Daily log */
+    .dl-wrap { max-height:190px; overflow-y:auto; }
+    .dl-wrap::-webkit-scrollbar { width:3px; }
+    .dl-wrap::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+    .dl-hdr { display:grid; grid-template-columns:64px 1fr 52px; gap:4px; padding:4px 0 6px; border-bottom:2px solid var(--border); margin-bottom:2px; }
+    .dl-hdr span { font-size:10px; color:var(--muted); font-weight:500; text-transform:uppercase; letter-spacing:.05em; }
+    .dl-row { display:grid; grid-template-columns:64px 1fr 52px; align-items:center; gap:4px; padding:6px 0; border-bottom:1px solid var(--border); }
+    .dl-row:last-child { border-bottom:none; }
+    .dl-dt  { font-size:11px; color:var(--muted); font-family:var(--mono); }
+    .dl-who { display:flex; flex-wrap:wrap; gap:3px; align-items:center; font-size:11px; }
+    .dl-qty { font-size:11px; color:var(--muted); font-family:var(--mono); text-align:right; }
+    .who-pip { display:inline-flex; align-items:center; gap:3px; }
+    .who-dot { display:inline-block; width:6px; height:6px; border-radius:50%; flex-shrink:0; }
 
-    /* ─── CHARTS ROW ─────────────────────────────────────────── */
-    .charts-row {
-      display: grid; grid-template-columns: 1.55fr .95fr;
-      gap: 12px; margin-bottom: 1.1rem; align-items: start;
-    }
-    .card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.1rem 1.25rem;
-    }
-    .card-title { font-size: 13px; font-weight: 500; margin-bottom: .9rem; }
-    .chart-box  { position: relative; }
-    .r-col      { display: flex; flex-direction: column; gap: 12px; }
+    /* ── TASK TABLE ── */
+    .tbl-wrap-outer { background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:1.5rem; overflow:hidden; }
+    .tbl-top { padding:.9rem 1.3rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
+    .tbl-top h2 { font-size:14px; font-weight:600; }
+    .filters { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .fl { font-size:12px; color:var(--muted); }
+    select { border:1px solid var(--border); border-radius:7px; padding:5px 9px; font-size:12px; color:var(--text); background:var(--pg-bg); cursor:pointer; outline:none; font-family:inherit; }
+    select:focus { border-color:var(--am); }
+    .row-chip { font-size:11px; color:var(--muted); background:var(--pg-bg); border:1px solid var(--border); border-radius:20px; padding:2px 9px; font-family:var(--mono); }
+    .tbl-scroll { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; min-width:780px; }
+    th { font-size:11px; color:var(--muted); font-weight:500; padding:9px 11px; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap; background:var(--pg-bg); }
+    td { padding:9px 11px; border-bottom:1px solid var(--border); vertical-align:middle; font-size:13px; }
+    tr:last-child td { border-bottom:none; }
+    tbody tr:hover td { background:#f7f5ff; }
+    .badge { display:inline-block; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:500; white-space:nowrap; border:1px solid transparent; }
+    .b-done  { background:var(--ok-lt);   color:#15803d; border-color:var(--ok-bd);   }
+    .b-block { background:var(--err-lt);  color:#b91c1c; border-color:var(--err-bd);  }
+    .b-prog  { background:var(--info-lt); color:#1d4ed8; border-color:var(--info-bd); }
+    .b-def   { background:#f4f3ff; color:var(--muted); border-color:var(--border); }
+    .tc-a { color:#0d9488; font-weight:500; }
+    .tc-s { color:#16a34a; font-weight:500; }
+    .tc-b { color:#d97706; font-weight:500; }
+    .res-tag { display:inline-flex; align-items:center; gap:4px; font-size:11px; background:var(--am-lt); color:var(--am); border:1px solid var(--am-bd); border-radius:20px; padding:2px 8px; transition:background .35s,color .35s,border-color .35s; }
+    .res-dot { width:5px; height:5px; border-radius:50%; background:var(--am); flex-shrink:0; transition:background .35s; }
+    .qw { display:flex; align-items:center; gap:6px; min-width:100px; }
+    .qn { min-width:30px; font-weight:600; text-align:right; font-family:var(--mono); font-size:13px; }
+    .qt { flex:1; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+    .qf { height:100%; border-radius:2px; background:var(--am); transition:background .35s; }
+    .who-pill { display:inline-flex; align-items:center; gap:5px; font-size:12px; }
 
-    .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: .65rem; }
-    .leg-i  { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
-    .leg-sq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
-
-    /* Status overview */
-    .pbar { height: 7px; background: var(--faint); border-radius: 4px; overflow: hidden; display: flex; margin: .5rem 0 .85rem; }
-    .pb-s { height: 100%; transition: width .4s ease; }
-    .s-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-    .s-lbl { display: flex; align-items: center; gap: 7px; font-size: 12px; }
-    .s-sq  { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-    .s-val { font-size: 12px; font-weight: 600; font-family: var(--mono); }
-
-    /* ─── PEOPLE SECTION ─────────────────────────────────────── */
-    .people-row {
-      display: grid; grid-template-columns: 1fr 1.3fr;
-      gap: 12px; margin-bottom: 1.1rem; align-items: start;
+    /* ── RESPONSIVE ── */
+    @media (max-width:1100px) { .mid { grid-template-columns:1fr; } }
+    @media (max-width:840px) {
+      .sidebar { width:62px; }
+      .sb-app-name,.sb-app-sub,.sb-welcome,.sb-section,.sb-nav-lbl { display:none; }
+      .sb-top { padding:.9rem .6rem .6rem; }
+      .sb-logo-row { justify-content:center; }
+      #tabsRow { padding:.2rem .4rem; }
+      .sb-nav-item { justify-content:center; padding:.6rem; }
+      .sb-footer { justify-content:center; gap:0; }
+      .sb-status span { display:none; }
     }
-
-    /* Assignee summary cards inside the assignee card */
-    .who-cards { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; }
-    .who-card {
-      display: flex; align-items: center; gap: 8px;
-      background: var(--faint); border: 1px solid var(--border);
-      border-radius: 8px; padding: 7px 10px; flex: 1; min-width: 110px;
-    }
-    .who-avatar {
-      width: 30px; height: 30px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
-    }
-    .who-name  { font-size: 12px; font-weight: 500; color: var(--text); }
-    .who-stats { font-size: 11px; color: var(--muted); margin-top: 1px; font-family: var(--mono); }
-
-    /* Daily resource log */
-    .dl-wrap { max-height: 220px; overflow-y: auto; }
-    .dl-head {
-      display: grid; grid-template-columns: 78px 80px 14px 1fr 60px;
-      gap: 6px; padding: 4px 0 6px;
-      border-bottom: 2px solid var(--border-s); margin-bottom: 2px;
-    }
-    .dl-head span { font-size: 10px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: .05em; }
-    .dl-row {
-      display: grid; grid-template-columns: 78px 80px 14px 1fr 60px;
-      align-items: center; gap: 6px;
-      padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 12px;
-    }
-    .dl-row:last-child { border-bottom: none; }
-    .dl-date { color: var(--muted); font-family: var(--mono); font-size: 11px; }
-    .dl-res  { color: var(--active-month); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; transition: color .35s; }
-    .dl-arr  { color: var(--border-s); font-size: 12px; text-align: center; }
-    .dl-who  { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-    .dl-qty  { color: var(--muted); font-family: var(--mono); font-size: 11px; text-align: right; }
-    .who-pip {
-      display: inline-flex; align-items: center; gap: 3px;
-      font-size: 11px; color: var(--text);
-    }
-    .who-dot {
-      display: inline-block; width: 7px; height: 7px;
-      border-radius: 50%; flex-shrink: 0;
-    }
-
-    /* ─── TABLE CARD ─────────────────────────────────────────── */
-    .tbl-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); overflow: hidden; margin-bottom: 1rem;
-    }
-    .tbl-top {
-      padding: .8rem 1.25rem; border-bottom: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 8px;
-    }
-    .tbl-top h2 { font-size: 13px; font-weight: 500; }
-    .filters { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .fl { font-size: 12px; color: var(--muted); }
-    select {
-      border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px;
-      font-size: 12px; color: var(--text); background: var(--card);
-      cursor: pointer; outline: none; font-family: inherit;
-    }
-    select:focus { border-color: var(--teal); }
-    .row-chip {
-      font-size: 11px; color: var(--muted); background: var(--faint);
-      border: 1px solid var(--border); border-radius: 20px; padding: 2px 9px;
-      font-family: var(--mono);
-    }
-    .tbl-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 780px; }
-    th {
-      font-size: 11px; color: var(--muted); font-weight: 500; padding: 8px 10px;
-      text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap;
-    }
-    td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-    tr:last-child td { border-bottom: none; }
-    tbody tr:hover td { background: var(--faint); }
-
-    /* Badges */
-    .badge {
-      display: inline-block; padding: 2px 8px; border-radius: 20px;
-      font-size: 11px; font-weight: 500; white-space: nowrap; border: 1px solid transparent;
-    }
-    .b-done  { background: var(--ok-lt);   color: #15803d; border-color: var(--ok-bd);   }
-    .b-block { background: var(--err-lt);  color: #b91c1c; border-color: var(--err-bd);  }
-    .b-prog  { background: var(--info-lt); color: #1d4ed8; border-color: var(--info-bd); }
-    .b-def   { background: var(--faint);   color: var(--muted); border-color: var(--border); }
-
-    /* Task types */
-    .tc-a { color: var(--teal); font-weight: 500; }
-    .tc-s { color: var(--ok);   font-weight: 500; }
-    .tc-b { color: var(--warn); font-weight: 500; }
-
-    /* Resource tag in table */
-    .res-tag {
-      display: inline-flex; align-items: center; gap: 4px; font-size: 11px;
-      background: var(--active-month-lt); color: var(--active-month);
-      border: 1px solid var(--active-month-bd); border-radius: 20px; padding: 1px 7px;
-      transition: background .35s, color .35s, border-color .35s;
-    }
-    .res-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--active-month); flex-shrink: 0; }
-
-    /* Qty inline bar */
-    .qw { display: flex; align-items: center; gap: 6px; min-width: 100px; }
-    .qn { min-width: 28px; font-weight: 600; text-align: right; font-family: var(--mono); font-size: 13px; }
-    .qt { flex: 1; height: 4px; background: var(--faint); border-radius: 2px; overflow: hidden; }
-    .qf { height: 100%; border-radius: 2px; background: var(--active-month); transition: background .35s; }
-
-    /* Assignee pill in table */
-    .who-pill {
-      display: inline-flex; align-items: center; gap: 5px; font-size: 12px;
-    }
-
-    /* ─── RESPONSIVE ─────────────────────────────────────────── */
-    @media (max-width: 960px) {
-      .charts-row  { grid-template-columns: 1fr; }
-      .people-row  { grid-template-columns: 1fr; }
-      .r-col { flex-direction: row; flex-wrap: wrap; }
-      .r-col .card { flex: 1; min-width: 200px; }
-    }
-    @media (max-width: 640px) {
-      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-      .main { padding: 1rem; }
-      .hdr { padding: .75rem 1rem; }
-      .kpi-val { font-size: 22px; }
+    @media (max-width:640px) {
+      .hero-right { display:none; }
+      .hero { padding:1.25rem 1.25rem; }
+      .page { padding:1rem; }
+      .topbar { padding:.7rem 1rem; }
+      .kpi-grid { grid-template-columns:repeat(2,1fr); }
     }
   </style>
 </head>
 <body>
+<div class="app">
 
-<!-- ── HEADER ───────────────────────────────────────────────── -->
-<header class="hdr">
-  <div class="hdr-left">
-    <div class="hdr-brand">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
-      </svg>
-    </div>
-    <div>
-      <div class="hdr-title">Workflow Dashboard</div>
-      <div class="hdr-sub">AI Annotation · Data Preparation Manager</div>
-    </div>
-  </div>
-  <div class="hdr-right">
-    <div class="live-badge">
-      <div class="pr ld" id="pRing">
-        <div class="ring"></div>
-        <div class="dot"></div>
-      </div>
-      <span id="sTxt">Connecting...</span>
-    </div>
-    <div class="timer" id="cChip">30s</div>
-  </div>
-</header>
-
-<!-- ── MAIN ─────────────────────────────────────────────────── -->
-<div class="main">
-
-  <div class="alert a-setup" id="setupBox" style="display:none">
-    <strong>One step required — paste your Apps Script URL</strong>
-    Open <code>index.html</code> in any text editor. Near the top of the
-    <code>&lt;script&gt;</code> block find <code>const SCRIPT_URL = 'PASTE...'</code>
-    and replace it with your Web App URL.
-  </div>
-  <div class="alert a-err" id="errBox" style="display:none"></div>
-  <div class="state" id="ldBox">Loading data from Google Sheets…</div>
-
-  <!-- DASHBOARD -->
-  <div id="content" style="display:none">
-
-    <!-- Sheet tabs -->
-    <div class="tabs" id="tabsRow"></div>
-    <div class="month-strip" id="monthStrip"></div>
-
-    <!-- KPI cards -->
-    <div class="kpi-grid" id="kpiGrid"></div>
-
-    <!-- Charts: production bar + type doughnut + status -->
-    <div class="charts-row">
-      <div class="card">
-        <div class="card-title">Daily production output</div>
-        <div class="chart-box" style="height:210px">
-          <canvas id="pchart" role="img" aria-label="Bar chart of daily production quantities"></canvas>
+  <!-- ═══ SIDEBAR ═══════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sb-top">
+      <div class="sb-logo-row">
+        <div class="sb-logo" id="sbLogo">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+          </svg>
         </div>
-        <div class="legend">
-          <div class="leg-i"><span class="leg-sq" style="background:var(--active-month)"></span>Working day</div>
-          <div class="leg-i"><span class="leg-sq" style="background:var(--purple)"></span>Sunday worked</div>
-          <div class="leg-i"><span class="leg-sq" style="background:#d4d4d4"></span>No output</div>
+        <div>
+          <div class="sb-app-name">WorkFlow</div>
+          <div class="sb-app-sub">AI Annotation</div>
         </div>
       </div>
-      <div class="r-col">
-        <div class="card">
-          <div class="card-title">Task type split</div>
-          <div class="chart-box" style="height:165px">
-            <canvas id="tchart" role="img" aria-label="Doughnut chart showing task type breakdown"></canvas>
+      <div class="sb-welcome">
+        <div class="sb-wlc-tag">Manager</div>
+        <div class="sb-wlc-name">Polash</div>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+    <div class="sb-section">Monthly Tasks</div>
+
+    <!-- Stable parent — ONE delegated listener wired in JS, never re-added -->
+    <nav id="tabsRow"></nav>
+
+    <div class="sb-footer">
+      <div class="sb-status">
+        <div class="pr ld" id="pRing"><div class="ring"></div><div class="dot"></div></div>
+        <span id="sTxt">Connecting...</span>
+      </div>
+      <div class="tmr" id="cChip">30s</div>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN ══════════════════════════════════════════════ -->
+  <div class="main-wrap">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="topTitle">Dashboard</div>
+        <div class="topbar-sub">Data Preparation · AI Model Annotation</div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-notif" title="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+          </svg>
+        </div>
+        <div class="topbar-avatar" id="topAvatar">P</div>
+      </div>
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <div class="page">
+
+      <div class="alert a-setup" id="setupBox" style="display:none">
+        <strong>One step required — paste your Apps Script URL</strong>
+        Open <code>index.html</code>, find <code>const SCRIPT_URL = 'PASTE...'</code>
+        and replace with your Apps Script Web App URL.
+      </div>
+      <div class="alert a-err" id="errBox" style="display:none"></div>
+      <div class="state-msg" id="ldBox">Loading data from Google Sheets…</div>
+
+      <div id="content" style="display:none">
+
+        <!-- HERO BANNER -->
+        <div class="hero" id="heroCard">
+          <div class="hero-left">
+            <div class="hero-eye">AI Annotation Workflow</div>
+            <div class="hero-title" id="heroTitle">Loading…</div>
+            <div class="hero-sub"  id="heroSub">Monthly overview</div>
+            <div class="hero-pills" id="heroPills"></div>
+          </div>
+          <div class="hero-right">
+            <div class="hero-badge">
+              <div class="hero-badge-num" id="heroBig">—</div>
+              <div class="hero-badge-lbl">items produced</div>
+            </div>
+          </div>
+          <!-- Decorative background circles -->
+          <svg class="hero-deco" viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <circle cx="240" cy="20"  r="70"  fill="white" fill-opacity=".05"/>
+            <circle cx="270" cy="115" r="45"  fill="white" fill-opacity=".07"/>
+            <circle cx="155" cy="75"  r="32"  fill="white" fill-opacity=".04"/>
+            <circle cx="210" cy="140" r="22"  fill="white" fill-opacity=".06"/>
+            <circle cx="295" cy="55"  r="55"  fill="white" fill-opacity=".04"/>
+            <circle cx="130" cy="15"  r="18"  fill="white" fill-opacity=".05"/>
+          </svg>
+        </div>
+
+        <!-- KPI CARDS -->
+        <div class="kpi-grid" id="kpiGrid"></div>
+
+        <!-- MID ROW -->
+        <div class="mid">
+
+          <!-- LEFT COLUMN -->
+          <div class="mid-l">
+            <!-- Production bar chart -->
+            <div class="card">
+              <div class="card-hdr">
+                <div class="card-title">Daily production output</div>
+              </div>
+              <div class="chart-wrap" style="height:200px">
+                <canvas id="pchart" role="img" aria-label="Bar chart of daily production quantities"></canvas>
+              </div>
+              <div class="legend">
+                <div class="leg-i"><span class="leg-sq" id="legWork" style="background:var(--am)"></span>Working day</div>
+                <div class="leg-i"><span class="leg-sq" style="background:#7c3aed"></span>Sunday worked</div>
+                <div class="leg-i"><span class="leg-sq" style="background:#d1d5db"></span>No output</div>
+              </div>
+            </div>
+            <!-- Assignee workload -->
+            <div class="card">
+              <div class="card-title">Assignee workload</div>
+              <div id="whoCards" class="who-grid"></div>
+              <div class="chart-wrap" style="height:120px">
+                <canvas id="achart" role="img" aria-label="Horizontal bar chart of assignee output"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN -->
+          <div class="mid-r">
+            <!-- Task type doughnut -->
+            <div class="card">
+              <div class="card-title">Task type split</div>
+              <div class="chart-wrap" style="height:165px">
+                <canvas id="tchart" role="img" aria-label="Doughnut chart of task types"></canvas>
+              </div>
+            </div>
+            <!-- Status overview -->
+            <div class="card">
+              <div class="card-title">Status overview</div>
+              <div id="sOver"></div>
+            </div>
+            <!-- Daily resource log -->
+            <div class="card">
+              <div class="card-title">Daily resource &amp; assignee log</div>
+              <div class="dl-hdr">
+                <span>Date</span><span>Assignee(s)</span><span style="text-align:right">Items</span>
+              </div>
+              <div class="dl-wrap" id="dailyLog"></div>
+            </div>
           </div>
         </div>
-        <div class="card">
-          <div class="card-title">Status overview</div>
-          <div id="sOver"></div>
-        </div>
-      </div>
-    </div>
 
-    <!-- ── PEOPLE SECTION ─────────────────────────────────── -->
-    <div class="people-row">
-      <!-- Assignee workload chart -->
-      <div class="card">
-        <div class="card-title">Assignee — production workload</div>
-        <div id="whoCards" class="who-cards"></div>
-        <div class="chart-box" style="height:140px">
-          <canvas id="achart" role="img" aria-label="Horizontal bar chart showing production by assignee"></canvas>
+        <!-- TASK TABLE -->
+        <div class="tbl-wrap-outer">
+          <div class="tbl-top">
+            <h2>Task log</h2>
+            <div class="filters">
+              <span class="fl">Filter:</span>
+              <select id="sfil">
+                <option value="All">All statuses</option>
+                <option value="Completed">Completed</option>
+                <option value="Blocked">Blocked</option>
+                <option value="In progress">In progress</option>
+              </select>
+              <select id="tfil"><option value="All">All types</option></select>
+              <select id="afil"><option value="All">All assignees</option></select>
+              <span class="row-chip" id="rCnt"></span>
+            </div>
+          </div>
+          <div class="tbl-scroll" id="tWrap"></div>
         </div>
-      </div>
-      <!-- Daily resource & assignee log -->
-      <div class="card">
-        <div class="card-title">Daily resource &amp; assignee log</div>
-        <div class="dl-head">
-          <span>Date</span>
-          <span>Resource</span>
-          <span></span>
-          <span>Assignee(s)</span>
-          <span style="text-align:right">Items</span>
-        </div>
-        <div class="dl-wrap" id="dailyLog"></div>
-      </div>
-    </div>
 
-    <!-- Task table -->
-    <div class="tbl-card">
-      <div class="tbl-top">
-        <h2>Task log</h2>
-        <div class="filters">
-          <span class="fl">Filter:</span>
-          <select id="sfil">
-            <option value="All">All statuses</option>
-            <option value="Completed">Completed</option>
-            <option value="Blocked">Blocked</option>
-            <option value="In progress">In progress</option>
-          </select>
-          <select id="tfil">
-            <option value="All">All types</option>
-          </select>
-          <select id="afil">
-            <option value="All">All assignees</option>
-          </select>
-          <span class="row-chip" id="rCnt"></span>
-        </div>
-      </div>
-      <div class="tbl-wrap" id="tWrap"></div>
-    </div>
+      </div><!-- /#content -->
+    </div><!-- /.page -->
+  </div><!-- /.main-wrap -->
+</div><!-- /.app -->
 
-  </div><!-- /#content -->
-</div><!-- /.main -->
-
-<!-- ── SCRIPTS ──────────────────────────────────────────────── -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ═══════════════════════════════════════════════════════════
-//  CONFIG  — paste your Apps Script Web App URL below
-// ═══════════════════════════════════════════════════════════
-const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycbx-CV008VAXhT8skoUX9DA6Cy5GR3jEuUiKAtUr7QEwaZMHCvSnS4PM-E0gsp0MwOU/exec';
+// ═══════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════
+const SCRIPT_URL  = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
 const REFRESH_SEC = 30;
-// ═══════════════════════════════════════════════════════════
 
-// ── MONTH COLOR SYSTEM ────────────────────────────────────
-// Each month gets a distinct color. Sheet names like "June Tasks",
-// "July Tasks" etc. are auto-matched by the month word inside.
+// ── MONTH COLOR PALETTE ────────────────────────────────
 const MONTH_CLR = {
-  'January'  : { main:'#e11d48', light:'#fff1f2', border:'#fecdd3' },  // Rose
-  'February' : { main:'#db2777', light:'#fdf2f8', border:'#fbcfe8' },  // Pink
-  'March'    : { main:'#16a34a', light:'#f0fdf4', border:'#bbf7d0' },  // Green
-  'April'    : { main:'#059669', light:'#ecfdf5', border:'#a7f3d0' },  // Emerald
-  'May'      : { main:'#ca8a04', light:'#fefce8', border:'#fde68a' },  // Yellow
-  'June'     : { main:'#0d9488', light:'#f0fdfa', border:'#99f6e4' },  // Teal
-  'July'     : { main:'#2563eb', light:'#eff6ff', border:'#bfdbfe' },  // Blue
-  'August'   : { main:'#ea580c', light:'#fff7ed', border:'#fed7aa' },  // Orange
-  'September': { main:'#dc2626', light:'#fef2f2', border:'#fecaca' },  // Red
-  'October'  : { main:'#b45309', light:'#fffbeb', border:'#fde68a' },  // Amber
-  'November' : { main:'#7c3aed', light:'#f5f3ff', border:'#ddd6fe' },  // Violet
-  'December' : { main:'#0284c7', light:'#f0f9ff', border:'#bae6fd' },  // Sky
+  January  :{main:'#e11d48',dk:'#be123c',light:'#fff1f2',border:'#fecdd3'},
+  February :{main:'#db2777',dk:'#be185d',light:'#fdf2f8',border:'#fbcfe8'},
+  March    :{main:'#16a34a',dk:'#15803d',light:'#f0fdf4',border:'#bbf7d0'},
+  April    :{main:'#059669',dk:'#047857',light:'#ecfdf5',border:'#a7f3d0'},
+  May      :{main:'#ca8a04',dk:'#a16207',light:'#fefce8',border:'#fde68a'},
+  June     :{main:'#0d9488',dk:'#0f766e',light:'#f0fdfa',border:'#99f6e4'},
+  July     :{main:'#2563eb',dk:'#1d4ed8',light:'#eff6ff',border:'#bfdbfe'},
+  August   :{main:'#ea580c',dk:'#c2410c',light:'#fff7ed',border:'#fed7aa'},
+  September:{main:'#dc2626',dk:'#b91c1c',light:'#fef2f2',border:'#fecaca'},
+  October  :{main:'#b45309',dk:'#92400e',light:'#fffbeb',border:'#fde68a'},
+  November :{main:'#7c3aed',dk:'#6d28d9',light:'#f5f3ff',border:'#ddd6fe'},
+  December :{main:'#0284c7',dk:'#0369a1',light:'#f0f9ff',border:'#bae6fd'},
 };
-// Default for sheets that don't match a month name
-const DEFAULT_CLR = { main:'#64748b', light:'#f8fafc', border:'#cbd5e1' };
-
-function getMonthColor(sheetName) {
-  for (const [month, clr] of Object.entries(MONTH_CLR)) {
-    if (sheetName.includes(month)) return clr;
-  }
-  return DEFAULT_CLR;
+const DEF_CLR = {main:'#64748b',dk:'#475569',light:'#f8fafc',border:'#cbd5e1'};
+function getMonthClr(name) {
+  for (const [m,c] of Object.entries(MONTH_CLR)) { if (name.includes(m)) return c; }
+  return DEF_CLR;
 }
 
-// Apply month color to the whole dashboard
-let activeMonthColor = '#0d9488';
-function setMonthTheme(sheetName) {
-  const mc = getMonthColor(sheetName);
-  activeMonthColor = mc.main;
-  const root = document.documentElement;
-  root.style.setProperty('--active-month',    mc.main);
-  root.style.setProperty('--active-month-lt', mc.light);
-  root.style.setProperty('--active-month-bd', mc.border);
+// ── LOOKUPS ────────────────────────────────────────────
+const TASK_CLS  = {Annotations:'tc-a',Supervision:'tc-s','Brand sessions':'tc-b'};
+const BADGE_CLS = {Completed:'b-done',Blocked:'b-block','In progress':'b-prog'};
+const TYPE_CLR  = {Annotations:'#0d9488',Supervision:'#16a34a','Brand sessions':'#d97706'};
+const STAT_CFG  = {Completed:{color:'#16a34a'},'In progress':{color:'#2563eb'},Blocked:{color:'#dc2626'}};
+const WHO_PAL   = ['#0d9488','#7c3aed','#d97706','#2563eb','#16a34a','#e11d48'];
+const WHO_MAP   = {};
+function whoColor(n) {
+  if (!n) return '#a8a29e';
+  if (!WHO_MAP[n]) WHO_MAP[n] = WHO_PAL[Object.keys(WHO_MAP).length % WHO_PAL.length];
+  return WHO_MAP[n];
 }
-
-// ── LOOKUP TABLES ─────────────────────────────────────────
-const TASK_CLS  = { 'Annotations':'tc-a', 'Supervision':'tc-s', 'Brand sessions':'tc-b' };
-const BADGE_CLS = { 'Completed':'b-done', 'Blocked':'b-block', 'In progress':'b-prog' };
-const TYPE_CLR  = { 'Annotations':'#0d9488', 'Supervision':'#16a34a', 'Brand sessions':'#d97706' };
-const STAT_CFG  = { 'Completed':{color:'#16a34a'}, 'In progress':{color:'#2563eb'}, 'Blocked':{color:'#dc2626'} };
-
-// Assignee color palette — extends automatically for new names
-const WHO_PALETTE = ['#0d9488','#7c3aed','#d97706','#2563eb','#16a34a','#e11d48'];
-const WHO_MAP     = {};   // built dynamically: name → color
-function whoColor(name) {
-  if (!name) return '#a8a29e';
-  if (!WHO_MAP[name]) {
-    WHO_MAP[name] = WHO_PALETTE[Object.keys(WHO_MAP).length % WHO_PALETTE.length];
-  }
-  return WHO_MAP[name];
-}
-// Pre-assign known names for consistency
 ['Evan','Abtahi','Rafiqa apu'].forEach(n => whoColor(n));
 
-// ── STATE ─────────────────────────────────────────────────
-let charts      = { p: null, t: null, a: null };
-let activeSheet = null;
-let allData     = {};
-let sheetNames  = [];
-let currentRows = [];
-let countdown   = REFRESH_SEC;
-let timerID     = null;
+// ── STATE ──────────────────────────────────────────────
+let charts = {p:null,t:null,a:null};
+let activeSheet=null, allData={}, sheetNames=[], currentRows=[];
+let countdown=REFRESH_SEC, timerID=null, activeMonthColor='#0d9488';
 
-// ── INIT ──────────────────────────────────────────────────
+// ── INIT ──────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   if (!SCRIPT_URL || SCRIPT_URL.includes('PASTE')) {
     show('setupBox'); hide('ldBox');
-    setStatus('err', 'Not configured');
-    return;
+    setStatus('err','Not configured'); return;
   }
 
-  // Wire filter dropdowns via addEventListener (not inline onchange)
+  // ══ EVENT DELEGATION — one permanent listener on stable parent ══
+  // This is never removed so tabs can re-render freely without rebinding
+  const nav = $('tabsRow');
+  if (nav) {
+    nav.addEventListener('click', function(e) {
+      const item = e.target.closest('.sb-nav-item');
+      if (item && item.dataset.sheet) switchSheet(item.dataset.sheet);
+    });
+  }
+
+  // Wire filter dropdowns once
   ['sfil','tfil','afil'].forEach(id => {
-    const el = $(id);
-    if (el) el.addEventListener('change', applyFilter);
+    const el = $(id); if (el) el.addEventListener('change', applyFilter);
   });
 
   fetchData();
   startTimer();
 });
 
-// ── FETCH ─────────────────────────────────────────────────
+// ── FETCH ─────────────────────────────────────────────
 async function fetchData() {
-  setStatus('ld', 'Loading...');
+  setStatus('ld','Loading...');
   try {
     const res  = await fetch(SCRIPT_URL + '?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -549,433 +528,351 @@ async function fetchData() {
     sheetNames = json.sheetNames || Object.keys(allData);
     if (!activeSheet || !allData[activeSheet]) activeSheet = sheetNames[0];
 
+    setMonthTheme(activeSheet);
     renderTabs();
     renderSheet(activeSheet);
     hide('ldBox'); hide('errBox'); show('content');
-    setMonthTheme(activeSheet);
     setStatus('ok', 'Live · ' + fmtTime(json.updatedAt));
-  } catch (err) {
-    $('errBox').textContent = 'Could not load: ' + err.message
-      + ' — Check SCRIPT_URL and re-deploy Apps Script with "Anyone" access.';
+  } catch(err) {
+    $('errBox').textContent = 'Could not load: ' + err.message + ' — Verify SCRIPT_URL and re-deploy with "Anyone" access.';
     show('errBox'); hide('ldBox');
     setStatus('err', err.message);
   }
 }
 
-// ── TABS ──────────────────────────────────────────────────
-function renderTabs() {
-  // Build tabs — no inline onclick, use data-sheet attribute instead
-  $('tabsRow').innerHTML = sheetNames.map(n => {
-    const mc  = getMonthColor(n);
-    const act = n === activeSheet;
-    const vars = `--tab-main:${mc.main};--tab-light:${mc.light};--tab-bd:${mc.border}`;
-    return `<button class="tab${act ? ' active' : ''}" style="${vars}" data-sheet="${n}">${n}</button>`;
-  }).join('');
-
-  // Attach click listeners AFTER innerHTML is set
-  $('tabsRow').querySelectorAll('.tab').forEach(btn => {
-    btn.addEventListener('click', function() {
-      switchSheet(this.dataset.sheet);
-    });
-  });
+// ── MONTH THEME ────────────────────────────────────────
+function setMonthTheme(name) {
+  const mc = getMonthClr(name);
+  activeMonthColor = mc.main;
+  const r = document.documentElement;
+  r.style.setProperty('--am',    mc.main);
+  r.style.setProperty('--am-dk', mc.dk);
+  r.style.setProperty('--am-lt', mc.light);
+  r.style.setProperty('--am-bd', mc.border);
+  const tt=$('topTitle');    if(tt) tt.textContent = name;
+  const av=$('topAvatar');   if(av) av.style.background = mc.main;
+  const lg=$('sbLogo');      if(lg) lg.style.background = mc.main;
 }
 
+// ── RENDER TABS — no inline handlers, no per-button listeners ──
+function renderTabs() {
+  const nav = $('tabsRow'); if (!nav) return;
+  nav.innerHTML = sheetNames.map(n => {
+    const mc  = getMonthClr(n);
+    const act = n === activeSheet;
+    const lbl = n.replace(/ [Tt]asks$/,'');
+    // data-sheet stores full name; click is caught by delegated listener on parent
+    return `<div class="sb-nav-item${act?' active':''}" data-sheet="${n}">
+      <span class="sb-nav-dot" style="background:${mc.main}"></span>
+      <span class="sb-nav-lbl">${lbl}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── SWITCH SHEET ──────────────────────────────────────
 function switchSheet(name) {
+  if (activeSheet === name) return;
   activeSheet = name;
   setMonthTheme(name);
   renderTabs();
   renderSheet(name);
 }
 
-// ── RENDER SHEET ──────────────────────────────────────────
+// ── RENDER SHEET ──────────────────────────────────────
 function renderSheet(name) {
-  const raw = (allData[name] || {}).rows || [];
+  try {
+    const raw = (allData[name]||{}).rows || [];
+    const rows = raw
+      .filter(r => { const t=(r['Task']||'').trim(); return t && t!=='Weekend' && t!=='Total'; })
+      .map(r => ({
+        _task : (r['Task']                              ||'').trim(),
+        _prio : (r['Priority']                          ||'').trim(),
+        _qty  : Math.round(parseFloat(r['Production Quantity'])||0),
+        _res  : (r['Resources']                         ||'').trim(),
+        _stat : (r['Status']                            ||'').trim(),
+        _start: (r['Start date']||r['Start Date']       ||'').trim(),
+        _end  : (r['End date']  ||r['End Date']         ||'').trim(),
+        _who  : (r['Assignee']                          ||'').trim(),
+        _note : (r['Notes']                             ||'').trim(),
+      }));
 
-  const rows = raw
-    .filter(r => { const t=(r['Task']||'').trim(); return t && t!=='Weekend' && t!=='Total'; })
-    .map(r => ({
-      _task  : (r['Task']                          || '').trim(),
-      _prio  : (r['Priority']                      || '').trim(),
-      _qty   : Math.round(parseFloat(r['Production Quantity']) || 0),
-      _res   : (r['Resources']                     || '').trim(),
-      _stat  : (r['Status']                        || '').trim(),
-      _start : (r['Start date'] || r['Start Date'] || '').trim(),
-      _end   : (r['End date']   || r['End Date']   || '').trim(),
-      _who   : (r['Assignee']                      || '').trim(),
-      _note  : (r['Notes']                         || '').trim(),
-    }));
-
-  // Empty state
-  if (!rows.length) {
-    $('kpiGrid').innerHTML = '';
-    $('tWrap').innerHTML =
-      `<div class="state">No tasks in "${name}" yet.<br>
-       Add data in Google Sheets — it will appear here automatically.</div>`;
-    ['p','t','a'].forEach(k => { if(charts[k]){charts[k].destroy();charts[k]=null;} });
-    $('sOver').innerHTML = '';
-    $('whoCards').innerHTML = '';
-    $('dailyLog').innerHTML = '';
-    return;
+    if (!rows.length) { renderEmpty(name); return; }
+    currentRows = rows;
+    rows.forEach(r => { if(r._who) whoColor(r._who); });
+    const s = calcStats(rows);
+    renderHero(s,name);
+    renderKPIs(s);
+    renderPChart(rows);
+    renderTChart(s.byType);
+    renderStatusOver(s.byStatus, rows.length);
+    renderWhoCards(s.byAssignee);
+    renderAChart(s.byAssignee);
+    renderDailyLog(rows);
+    populateTypeFilter(s.byType);
+    populateAssigneeFilter(s.byAssignee);
+    applyFilter();
+  } catch(err) {
+    console.error('renderSheet:', err);
+    const tw=$('tWrap');
+    if(tw) tw.innerHTML=`<div class="state-msg">Render error: ${err.message}</div>`;
   }
-
-  currentRows = rows;
-  // Pre-warm color map for all assignees in data
-  rows.forEach(r => { if(r._who) whoColor(r._who); });
-
-  const s = calcStats(rows);
-
-  renderKPIs(s);
-  renderPChart(rows);
-  renderTChart(s.byType);
-  renderStatusOver(s.byStatus, rows.length);
-  renderWhoCards(s.byAssignee);
-  renderAChart(s.byAssignee);
-  renderDailyLog(rows);
-  populateTypeFilter(s.byType);
-  populateAssigneeFilter(s.byAssignee);
-  applyFilter();
 }
 
-// ── STATISTICS ────────────────────────────────────────────
+function renderEmpty(name) {
+  $('kpiGrid').innerHTML=''; $('sOver').innerHTML=''; $('whoCards').innerHTML=''; $('dailyLog').innerHTML='';
+  $('tWrap').innerHTML=`<div class="state-msg">No tasks in "${name}" yet.<br>Add rows in Google Sheets — they appear here automatically.</div>`;
+  ['p','t','a'].forEach(k=>{ if(charts[k]){charts[k].destroy();charts[k]=null;} });
+  const ht=$('heroTitle'); if(ht) ht.textContent=name;
+  const hs=$('heroSub');   if(hs) hs.textContent='No data yet';
+  const hp=$('heroPills'); if(hp) hp.innerHTML='';
+  const hb=$('heroBig');   if(hb) hb.textContent='0';
+}
+
+// ── STATS ─────────────────────────────────────────────
 function calcStats(rows) {
-  const byStatus = {}, byType = {}, byDate = {}, byAssignee = {};
-  let total = 0;
-
-  rows.forEach(r => {
-    total += r._qty;
-    byStatus[r._stat] = (byStatus[r._stat] || 0) + 1;
-
-    if (!byType[r._task]) byType[r._task] = { count:0, qty:0 };
-    byType[r._task].count++;
-    byType[r._task].qty += r._qty;
-
-    if (r._start) byDate[r._start] = (byDate[r._start] || 0) + r._qty;
-
-    if (r._who) {
-      if (!byAssignee[r._who]) byAssignee[r._who] = { count:0, qty:0 };
-      byAssignee[r._who].count++;
-      byAssignee[r._who].qty += r._qty;
+  const byStatus={},byType={},byDate={},byAssignee={};
+  let total=0;
+  rows.forEach(r=>{
+    total+=r._qty;
+    byStatus[r._stat]=(byStatus[r._stat]||0)+1;
+    if(!byType[r._task]) byType[r._task]={count:0,qty:0};
+    byType[r._task].count++; byType[r._task].qty+=r._qty;
+    if(r._start) byDate[r._start]=(byDate[r._start]||0)+r._qty;
+    if(r._who){
+      if(!byAssignee[r._who]) byAssignee[r._who]={count:0,qty:0};
+      byAssignee[r._who].count++; byAssignee[r._who].qty+=r._qty;
     }
   });
-
-  return { total, byStatus, byType, byDate, byAssignee, n: rows.length };
+  return {total,byStatus,byType,byDate,byAssignee,n:rows.length};
 }
 
-// ── KPI CARDS ─────────────────────────────────────────────
+// ── HERO ──────────────────────────────────────────────
+function renderHero(s,name) {
+  const done=s.byStatus['Completed']||0;
+  const rate=s.n?Math.round(done/s.n*100):0;
+  const month=name.replace(/ [Tt]asks$/,'');
+  const ht=$('heroTitle'); if(ht) ht.textContent=month+' Tasks';
+  const hs=$('heroSub');   if(hs) hs.textContent=s.n+' tasks tracked · Refreshes every 30s';
+  const hb=$('heroBig');   if(hb) hb.textContent=s.total.toLocaleString();
+  const hp=$('heroPills');
+  if(hp) hp.innerHTML=
+    `<div class="hero-pill"><div class="hero-pill-val">${done}</div><div class="hero-pill-lbl">Completed</div></div>
+     <div class="hero-pill"><div class="hero-pill-val">${rate}%</div><div class="hero-pill-lbl">Success rate</div></div>
+     <div class="hero-pill"><div class="hero-pill-val">${s.byStatus['Blocked']||0}</div><div class="hero-pill-lbl">Blocked</div></div>`;
+}
+
+// ── KPI CARDS ─────────────────────────────────────────
 function renderKPIs(s) {
-  const done = s.byStatus['Completed']   || 0;
-  const blk  = s.byStatus['Blocked']     || 0;
-  const prog = s.byStatus['In progress'] || 0;
-  const rate = s.n ? Math.round(done/s.n*100) : 0;
-  const ann  = s.byType['Annotations'] || {qty:0,count:0};
-  const sup  = s.byType['Supervision'] || {qty:0,count:0};
+  const done=s.byStatus['Completed']||0;
+  const blk =s.byStatus['Blocked']||0;
+  const prog=s.byStatus['In progress']||0;
+  const rate=s.n?Math.round(done/s.n*100):0;
+  const ann =s.byType['Annotations']||{qty:0,count:0};
+  const sup =s.byType['Supervision']||{qty:0,count:0};
 
-  const k = (stripe, label, val, sub) =>
-    `<div class="kpi" style="--stripe:${stripe}">
-       <div class="kpi-lbl">${label}</div>
-       <div class="kpi-val" style="color:${stripe}">${val}</div>
-       <div class="kpi-sub">${sub}</div>
-     </div>`;
+  const wave=(color,d)=>`<svg viewBox="0 0 120 30" xmlns="http://www.w3.org/2000/svg">
+    <path d="${d}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" opacity=".45"/></svg>`;
+  const w1=wave(activeMonthColor,'M0 22 Q20 8 40 16 Q60 24 80 10 Q100 2 120 14');
+  const w2=wave('#16a34a',       'M0 18 Q25 6 50 20 Q75 28 100 10 Q110 6 120 14');
+  const w3=wave('#dc2626',       'M0 14 Q30 26 60 8 Q90 2 120 18');
+  const w4=wave('#2563eb',       'M0 8 Q20 22 45 12 Q70 4 95 18 Q110 24 120 12');
 
-  $('kpiGrid').innerHTML =
-    k(activeMonthColor, 'Total production', s.total.toLocaleString(), 'items this month') +
-    k('var(--text)',     'Total tasks',      s.n,   Object.keys(s.byType).join(' · '))      +
-    k('var(--ok)',       'Completed',        done,  rate + '% completion rate')              +
-    k('var(--err)',      'Blocked',          blk,   prog + ' task'+(prog!==1?'s':'')+' in progress') +
-    k(activeMonthColor,  'Annotation qty',   ann.qty.toLocaleString(), ann.count+' tasks')  +
-    k('var(--ok)',       'Supervision qty',  sup.qty.toLocaleString(), sup.count+' tasks');
+  const k=(color,lbl,val,sub,pill,pilllcls,wv)=>
+    `<div class="kpi">
+      <div class="kpi-top"><div class="kpi-lbl">${lbl}</div>${pill?`<span class="kpi-pill ${pilllcls}">${pill}</span>`:''}</div>
+      <div class="kpi-val" style="color:${color}">${val}</div>
+      <div class="kpi-sub">${sub}</div>
+      <div class="kpi-wave">${wv}</div>
+    </div>`;
+
+  $('kpiGrid').innerHTML=
+    k(activeMonthColor,'Total production',s.total.toLocaleString(),'items this month','','',w1)+
+    k('#16a34a','Completed tasks',done,rate+'% completion rate',rate+'%','up',w2)+
+    k('#dc2626','Blocked tasks',blk,prog+' task'+(prog!==1?'s':'')+' in progress',blk>0?blk:'0',blk>0?'down':'neu',w3)+
+    k('#2563eb','Supervision qty',sup.qty.toLocaleString(),sup.count+' supv · '+ann.count+' annot tasks','','',w4);
 }
 
-// ── PRODUCTION BAR CHART ──────────────────────────────────
+// ── PRODUCTION CHART ──────────────────────────────────
 function renderPChart(rows) {
-  const map = {};
-  rows.forEach(r => {
-    if (!r._start) return;
-    if (!map[r._start]) map[r._start] = { qty:0, sun:isSun(r._start) };
-    map[r._start].qty += r._qty;
+  const map={};
+  rows.forEach(r=>{
+    if(!r._start) return;
+    if(!map[r._start]) map[r._start]={qty:0,sun:isSun(r._start)};
+    map[r._start].qty+=r._qty;
   });
-  const labels = Object.keys(map);
-  const data   = labels.map(l => map[l].qty);
-  // No-output days = light gray, Sunday-worked = purple, normal = active month color
-  const bg     = labels.map(l => map[l].qty===0 ? '#d4d4d4' : map[l].sun ? '#7c3aed' : activeMonthColor);
-  // Sunday bar is slightly lighter shade of the month color
-  const sunColor = hexAlpha(activeMonthColor, 0.5);
-
-  if (charts.p) charts.p.destroy();
-  charts.p = new Chart($('pchart').getContext('2d'), {
+  const labels=Object.keys(map);
+  const data=labels.map(l=>map[l].qty);
+  const bg=labels.map(l=>map[l].qty===0?'#d1d5db':map[l].sun?'#7c3aed':activeMonthColor);
+  if(charts.p) charts.p.destroy();
+  charts.p=new Chart($('pchart').getContext('2d'),{
     type:'bar',
-    data:{ labels, datasets:[{ data, backgroundColor:bg, borderRadius:5, borderSkipped:'bottom' }] },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{callbacks:{
-          title: i => i[0].label+(map[i[0].label].sun?' (Sunday — worked)':''),
-          label: i => 'Output: '+i.raw.toLocaleString()+' items'
-        }}
-      },
+    data:{labels,datasets:[{data,backgroundColor:bg,borderRadius:5,borderSkipped:'bottom'}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{
+        title:i=>i[0].label+(map[i[0].label].sun?' (Sunday)':''),
+        label:i=>'Output: '+i.raw.toLocaleString()+' items'
+      }}},
       scales:{
-        x:{ grid:{display:false}, ticks:{font:{size:10},maxRotation:45,autoSkip:false} },
-        y:{ beginAtZero:true, ticks:{font:{size:11}}, grid:{color:'#f0ede8'} }
+        x:{grid:{display:false},ticks:{font:{size:10},maxRotation:45,autoSkip:false}},
+        y:{beginAtZero:true,ticks:{font:{size:11}},grid:{color:'#f0eef8'}}
       }
     }
   });
 }
 
-// ── TYPE DOUGHNUT ─────────────────────────────────────────
+// ── TYPE DOUGHNUT ─────────────────────────────────────
 function renderTChart(byType) {
-  const labels = Object.keys(byType);
-  const data   = labels.map(l => byType[l].qty);
-  const colors = labels.map(l => TYPE_CLR[l] || '#a8a29e');
-
-  if (charts.t) charts.t.destroy();
-  charts.t = new Chart($('tchart').getContext('2d'), {
+  const labels=Object.keys(byType);
+  const data=labels.map(l=>byType[l].qty);
+  const colors=labels.map(l=>TYPE_CLR[l]||'#a8a29e');
+  if(charts.t) charts.t.destroy();
+  charts.t=new Chart($('tchart').getContext('2d'),{
     type:'doughnut',
-    data:{
-      labels: labels.map(l => l+'  '+byType[l].qty.toLocaleString()),
-      datasets:[{ data, backgroundColor:colors, borderWidth:2, borderColor:'#fff', hoverOffset:6 }]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false, cutout:'68%',
-      plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:10,boxWidth:10,boxHeight:10}}}
-    }
+    data:{labels:labels.map(l=>l+'  '+byType[l].qty.toLocaleString()),
+          datasets:[{data,backgroundColor:colors,borderWidth:2,borderColor:'#fff',hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',
+      plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:10,boxWidth:10,boxHeight:10}}}}
   });
 }
 
-// ── STATUS PROGRESS ───────────────────────────────────────
-function renderStatusOver(byStatus, total) {
-  const order = ['Completed','In progress','Blocked'];
-  const all   = [...order, ...Object.keys(byStatus).filter(k=>!order.includes(k))];
-  const items = all
-    .filter(k => byStatus[k])
-    .map(k => ({
-      label: k, color:(STAT_CFG[k]||{color:'#a8a29e'}).color,
-      count:byStatus[k], pct:Math.round(byStatus[k]/total*100)
-    }));
-
-  const segs = items.map(i=>`<div class="pb-s" style="width:${i.pct}%;background:${i.color}"></div>`).join('');
-  const rows = items.map(i=>
-    `<div class="s-row">
-       <span class="s-lbl"><span class="s-sq" style="background:${i.color}"></span>${i.label}</span>
-       <span class="s-val" style="color:${i.color}">${i.count}</span>
-     </div>`
-  ).join('');
-  $('sOver').innerHTML = `<div class="pbar">${segs}</div>${rows}`;
+// ── STATUS OVERVIEW ───────────────────────────────────
+function renderStatusOver(byStatus,total) {
+  const order=['Completed','In progress','Blocked'];
+  const all=[...order,...Object.keys(byStatus).filter(k=>!order.includes(k))];
+  const items=all.filter(k=>byStatus[k]).map(k=>({
+    label:k,color:(STAT_CFG[k]||{color:'#a8a29e'}).color,
+    count:byStatus[k],pct:Math.round(byStatus[k]/total*100)
+  }));
+  $('sOver').innerHTML=
+    `<div class="pbar">${items.map(i=>`<div class="pb-s" style="width:${i.pct}%;background:${i.color}"></div>`).join('')}</div>`+
+    items.map(i=>`<div class="s-row">
+      <span class="s-lbl"><span class="s-sq" style="background:${i.color}"></span>${i.label}</span>
+      <span class="s-val" style="color:${i.color}">${i.count}</span>
+    </div>`).join('');
 }
 
-// ── ASSIGNEE SUMMARY CARDS ────────────────────────────────
+// ── ASSIGNEE CARDS ────────────────────────────────────
 function renderWhoCards(byAssignee) {
-  const el = $('whoCards');
-  if (!el) return;
-  el.innerHTML = Object.entries(byAssignee).map(([name, d]) => {
-    const color  = whoColor(name);
-    const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    return `<div class="who-card">
-      <div class="who-avatar" style="background:${color}">${initials}</div>
-      <div>
-        <div class="who-name">${name}</div>
-        <div class="who-stats">${d.qty.toLocaleString()} items · ${d.count} tasks</div>
-      </div>
-    </div>`;
-  }).join('');
+  const el=$('whoCards'); if(!el) return;
+  el.innerHTML=Object.entries(byAssignee).map(([n,d])=>`
+    <div class="who-card">
+      <div class="who-av" style="background:${whoColor(n)}">${n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
+      <div><div class="who-name">${n}</div><div class="who-stat">${d.qty.toLocaleString()} · ${d.count} tasks</div></div>
+    </div>`).join('');
 }
 
-// ── ASSIGNEE HORIZONTAL BAR CHART ────────────────────────
+// ── ASSIGNEE CHART ────────────────────────────────────
 function renderAChart(byAssignee) {
-  const labels = Object.keys(byAssignee);
-  const data   = labels.map(l => byAssignee[l].qty);
-  const colors = labels.map(l => whoColor(l));
-
-  if (charts.a) charts.a.destroy();
-  charts.a = new Chart($('achart').getContext('2d'), {
+  const labels=Object.keys(byAssignee);
+  const data=labels.map(l=>byAssignee[l].qty);
+  const colors=labels.map(l=>whoColor(l));
+  if(charts.a) charts.a.destroy();
+  charts.a=new Chart($('achart').getContext('2d'),{
     type:'bar',
-    data:{ labels, datasets:[{ data, backgroundColor:colors, borderRadius:5, borderSkipped:'bottom' }] },
-    options:{
-      indexAxis:'y',
-      responsive:true, maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{callbacks:{
-          label: i => 'Output: '+i.raw.toLocaleString()+' items ('+byAssignee[i.label].count+' tasks)'
-        }}
-      },
-      scales:{
-        x:{ beginAtZero:true, ticks:{font:{size:11}}, grid:{color:'#f0ede8'} },
-        y:{ grid:{display:false}, ticks:{font:{size:12},color:'#1c1917'} }
-      }
+    data:{labels,datasets:[{data,backgroundColor:colors,borderRadius:5,borderSkipped:'bottom'}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:i=>'Output: '+i.raw.toLocaleString()+' items ('+byAssignee[i.label].count+' tasks)'}}},
+      scales:{x:{beginAtZero:true,ticks:{font:{size:11}},grid:{color:'#f0eef8'}},y:{grid:{display:false},ticks:{font:{size:12},color:'#1a1928'}}}
     }
   });
 }
 
-// ── DAILY RESOURCE & ASSIGNEE LOG ────────────────────────
+// ── DAILY LOG ─────────────────────────────────────────
 function renderDailyLog(rows) {
-  // Aggregate by start date
-  const dayMap = {};
-  rows.forEach(r => {
-    if (!r._start) return;
-    if (!dayMap[r._start]) dayMap[r._start] = { res:new Set(), who:new Set(), qty:0 };
-    if (r._res) dayMap[r._start].res.add(r._res);
-    if (r._who) dayMap[r._start].who.add(r._who);
-    dayMap[r._start].qty += r._qty;
+  const dm={};
+  rows.forEach(r=>{
+    if(!r._start) return;
+    if(!dm[r._start]) dm[r._start]={who:new Set(),qty:0};
+    if(r._who) dm[r._start].who.add(r._who);
+    dm[r._start].qty+=r._qty;
   });
-
-  const el = $('dailyLog');
-  if (!el) return;
-
-  const html = Object.entries(dayMap).map(([date, d]) => {
-    // Compact date: "Jun 01, 2026" → "Jun 01"
-    const shortDate = date.length > 6 ? date.slice(0,6) : date;
-
-    // Resource label
-    const resHtml = [...d.res].join(', ') || '—';
-
-    // Assignees with colored dots
-    const whoHtml = [...d.who].map(w =>
-      `<span class="who-pip">
-         <span class="who-dot" style="background:${whoColor(w)}"></span>${w}
-       </span>`
-    ).join('<span style="color:var(--border-s);margin:0 2px">·</span>') || '<span style="color:var(--muted)">—</span>';
-
-    const qtyStr = d.qty > 0 ? d.qty.toLocaleString() : '—';
-
+  const el=$('dailyLog'); if(!el) return;
+  el.innerHTML=Object.entries(dm).map(([date,d])=>{
+    const sd=date.length>6?date.slice(0,6):date;
+    const wh=[...d.who].map(w=>`<span class="who-pip"><span class="who-dot" style="background:${whoColor(w)}"></span>${w}</span>`).join('<span style="color:#d1d5db;margin:0 2px">·</span>')||'<span style="color:var(--muted)">—</span>';
     return `<div class="dl-row">
-      <span class="dl-date">${shortDate}</span>
-      <span class="dl-res">${resHtml}</span>
-      <span class="dl-arr">&#8594;</span>
-      <span class="dl-who">${whoHtml}</span>
-      <span class="dl-qty">${qtyStr}</span>
+      <span class="dl-dt">${sd}</span>
+      <span class="dl-who">${wh}</span>
+      <span class="dl-qty">${d.qty>0?d.qty.toLocaleString():'—'}</span>
     </div>`;
-  }).join('');
-
-  el.innerHTML = html || '<div style="color:var(--muted);padding:.5rem;font-size:12px">No data.</div>';
+  }).join('')||'<div style="color:var(--muted);padding:.5rem;font-size:12px">No data.</div>';
 }
 
-// ── FILTERS ───────────────────────────────────────────────
+// ── FILTERS ───────────────────────────────────────────
 function populateTypeFilter(byType) {
-  const sel = $('tfil');
-  Array.from(sel.options).forEach(o => { if(o.value!=='All'&&!byType[o.value]) o.remove(); });
-  const existing = Array.from(sel.options).map(o=>o.value);
-  Object.keys(byType).forEach(t => {
-    if (!existing.includes(t)) {
-      const o = document.createElement('option'); o.value=o.textContent=t; sel.appendChild(o);
-    }
-  });
+  const sel=$('tfil'); if(!sel) return;
+  Array.from(sel.options).forEach(o=>{if(o.value!=='All'&&!byType[o.value])o.remove();});
+  const ex=Array.from(sel.options).map(o=>o.value);
+  Object.keys(byType).forEach(t=>{if(!ex.includes(t)){const o=document.createElement('option');o.value=o.textContent=t;sel.appendChild(o);}});
 }
-
 function populateAssigneeFilter(byAssignee) {
-  const sel = $('afil');
-  if (!sel) return;
-  Array.from(sel.options).forEach(o => { if(o.value!=='All'&&!byAssignee[o.value]) o.remove(); });
-  const existing = Array.from(sel.options).map(o=>o.value);
-  Object.keys(byAssignee).forEach(a => {
-    if (a && !existing.includes(a)) {
-      const o = document.createElement('option'); o.value=o.textContent=a; sel.appendChild(o);
-    }
-  });
+  const sel=$('afil'); if(!sel) return;
+  Array.from(sel.options).forEach(o=>{if(o.value!=='All'&&!byAssignee[o.value])o.remove();});
+  const ex=Array.from(sel.options).map(o=>o.value);
+  Object.keys(byAssignee).forEach(a=>{if(a&&!ex.includes(a)){const o=document.createElement('option');o.value=o.textContent=a;sel.appendChild(o);}});
 }
-
 function applyFilter() {
-  const sf = ($('sfil')||{}).value||'All';
-  const tf = ($('tfil')||{}).value||'All';
-  const af = ($('afil')||{}).value||'All';
-  let rows = currentRows;
-  if (sf!=='All') rows = rows.filter(r=>r._stat===sf);
-  if (tf!=='All') rows = rows.filter(r=>r._task===tf);
-  if (af!=='All') rows = rows.filter(r=>r._who===af);
+  const sf=($('sfil')||{}).value||'All';
+  const tf=($('tfil')||{}).value||'All';
+  const af=($('afil')||{}).value||'All';
+  let rows=currentRows;
+  if(sf!=='All') rows=rows.filter(r=>r._stat===sf);
+  if(tf!=='All') rows=rows.filter(r=>r._task===tf);
+  if(af!=='All') rows=rows.filter(r=>r._who===af);
   renderTable(rows);
 }
 
-// ── TABLE ─────────────────────────────────────────────────
+// ── TABLE ─────────────────────────────────────────────
 function renderTable(rows) {
-  const maxQ = Math.max(...currentRows.map(r=>r._qty), 1);
-  $('rCnt').textContent = rows.length + ' rows';
-
-  if (!rows.length) {
-    $('tWrap').innerHTML = '<div class="state">No tasks match the current filters.</div>';
-    return;
-  }
-
-  const body = rows.map(r => {
-    // Qty bar
-    const qCell = r._qty > 0
-      ? `<div class="qw">
-           <span class="qn">${r._qty}</span>
-           <div class="qt"><div class="qf" style="width:${Math.round(r._qty/maxQ*100)}%"></div></div>
-         </div>`
-      : `<span style="color:#d4d4d4">—</span>`;
-
-    // Resource pill
-    const resCell = r._res
-      ? `<span class="res-tag"><span class="res-dot"></span>${r._res}</span>`
-      : `<span style="color:#d4d4d4">—</span>`;
-
-    // Assignee with colored dot
-    const whoCell = r._who
-      ? `<span class="who-pill">
-           <span class="who-dot" style="background:${whoColor(r._who)}"></span>${r._who}
-         </span>`
-      : `<span style="color:#d4d4d4">—</span>`;
-
-    const note = r._note.length>50 ? r._note.slice(0,50)+'…' : (r._note||'—');
-
+  const maxQ=Math.max(...currentRows.map(r=>r._qty),1);
+  $('rCnt').textContent=rows.length+' rows';
+  if(!rows.length){$('tWrap').innerHTML='<div class="state-msg">No tasks match filters.</div>';return;}
+  const body=rows.map(r=>{
+    const qCell=r._qty>0
+      ?`<div class="qw"><span class="qn">${r._qty}</span><div class="qt"><div class="qf" style="width:${Math.round(r._qty/maxQ*100)}%"></div></div></div>`
+      :'<span style="color:#d1d5db">—</span>';
+    const res=r._res?`<span class="res-tag"><span class="res-dot"></span>${r._res}</span>`:'<span style="color:#d1d5db">—</span>';
+    const who=r._who?`<span class="who-pill"><span class="who-dot" style="background:${whoColor(r._who)}"></span>${r._who}</span>`:'<span style="color:#d1d5db">—</span>';
+    const note=r._note.length>50?r._note.slice(0,50)+'…':(r._note||'—');
     return `<tr>
       <td><span class="${TASK_CLS[r._task]||''}">${r._task}</span></td>
       <td style="color:var(--muted)">${r._prio||'—'}</td>
-      <td>${resCell}</td>
-      <td>${qCell}</td>
+      <td>${res}</td><td>${qCell}</td>
       <td><span class="badge ${BADGE_CLS[r._stat]||'b-def'}">${r._stat||'—'}</span></td>
       <td style="color:var(--muted);font-size:12px">${r._start||'—'}</td>
       <td style="color:var(--muted);font-size:12px">${r._end||'—'}</td>
-      <td>${whoCell}</td>
+      <td>${who}</td>
       <td style="color:#a8a29e;font-size:12px" title="${r._note}">${note}</td>
     </tr>`;
   }).join('');
-
-  $('tWrap').innerHTML = `
-    <table>
-      <thead><tr>
-        <th>Task</th>
-        <th>Priority</th>
-        <th>Resources</th>
-        <th style="min-width:110px">Production qty</th>
-        <th>Status</th>
-        <th>Start</th>
-        <th>End</th>
-        <th>Assignee</th>
-        <th>Notes</th>
-      </tr></thead>
-      <tbody>${body}</tbody>
-    </table>`;
+  $('tWrap').innerHTML=`<table><thead><tr>
+    <th>Task</th><th>Priority</th><th>Resources</th>
+    <th style="min-width:110px">Production qty</th><th>Status</th>
+    <th>Start</th><th>End</th><th>Assignee</th><th>Notes</th>
+  </tr></thead><tbody>${body}</tbody></table>`;
 }
 
-// ── TIMER ─────────────────────────────────────────────────
+// ── TIMER ─────────────────────────────────────────────
 function startTimer() {
-  countdown = REFRESH_SEC;
-  if (timerID) clearInterval(timerID);
-  timerID = setInterval(() => {
+  countdown=REFRESH_SEC;
+  if(timerID) clearInterval(timerID);
+  timerID=setInterval(()=>{
     countdown--;
-    const c = $('cChip'); if(c) c.textContent = countdown+'s';
-    if (countdown <= 0) { countdown = REFRESH_SEC; fetchData(); }
-  }, 1000);
+    const c=$('cChip'); if(c) c.textContent=countdown+'s';
+    if(countdown<=0){countdown=REFRESH_SEC;fetchData();}
+  },1000);
 }
 
-// ── HELPERS ───────────────────────────────────────────────
-// Convert hex color to rgba with given opacity (used for Sunday bars)
-function hexAlpha(hex, alpha) {
-  const r = parseInt(hex.slice(1,3),16);
-  const g = parseInt(hex.slice(3,5),16);
-  const b = parseInt(hex.slice(5,7),16);
-  return `rgba(${r},${g},${b},${alpha})`;
-}
-function isSun(s) { try{const d=new Date(s);return !isNaN(d)&&d.getDay()===0;}catch{return false;} }
-function $(id)    { return document.getElementById(id); }
-function show(id) { const e=$(id); if(e) e.style.removeProperty('display'); }
-function hide(id) { const e=$(id); if(e) e.style.display='none'; }
-function fmtTime(iso) { try{return new Date(iso).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}catch{return '';} }
-function setStatus(type, txt) {
+// ── HELPERS ───────────────────────────────────────────
+function isSun(s){try{const d=new Date(s);return !isNaN(d)&&d.getDay()===0;}catch{return false;}}
+function $(id){return document.getElementById(id);}
+function show(id){const e=$(id);if(e)e.style.removeProperty('display');}
+function hide(id){const e=$(id);if(e)e.style.display='none';}
+function fmtTime(iso){try{return new Date(iso).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}catch{return '';}}
+function setStatus(type,txt){
   const r=$('pRing'),s=$('sTxt');
-  if(r) r.className='pr '+(type==='ok'?'ok':type==='err'?'err':'ld');
-  if(s) s.textContent=txt;
+  if(r)r.className='pr '+(type==='ok'?'ok':type==='err'?'err':'ld');
+  if(s)s.textContent=txt;
 }
 </script>
 </body>

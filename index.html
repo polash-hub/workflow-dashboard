@@ -326,8 +326,9 @@
 
       <div class="alert a-setup" id="setupBox" style="display:none">
         <strong>One step required — paste your Apps Script URL</strong>
-        Open <code>index.html</code>, find <code>const SCRIPT_URL = 'PASTE...'</code>
-        and replace with your Apps Script Web App URL.
+        Open <code>index.html</code> in a text editor, find <code>const SHEET_ID = 'PASTE...'</code>
+        and replace with your Google Spreadsheet ID (the long code in your sheet's URL between <code>/d/</code> and <code>/edit</code>).
+        Also make sure your sheet is shared: <strong>File → Share → Anyone with the link → Viewer</strong>.
       </div>
       <div class="alert a-err" id="errBox" style="display:none"></div>
       <div class="state-msg" id="ldBox">Loading data from Google Sheets…</div>
@@ -443,10 +444,12 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ═══════════════════════════════════════════════════════
-//  CONFIG
-// ═══════════════════════════════════════════════════════
-const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycbx-CV008VAXhT8skoUX9DA6Cy5GR3jEuUiKAtUr7QEwaZMHCvSnS4PM-E0gsp0MwOU/exec';
+// ═══════════════════════════════════════════════
+//  CONFIG  ← only change SHEET_ID below
+// ═══════════════════════════════════════════════
+const SHEET_ID    = 'PASTE_YOUR_SPREADSHEET_ID_HERE';
+const MONTHS      = ['January','February','March','April','May','June',
+                     'July','August','September','October','November','December'];
 const REFRESH_SEC = 30;
 
 // ── MONTH COLOR PALETTE ────────────────────────────────
@@ -491,7 +494,7 @@ let countdown=REFRESH_SEC, timerID=null, activeMonthColor='#0d9488';
 
 // ── INIT ──────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  if (!SCRIPT_URL || SCRIPT_URL.includes('PASTE')) {
+  if (!SHEET_ID || SHEET_ID.includes('PASTE')) {
     show('setupBox'); hide('ldBox');
     setStatus('err','Not configured'); return;
   }
@@ -515,76 +518,102 @@ document.addEventListener('DOMContentLoaded', () => {
   startTimer();
 });
 
-// ── FETCH via JSONP (bypasses CORS — required for Apps Script) ──
-// fetch() is blocked by browsers for cross-origin Apps Script URLs.
-// JSONP injects a <script> tag instead — no CORS restrictions.
-let jsonpTimer = null;
+// ── FETCH via Google Sheets gviz API (no Apps Script, no CORS issues) ──
+// Google's built-in Visualization endpoint supports cross-origin requests.
+// Only requirement: sheet is shared "Anyone with the link → Viewer".
+async function fetchData() {
+  setStatus('ld','Loading…');
+  try {
+    if (!SHEET_ID || SHEET_ID.includes('PASTE'))
+      throw new Error('SHEET_ID not set — open index.html and paste your Spreadsheet ID.');
 
-function fetchData() {
-  setStatus('ld', 'Loading...');
+    const results = {}, found = [];
+    // Fetch all months in parallel; silently skip months that don’t exist
+    await Promise.all(MONTHS.map(async month => {
+      const name = month + ' Tasks';
+      try {
+        const data = await fetchSheet(name);
+        if (data.headers.length > 0) { results[name] = data; found.push(name); }
+      } catch(_) {}
+    }));
 
-  // Remove any leftover JSONP script tag from a previous call
-  const old = document.getElementById('_wfJsonp');
-  if (old) old.remove();
+    // Sort in calendar order
+    found.sort((a,b) =>
+      MONTHS.indexOf(a.replace(' Tasks','')) - MONTHS.indexOf(b.replace(' Tasks','')));
 
-  // Unique callback name per request
-  const cbName = '_wfData_' + Date.now();
+    if (!found.length) throw new Error(
+      'No sheets found. Check: (1) SHEET_ID is correct, '
+      + '(2) sheet is shared “Anyone with the link → Viewer”, '
+      + '(3) tab names are exactly “June Tasks”, “July Tasks”, etc.');
 
-  // Timeout: if Apps Script doesn't respond in 12 seconds, show an error
-  if (jsonpTimer) clearTimeout(jsonpTimer);
-  jsonpTimer = setTimeout(function() {
-    if (window[cbName]) {
-      delete window[cbName];
-      const s = document.getElementById('_wfJsonp');
-      if (s) s.remove();
-      showErr('Timeout — Apps Script did not respond within 12 seconds. Check your deployment URL and access settings.');
-    }
-  }, 12000);
+    allData    = results;
+    sheetNames = found;
+    if (!activeSheet || !allData[activeSheet]) activeSheet = sheetNames[0];
 
-  // The callback function Apps Script will call with the data
-  window[cbName] = function(json) {
-    clearTimeout(jsonpTimer);
-    delete window[cbName];
-    const s = document.getElementById('_wfJsonp');
-    if (s) s.remove();
+    setMonthTheme(activeSheet);
+    renderTabs();
+    renderSheet(activeSheet);
+    hide('ldBox'); hide('errBox'); show('content');
+    setStatus('ok','Live · ' + fmtTime(new Date().toISOString()));
 
-    try {
-      if (!json.success) throw new Error(json.error || 'Script returned success:false');
+  } catch(err) { showErr(err.message); }
+}
 
-      allData    = json.sheets     || {};
-      sheetNames = json.sheetNames || Object.keys(allData);
-      if (!activeSheet || !allData[activeSheet]) activeSheet = sheetNames[0];
+// Fetch one sheet from the gviz/tq endpoint
+async function fetchSheet(sheetName) {
+  const url = 'https://docs.google.com/spreadsheets/d/'
+    + SHEET_ID + '/gviz/tq?tqx=out:json&sheet='
+    + encodeURIComponent(sheetName) + '&t=' + Date.now();
 
-      setMonthTheme(activeSheet);
-      renderTabs();
-      renderSheet(activeSheet);
-      hide('ldBox'); hide('errBox'); show('content');
-      setStatus('ok', 'Live · ' + fmtTime(json.updatedAt));
-    } catch(err) {
-      showErr('Data error: ' + err.message);
-    }
-  };
+  const res  = await fetch(url);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const text = await res.text();
 
-  // Inject JSONP script tag — browser loads it like a script, no CORS check
-  const script = document.createElement('script');
-  script.id  = '_wfJsonp';
-  script.src = SCRIPT_URL + '?callback=' + cbName + '&t=' + Date.now();
-  script.onerror = function() {
-    clearTimeout(jsonpTimer);
-    delete window[cbName];
-    script.remove();
-    showErr('Network error — could not reach Apps Script. Verify your SCRIPT_URL is correct, the script is deployed, and access is set to "Anyone".');
-  };
-  document.head.appendChild(script);
+  // Strip Google’s wrapper: /*O_o*/\ngoogle.visualization.Query.setResponse({...});
+  const jsonStr = text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1);
+  const json    = JSON.parse(jsonStr);
+
+  if (json.status === 'error') {
+    const detail = json.errors && json.errors[0] ? json.errors[0].detailed_message : '';
+    throw new Error(detail || 'Sheet not found');
+  }
+  return parseGvizTable(json.table);
+}
+
+// Parse Google Visualization table → {headers, rows}
+function parseGvizTable(table) {
+  if (!table || !table.cols) return { headers:[], rows:[] };
+  const headers = table.cols.map(c => (c.label || c.id || '').trim());
+  const rows = (table.rows || []).map(row => {
+    const obj = {};
+    headers.forEach((h,i) => {
+      if (!h) return;
+      const cell = row.c ? row.c[i] : null;
+      if (!cell || cell.v === null || cell.v === undefined) { obj[h] = ''; return; }
+      // Dates arrive as Date(year,month0idx,day) — convert to readable string
+      if (typeof cell.v === 'string' && cell.v.startsWith('Date(')) {
+        const p = cell.v.slice(5,-1).split(',').map(Number);
+        const d = new Date(p[0], p[1], p[2]);
+        obj[h] = d.toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'});
+      } else {
+        obj[h] = (cell.f !== null && cell.f !== undefined) ? String(cell.f) : String(cell.v);
+      }
+    });
+    return obj;
+  });
+  return { headers, rows };
 }
 
 function showErr(msg) {
-  $('errBox').textContent = msg;
+  $('errBox').innerHTML = '<strong>Could not load data.</strong> ' + msg
+    + '<br><br>✓ Sheet shared: <em>File → Share → Anyone with the link → Viewer</em><br>'
+    + '✓ <code>SHEET_ID</code> = the string between <code>/d/</code> and <code>/edit</code> in your sheet URL<br>'
+    + '✓ Tab names are exactly <em>June Tasks</em>, <em>July Tasks</em> …';
   show('errBox'); hide('ldBox');
-  setStatus('err', 'Error');
+  setStatus('err','Error');
 }
 
-// ── MONTH THEME ────────────────────────────────────────
+// ── SET MONTH THEME ────────────────────────────────────────
 function setMonthTheme(name) {
   const mc = getMonthClr(name);
   activeMonthColor = mc.main;
@@ -593,9 +622,9 @@ function setMonthTheme(name) {
   r.style.setProperty('--am-dk', mc.dk);
   r.style.setProperty('--am-lt', mc.light);
   r.style.setProperty('--am-bd', mc.border);
-  const tt=$('topTitle');    if(tt) tt.textContent = name;
-  const av=$('topAvatar');   if(av) av.style.background = mc.main;
-  const lg=$('sbLogo');      if(lg) lg.style.background = mc.main;
+  const tt=$('topTitle');  if(tt) tt.textContent = name;
+  const av=$('topAvatar'); if(av) av.style.background = mc.main;
+  const lg=$('sbLogo');    if(lg) lg.style.background = mc.main;
 }
 
 // ── RENDER TABS — no inline handlers, no per-button listeners ──

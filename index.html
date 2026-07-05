@@ -3,127 +3,111 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Workflow Dashboard — AI Annotation</title>
+  <title>Workflow Dashboard — Advanced AI Lab</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --sb-bg   : #1c1845;
-      --sb-w    : 224px;
-      --pg-bg   : #edeaf8;
-      --card    : #ffffff;
-      --text    : #1a1928;
-      --muted   : #7a788e;
-      --border  : #e8e5f4;
-      --shadow  : 0 2px 12px rgba(28,24,69,.07);
-      --shad-md : 0 4px 24px rgba(28,24,69,.13);
-      --radius  : 16px;
-      --rad-sm  : 10px;
-      --mono    : 'JetBrains Mono', monospace;
+      --sb-bg  : #1c1845;
+      --sb-w   : 230px;
+      --pg-bg  : #edeaf8;
+      --card   : #ffffff;
+      --text   : #1a1928;
+      --muted  : #7a788e;
+      --border : #e8e5f4;
+      --shadow : 0 2px 12px rgba(28,24,69,.07);
+      --shad-md: 0 4px 24px rgba(28,24,69,.13);
+      --radius : 16px;
+      --rad-sm : 10px;
+      --mono   : 'JetBrains Mono', monospace;
       --ok:#16a34a; --ok-lt:#dcfce7; --ok-bd:#86efac;
       --err:#dc2626; --err-lt:#fee2e2; --err-bd:#fca5a5;
       --warn:#d97706; --warn-lt:#fffbeb; --warn-bd:#fcd34d;
       --info:#2563eb; --info-lt:#eff6ff; --info-bd:#93c5fd;
-      /* Active month — overridden by JS */
       --am:#0d9488; --am-dk:#0f766e; --am-lt:#f0fdfa; --am-bd:#99f6e4;
     }
     body { font-family:'Inter',-apple-system,sans-serif; background:var(--pg-bg); color:var(--text); font-size:14px; line-height:1.5; }
 
-    /* ── APP SHELL ── */
+    /* ── APP ── */
     .app { display:flex; min-height:100vh; }
 
     /* ── SIDEBAR ── */
-    .sidebar {
-      width:var(--sb-w); background:var(--sb-bg);
-      display:flex; flex-direction:column;
-      position:sticky; top:0; height:100vh; flex-shrink:0;
-    }
-    .sb-top { padding:1.5rem 1.25rem 1.1rem; }
-    .sb-logo-row { display:flex; align-items:center; gap:10px; margin-bottom:1.5rem; }
-    .sb-logo {
-      width:40px; height:40px; border-radius:11px; background:var(--am);
-      display:flex; align-items:center; justify-content:center; flex-shrink:0;
-      transition:background .35s;
-    }
-    .sb-logo svg { width:21px; height:21px; fill:#fff; }
-    .sb-app-name { font-size:15px; font-weight:700; color:#fff; }
+    .sidebar { width:var(--sb-w); background:var(--sb-bg); display:flex; flex-direction:column; position:sticky; top:0; height:100vh; flex-shrink:0; }
+    .sb-top { padding:1.4rem 1.1rem 1rem; flex-shrink:0; }
+    .sb-logo-row { display:flex; align-items:center; gap:9px; margin-bottom:1.2rem; }
+    .sb-logo { width:38px; height:38px; border-radius:10px; background:var(--am); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background .35s; }
+    .sb-logo svg { width:20px; height:20px; fill:#fff; }
+    .sb-app-name { font-size:14px; font-weight:700; color:#fff; line-height:1.2; }
     .sb-app-sub  { font-size:10px; color:rgba(255,255,255,.4); margin-top:1px; }
-    .sb-welcome {
-      background:rgba(255,255,255,.07); border-radius:var(--rad-sm);
-      padding:.7rem .9rem;
-    }
-    .sb-wlc-tag  { font-size:10px; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.07em; }
-    .sb-wlc-name { font-size:15px; font-weight:600; color:#fff; margin-top:3px; }
+    .sb-profile { background:rgba(255,255,255,.07); border-radius:var(--rad-sm); padding:.65rem .85rem; }
+    .sb-prof-tag  { font-size:10px; color:rgba(255,255,255,.38); text-transform:uppercase; letter-spacing:.07em; }
+    .sb-prof-name { font-size:13px; font-weight:600; color:#fff; margin-top:3px; line-height:1.3; }
+    .sb-prof-role { font-size:10px; color:rgba(255,255,255,.45); margin-top:3px; line-height:1.3; }
+    .sb-divider   { height:1px; background:rgba(255,255,255,.08); margin:.85rem 0; flex-shrink:0; }
+    .sb-section   { font-size:9px; color:rgba(255,255,255,.28); text-transform:uppercase; letter-spacing:.1em; padding:0 1.1rem .4rem; flex-shrink:0; }
 
-    .sb-divider { height:1px; background:rgba(255,255,255,.08); margin:1rem 0; }
-    .sb-section { font-size:10px; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:.09em; padding:0 1.25rem .5rem; }
-
-    /* Month nav — single delegated listener on #tabsRow */
-    #tabsRow { flex:1; overflow-y:auto; padding:.25rem .75rem; }
+    /* Year / month nav */
+    #tabsRow { flex:1; overflow-y:auto; padding:.1rem .6rem .5rem; }
     #tabsRow::-webkit-scrollbar { width:3px; }
-    #tabsRow::-webkit-scrollbar-thumb { background:rgba(255,255,255,.12); border-radius:2px; }
+    #tabsRow::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); border-radius:2px; }
 
-    .sb-nav-item {
-      display:flex; align-items:center; gap:10px; padding:.58rem .75rem;
-      border-radius:var(--rad-sm); cursor:pointer;
-      color:rgba(255,255,255,.5); transition:all .18s;
-      margin:1px 0; user-select:none;
+    .yr-group { margin-bottom:2px; }
+    .yr-item {
+      display:flex; align-items:center; gap:7px; padding:.5rem .65rem;
+      border-radius:var(--rad-sm); cursor:pointer; color:rgba(255,255,255,.55);
+      transition:all .18s; user-select:none; font-size:13px; font-weight:600;
     }
-    .sb-nav-item:hover { background:rgba(255,255,255,.07); color:rgba(255,255,255,.82); }
-    .sb-nav-item.active { background:rgba(255,255,255,.13); color:#fff; font-weight:500; }
-    .sb-nav-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; transition:box-shadow .2s; }
-    .sb-nav-item.active .sb-nav-dot { box-shadow:0 0 0 3px rgba(255,255,255,.2); }
-    .sb-nav-lbl { font-size:13px; }
+    .yr-item:hover { background:rgba(255,255,255,.07); color:rgba(255,255,255,.88); }
+    .yr-item.yr-open { color:#fff; }
+    .yr-chevron { display:flex; align-items:center; justify-content:center; width:14px; height:14px; flex-shrink:0; transition:transform .22s; }
+    .yr-item.yr-open .yr-chevron { transform:rotate(90deg); }
+    .yr-chevron svg { width:10px; height:10px; }
+    .yr-num { flex:1; }
+    .yr-badge { font-size:10px; font-family:var(--mono); background:rgba(255,255,255,.1); border-radius:20px; padding:1px 6px; color:rgba(255,255,255,.4); }
 
-    .sb-footer {
-      padding:1rem 1.25rem; border-top:1px solid rgba(255,255,255,.07);
-      display:flex; align-items:center; justify-content:space-between;
+    .mo-list { padding:2px 0 3px 18px; }
+    .mo-item {
+      display:flex; align-items:center; gap:7px; padding:.38rem .6rem;
+      border-radius:7px; cursor:pointer; color:rgba(255,255,255,.38);
+      transition:all .15s; font-size:12px; user-select:none;
     }
-    .sb-status { display:flex; align-items:center; gap:7px; font-size:11px; color:rgba(255,255,255,.4); }
-    .tmr { font-family:var(--mono); font-size:11px; color:rgba(255,255,255,.3); background:rgba(255,255,255,.07); border-radius:20px; padding:2px 9px; }
+    .mo-item:hover { color:rgba(255,255,255,.75); background:rgba(255,255,255,.05); }
+    .mo-item.mo-active { background:rgba(255,255,255,.13); color:#fff; font-weight:500; }
+    .mo-item.mo-empty  { color:rgba(255,255,255,.2); }
+    .mo-item.mo-empty:hover { color:rgba(255,255,255,.35); background:rgba(255,255,255,.03); }
+    .mo-dot  { width:6px; height:6px; border-radius:50%; flex-shrink:0; background:rgba(255,255,255,.12); transition:background .3s; }
+    .mo-name { flex:1; }
+    .mo-dash { font-size:10px; color:rgba(255,255,255,.14); font-family:var(--mono); }
+
+    .sb-footer { padding:.9rem 1.1rem; border-top:1px solid rgba(255,255,255,.07); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+    .sb-status { display:flex; align-items:center; gap:6px; font-size:11px; color:rgba(255,255,255,.38); }
+    .tmr { font-family:var(--mono); font-size:11px; color:rgba(255,255,255,.3); background:rgba(255,255,255,.07); border-radius:20px; padding:2px 8px; }
 
     .pr { position:relative; width:9px; height:9px; flex-shrink:0; }
     .pr .ring { position:absolute; inset:-3px; border-radius:50%; border:1.5px solid transparent; }
     .pr .dot  { position:absolute; inset:0; border-radius:50%; }
-    .pr.ok  .dot { background:var(--ok); }
+    .pr.ok  .dot  { background:var(--ok); }
     .pr.ok  .ring { border-color:var(--ok); animation:expand 1.8s ease-out infinite; }
     .pr.err .dot  { background:var(--err); }
     .pr.ld  .dot  { background:var(--warn); animation:blink 1s infinite; }
     .pr.ld  .ring { border-color:var(--warn); animation:expand 1.2s ease-out infinite; }
-    @keyframes expand { 0%{transform:scale(.7);opacity:.9} 100%{transform:scale(2.2);opacity:0} }
-    @keyframes blink  { 0%,100%{opacity:1} 50%{opacity:.2} }
+    @keyframes expand { 0%{transform:scale(.7);opacity:.9}100%{transform:scale(2.2);opacity:0} }
+    @keyframes blink  { 0%,100%{opacity:1}50%{opacity:.2} }
 
-    /* ── MAIN WRAP ── */
+    /* ── MAIN ── */
     .main-wrap { flex:1; display:flex; flex-direction:column; min-width:0; overflow:hidden; }
-
-    /* ── TOPBAR ── */
-    .topbar {
-      background:var(--card); border-bottom:1px solid var(--border);
-      padding:.8rem 1.75rem;
-      display:flex; justify-content:space-between; align-items:center;
-      flex-shrink:0; box-shadow:0 1px 0 var(--border);
-    }
+    .topbar { background:var(--card); border-bottom:1px solid var(--border); padding:.8rem 1.75rem; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
     .topbar-title { font-size:19px; font-weight:700; color:var(--am); transition:color .35s; }
     .topbar-sub   { font-size:11px; color:var(--muted); margin-top:2px; }
-    .topbar-right { display:flex; align-items:center; gap:14px; }
-    .topbar-notif {
-      width:36px; height:36px; border-radius:50%; background:var(--pg-bg);
-      border:1px solid var(--border); display:flex; align-items:center; justify-content:center;
-      cursor:pointer; color:var(--muted);
-    }
-    .topbar-notif svg { width:16px; height:16px; }
-    .topbar-avatar {
-      width:36px; height:36px; border-radius:50%; background:var(--am);
-      color:#fff; display:flex; align-items:center; justify-content:center;
-      font-size:13px; font-weight:700; transition:background .35s;
-    }
+    .topbar-right { display:flex; align-items:center; gap:12px; }
+    .topbar-notif { width:34px; height:34px; border-radius:50%; background:var(--pg-bg); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--muted); }
+    .topbar-notif svg { width:15px; height:15px; }
+    .topbar-avatar { width:34px; height:34px; border-radius:50%; background:var(--am); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; transition:background .35s; }
 
-    /* ── PAGE ── */
     .page { flex:1; overflow-y:auto; padding:1.5rem 1.75rem 2.5rem; }
 
-    /* ── ALERTS ── */
+    /* ── ALERTS / STATES ── */
     .alert { border-radius:var(--rad-sm); padding:1rem 1.25rem; font-size:13px; margin-bottom:1.2rem; border:1px solid; line-height:1.7; }
     .a-setup { background:var(--info-lt); border-color:var(--info-bd); color:#1e40af; }
     .a-err   { background:var(--err-lt);  border-color:var(--err-bd);  color:#991b1b; }
@@ -131,80 +115,63 @@
     code { background:rgba(0,0,0,.07); border-radius:4px; padding:1px 5px; font-family:var(--mono); font-size:12px; }
     .state-msg { text-align:center; padding:5rem 2rem; color:var(--muted); font-size:13px; line-height:1.9; }
 
-    /* ── HERO BANNER ── */
-    .hero {
-      border-radius:var(--radius); margin-bottom:1.4rem;
-      background:linear-gradient(135deg, var(--am) 0%, var(--am-dk) 100%);
-      padding:1.8rem 2rem; display:flex; justify-content:space-between; align-items:center;
-      position:relative; overflow:hidden; min-height:150px;
-      box-shadow:var(--shad-md); transition:background .4s;
-    }
+    /* ── HERO ── */
+    .hero { border-radius:var(--radius); margin-bottom:1.4rem; background:linear-gradient(135deg,var(--am) 0%,var(--am-dk) 100%); padding:1.8rem 2rem; display:flex; justify-content:space-between; align-items:center; position:relative; overflow:hidden; min-height:148px; box-shadow:var(--shad-md); transition:background .4s; }
     .hero-left  { position:relative; z-index:1; }
     .hero-right { position:relative; z-index:1; }
-    .hero-eye   { font-size:10px; color:rgba(255,255,255,.6); text-transform:uppercase; letter-spacing:.1em; margin-bottom:.5rem; }
-    .hero-title { font-size:27px; font-weight:700; color:#fff; line-height:1.2; margin-bottom:.5rem; }
-    .hero-sub   { font-size:12px; color:rgba(255,255,255,.65); margin-bottom:1.1rem; }
+    .hero-eye   { font-size:10px; color:rgba(255,255,255,.6); text-transform:uppercase; letter-spacing:.1em; margin-bottom:.4rem; }
+    .hero-title { font-size:26px; font-weight:700; color:#fff; line-height:1.2; margin-bottom:.45rem; }
+    .hero-sub   { font-size:12px; color:rgba(255,255,255,.65); margin-bottom:1rem; }
     .hero-pills { display:flex; gap:10px; flex-wrap:wrap; }
-    .hero-pill  { display:flex; flex-direction:column; background:rgba(255,255,255,.15); backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,.2); border-radius:10px; padding:.55rem .85rem; min-width:80px; }
-    .hero-pill-val { font-size:19px; font-weight:700; color:#fff; font-family:var(--mono); line-height:1; }
+    .hero-pill  { display:flex; flex-direction:column; background:rgba(255,255,255,.15); backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,.2); border-radius:10px; padding:.55rem .85rem; min-width:78px; }
+    .hero-pill-val { font-size:18px; font-weight:700; color:#fff; font-family:var(--mono); line-height:1; }
     .hero-pill-lbl { font-size:10px; color:rgba(255,255,255,.6); margin-top:3px; text-transform:uppercase; }
-    .hero-badge {
-      background:rgba(255,255,255,.16); backdrop-filter:blur(10px);
-      border:1px solid rgba(255,255,255,.22); border-radius:14px;
-      padding:1rem 1.4rem; text-align:center; min-width:150px;
-    }
-    .hero-badge-num { font-size:36px; font-weight:700; color:#fff; font-family:var(--mono); line-height:1; }
+    .hero-badge { background:rgba(255,255,255,.16); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.22); border-radius:14px; padding:1rem 1.4rem; text-align:center; min-width:145px; }
+    .hero-badge-num { font-size:34px; font-weight:700; color:#fff; font-family:var(--mono); line-height:1; }
     .hero-badge-lbl { font-size:11px; color:rgba(255,255,255,.65); margin-top:5px; }
     .hero-deco { position:absolute; right:0; top:0; bottom:0; width:300px; pointer-events:none; z-index:0; }
 
-    /* ── KPI ROW ── */
-    .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:12px; margin-bottom:1.4rem; }
+    /* ── KPI ── */
+    .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(162px,1fr)); gap:12px; margin-bottom:1.4rem; }
     .kpi { background:var(--card); border-radius:var(--radius); padding:1.1rem 1.2rem; box-shadow:var(--shadow); }
     .kpi-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:.4rem; }
     .kpi-lbl  { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
     .kpi-pill { font-size:10px; font-weight:600; border-radius:20px; padding:2px 7px; }
-    .kpi-pill.up   { background:var(--ok-lt);   color:var(--ok);  }
+    .kpi-pill.up   { background:var(--ok-lt);   color:var(--ok); }
     .kpi-pill.down { background:var(--err-lt);  color:var(--err); }
     .kpi-pill.neu  { background:var(--info-lt); color:var(--info); }
-    .kpi-val  { font-size:30px; font-weight:700; font-family:var(--mono); line-height:1; margin:.4rem 0 .3rem; }
-    .kpi-sub  { font-size:11px; color:var(--muted); }
-    .kpi-wave { margin-top:.6rem; overflow:hidden; }
-    .kpi-wave svg { width:100%; height:30px; display:block; }
+    .kpi-val { font-size:28px; font-weight:700; font-family:var(--mono); line-height:1; margin:.35rem 0 .3rem; }
+    .kpi-sub { font-size:11px; color:var(--muted); }
+    .kpi-wave { margin-top:.55rem; overflow:hidden; }
+    .kpi-wave svg { width:100%; height:28px; display:block; }
 
-    /* ── MID SECTION ── */
+    /* ── MID ── */
     .mid { display:grid; grid-template-columns:1.5fr 1fr; gap:14px; margin-bottom:1.4rem; }
     .mid-l { display:flex; flex-direction:column; gap:14px; }
     .mid-r { display:flex; flex-direction:column; gap:14px; }
-    .card { background:var(--card); border-radius:var(--radius); padding:1.15rem 1.3rem; box-shadow:var(--shadow); }
-    .card-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
-    .card-title { font-size:13px; font-weight:600; color:var(--text); }
+    .card { background:var(--card); border-radius:var(--radius); padding:1.1rem 1.25rem; box-shadow:var(--shadow); }
+    .card-title { font-size:13px; font-weight:600; color:var(--text); margin-bottom:.9rem; }
     .chart-wrap { position:relative; }
-    .legend { display:flex; flex-wrap:wrap; gap:12px; margin-top:.65rem; }
+    .legend { display:flex; flex-wrap:wrap; gap:12px; margin-top:.6rem; }
     .leg-i  { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--muted); }
     .leg-sq { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
-
-    /* Status bars */
     .pbar { height:7px; background:var(--border); border-radius:4px; overflow:hidden; display:flex; margin:.5rem 0 .85rem; }
     .pb-s { height:100%; transition:width .4s; }
     .s-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
     .s-lbl { display:flex; align-items:center; gap:6px; font-size:12px; }
     .s-sq  { width:7px; height:7px; border-radius:2px; flex-shrink:0; }
     .s-val { font-size:12px; font-weight:600; font-family:var(--mono); }
-
-    /* Assignee cards */
     .who-grid { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:1rem; }
     .who-card { display:flex; align-items:center; gap:8px; background:var(--pg-bg); border-radius:var(--rad-sm); padding:7px 10px; flex:1; min-width:100px; }
     .who-av   { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0; }
     .who-name { font-size:12px; font-weight:500; }
     .who-stat { font-size:11px; color:var(--muted); font-family:var(--mono); }
-
-    /* Daily log */
-    .dl-wrap { max-height:190px; overflow-y:auto; }
+    .dl-wrap  { max-height:188px; overflow-y:auto; }
     .dl-wrap::-webkit-scrollbar { width:3px; }
     .dl-wrap::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
-    .dl-hdr { display:grid; grid-template-columns:64px 1fr 52px; gap:4px; padding:4px 0 6px; border-bottom:2px solid var(--border); margin-bottom:2px; }
+    .dl-hdr { display:grid; grid-template-columns:62px 1fr 50px; gap:4px; padding:4px 0 6px; border-bottom:2px solid var(--border); margin-bottom:2px; }
     .dl-hdr span { font-size:10px; color:var(--muted); font-weight:500; text-transform:uppercase; letter-spacing:.05em; }
-    .dl-row { display:grid; grid-template-columns:64px 1fr 52px; align-items:center; gap:4px; padding:6px 0; border-bottom:1px solid var(--border); }
+    .dl-row { display:grid; grid-template-columns:62px 1fr 50px; align-items:center; gap:4px; padding:6px 0; border-bottom:1px solid var(--border); }
     .dl-row:last-child { border-bottom:none; }
     .dl-dt  { font-size:11px; color:var(--muted); font-family:var(--mono); }
     .dl-who { display:flex; flex-wrap:wrap; gap:3px; align-items:center; font-size:11px; }
@@ -212,9 +179,9 @@
     .who-pip { display:inline-flex; align-items:center; gap:3px; }
     .who-dot { display:inline-block; width:6px; height:6px; border-radius:50%; flex-shrink:0; }
 
-    /* ── TASK TABLE ── */
-    .tbl-wrap-outer { background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:1.5rem; overflow:hidden; }
-    .tbl-top { padding:.9rem 1.3rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
+    /* ── TABLE ── */
+    .tbl-outer { background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:1.5rem; overflow:hidden; }
+    .tbl-top { padding:.9rem 1.25rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
     .tbl-top h2 { font-size:14px; font-weight:600; }
     .filters { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .fl { font-size:12px; color:var(--muted); }
@@ -228,36 +195,45 @@
     tr:last-child td { border-bottom:none; }
     tbody tr:hover td { background:#f7f5ff; }
     .badge { display:inline-block; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:500; white-space:nowrap; border:1px solid transparent; }
-    .b-done  { background:var(--ok-lt);   color:#15803d; border-color:var(--ok-bd);   }
-    .b-block { background:var(--err-lt);  color:#b91c1c; border-color:var(--err-bd);  }
+    .b-done  { background:var(--ok-lt);   color:#15803d; border-color:var(--ok-bd); }
+    .b-block { background:var(--err-lt);  color:#b91c1c; border-color:var(--err-bd); }
     .b-prog  { background:var(--info-lt); color:#1d4ed8; border-color:var(--info-bd); }
     .b-def   { background:#f4f3ff; color:var(--muted); border-color:var(--border); }
     .tc-a { color:#0d9488; font-weight:500; }
     .tc-s { color:#16a34a; font-weight:500; }
     .tc-b { color:#d97706; font-weight:500; }
-    .res-tag { display:inline-flex; align-items:center; gap:4px; font-size:11px; background:var(--am-lt); color:var(--am); border:1px solid var(--am-bd); border-radius:20px; padding:2px 8px; transition:background .35s,color .35s,border-color .35s; }
-    .res-dot { width:5px; height:5px; border-radius:50%; background:var(--am); flex-shrink:0; transition:background .35s; }
+    .res-tag { display:inline-flex; align-items:center; gap:4px; font-size:11px; background:var(--am-lt); color:var(--am); border:1px solid var(--am-bd); border-radius:20px; padding:2px 8px; }
+    .res-dot { width:5px; height:5px; border-radius:50%; background:var(--am); flex-shrink:0; }
     .qw { display:flex; align-items:center; gap:6px; min-width:100px; }
-    .qn { min-width:30px; font-weight:600; text-align:right; font-family:var(--mono); font-size:13px; }
+    .qn { min-width:28px; font-weight:600; text-align:right; font-family:var(--mono); font-size:13px; }
     .qt { flex:1; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
-    .qf { height:100%; border-radius:2px; background:var(--am); transition:background .35s; }
+    .qf { height:100%; border-radius:2px; background:var(--am); }
     .who-pill { display:inline-flex; align-items:center; gap:5px; font-size:12px; }
+
+    /* ── EMPTY MONTH STATE ── */
+    .empty-month { text-align:center; padding:4rem 2rem; }
+    .empty-month-icon { font-size:40px; margin-bottom:1rem; opacity:.3; }
+    .empty-month-title { font-size:15px; font-weight:600; color:var(--text); margin-bottom:.4rem; }
+    .empty-month-sub   { font-size:13px; color:var(--muted); line-height:1.7; }
 
     /* ── RESPONSIVE ── */
     @media (max-width:1100px) { .mid { grid-template-columns:1fr; } }
     @media (max-width:840px) {
-      .sidebar { width:62px; }
-      .sb-app-name,.sb-app-sub,.sb-welcome,.sb-section,.sb-nav-lbl { display:none; }
-      .sb-top { padding:.9rem .6rem .6rem; }
+      .sidebar { width:60px; }
+      .sb-app-name,.sb-app-sub,.sb-profile,.sb-section,
+      .yr-num,.yr-badge,.mo-name,.mo-dash,.sb-status span { display:none; }
+      .sb-top { padding:.8rem .5rem .6rem; }
       .sb-logo-row { justify-content:center; }
-      #tabsRow { padding:.2rem .4rem; }
-      .sb-nav-item { justify-content:center; padding:.6rem; }
-      .sb-footer { justify-content:center; gap:0; }
-      .sb-status span { display:none; }
+      #tabsRow { padding:.2rem .3rem; }
+      .yr-item { justify-content:center; padding:.5rem; }
+      .yr-chevron { display:none; }
+      .mo-list { padding-left:.3rem; }
+      .mo-item { justify-content:center; padding:.4rem; }
+      .sb-footer { justify-content:center; }
     }
     @media (max-width:640px) {
       .hero-right { display:none; }
-      .hero { padding:1.25rem 1.25rem; }
+      .hero { padding:1.25rem; }
       .page { padding:1rem; }
       .topbar { padding:.7rem 1rem; }
       .kpi-grid { grid-template-columns:repeat(2,1fr); }
@@ -267,7 +243,7 @@
 <body>
 <div class="app">
 
-  <!-- ═══ SIDEBAR ═══════════════════════════════════════════ -->
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sb-top">
       <div class="sb-logo-row">
@@ -278,67 +254,64 @@
         </div>
         <div>
           <div class="sb-app-name">WorkFlow</div>
-          <div class="sb-app-sub">AI Annotation</div>
+          <div class="sb-app-sub">Advanced AI Lab</div>
         </div>
       </div>
-      <div class="sb-welcome">
-        <div class="sb-wlc-tag">Manager</div>
-        <div class="sb-wlc-name">Polash</div>
+      <div class="sb-profile">
+        <div class="sb-prof-tag">Welcome</div>
+        <div class="sb-prof-name">Imran Ali Polash</div>
+        <div class="sb-prof-role">Data Preparation Manager</div>
       </div>
     </div>
 
     <div class="sb-divider"></div>
-    <div class="sb-section">Monthly Tasks</div>
+    <div class="sb-section">Workspace</div>
 
-    <!-- Stable parent — ONE delegated listener wired in JS, never re-added -->
+    <!-- Year/Month nav — single delegated listener wired in JS -->
     <nav id="tabsRow"></nav>
 
     <div class="sb-footer">
       <div class="sb-status">
         <div class="pr ld" id="pRing"><div class="ring"></div><div class="dot"></div></div>
-        <span id="sTxt">Connecting...</span>
+        <span id="sTxt">Connecting…</span>
       </div>
       <div class="tmr" id="cChip">30s</div>
     </div>
   </aside>
 
-  <!-- ═══ MAIN ══════════════════════════════════════════════ -->
+  <!-- MAIN -->
   <div class="main-wrap">
 
-    <!-- TOPBAR -->
     <div class="topbar">
       <div>
         <div class="topbar-title" id="topTitle">Dashboard</div>
-        <div class="topbar-sub">Data Preparation · AI Model Annotation</div>
+        <div class="topbar-sub">Advanced AI Lab · Data Preparation Workflow</div>
       </div>
       <div class="topbar-right">
-        <div class="topbar-notif" title="Notifications">
+        <div class="topbar-notif">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
           </svg>
         </div>
-        <div class="topbar-avatar" id="topAvatar">P</div>
+        <div class="topbar-avatar" id="topAvatar">IP</div>
       </div>
     </div>
 
-    <!-- PAGE CONTENT -->
     <div class="page">
-
       <div class="alert a-setup" id="setupBox" style="display:none">
-        <strong>One step required — paste your Apps Script URL</strong>
-        Open <code>index.html</code> in a text editor, find <code>const SHEET_ID = 'PASTE...'</code>
-        and replace with your Google Spreadsheet ID (the long code in your sheet's URL between <code>/d/</code> and <code>/edit</code>).
-        Also make sure your sheet is shared: <strong>File → Share → Anyone with the link → Viewer</strong>.
+        <strong>Configuration required</strong>
+        Open <code>index.html</code>, find <code>const SHEET_ID</code> and paste your Google Spreadsheet ID.
+        Also share your sheet: <strong>File → Share → Anyone with the link → Viewer</strong>.
       </div>
       <div class="alert a-err" id="errBox" style="display:none"></div>
-      <div class="state-msg" id="ldBox">Loading data from Google Sheets…</div>
+      <div class="state-msg" id="ldBox">Loading workspace data…</div>
 
       <div id="content" style="display:none">
 
-        <!-- HERO BANNER -->
+        <!-- HERO -->
         <div class="hero" id="heroCard">
           <div class="hero-left">
-            <div class="hero-eye">AI Annotation Workflow</div>
+            <div class="hero-eye">Advanced AI Lab · Data Preparation</div>
             <div class="hero-title" id="heroTitle">Loading…</div>
             <div class="hero-sub"  id="heroSub">Monthly overview</div>
             <div class="hero-pills" id="heroPills"></div>
@@ -349,64 +322,51 @@
               <div class="hero-badge-lbl">items produced</div>
             </div>
           </div>
-          <!-- Decorative background circles -->
           <svg class="hero-deco" viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
             <circle cx="240" cy="20"  r="70"  fill="white" fill-opacity=".05"/>
             <circle cx="270" cy="115" r="45"  fill="white" fill-opacity=".07"/>
             <circle cx="155" cy="75"  r="32"  fill="white" fill-opacity=".04"/>
-            <circle cx="210" cy="140" r="22"  fill="white" fill-opacity=".06"/>
+            <circle cx="200" cy="140" r="22"  fill="white" fill-opacity=".06"/>
             <circle cx="295" cy="55"  r="55"  fill="white" fill-opacity=".04"/>
-            <circle cx="130" cy="15"  r="18"  fill="white" fill-opacity=".05"/>
           </svg>
         </div>
 
-        <!-- KPI CARDS -->
+        <!-- KPIs -->
         <div class="kpi-grid" id="kpiGrid"></div>
 
-        <!-- MID ROW -->
+        <!-- MID -->
         <div class="mid">
-
-          <!-- LEFT COLUMN -->
           <div class="mid-l">
-            <!-- Production bar chart -->
             <div class="card">
-              <div class="card-hdr">
-                <div class="card-title">Daily production output</div>
-              </div>
+              <div class="card-title">Daily production output</div>
               <div class="chart-wrap" style="height:200px">
-                <canvas id="pchart" role="img" aria-label="Bar chart of daily production quantities"></canvas>
+                <canvas id="pchart" role="img" aria-label="Production bar chart"></canvas>
               </div>
               <div class="legend">
-                <div class="leg-i"><span class="leg-sq" id="legWork" style="background:var(--am)"></span>Working day</div>
+                <div class="leg-i"><span class="leg-sq" style="background:var(--am)"></span>Working day</div>
                 <div class="leg-i"><span class="leg-sq" style="background:#7c3aed"></span>Sunday worked</div>
                 <div class="leg-i"><span class="leg-sq" style="background:#d1d5db"></span>No output</div>
               </div>
             </div>
-            <!-- Assignee workload -->
             <div class="card">
               <div class="card-title">Assignee workload</div>
               <div id="whoCards" class="who-grid"></div>
               <div class="chart-wrap" style="height:120px">
-                <canvas id="achart" role="img" aria-label="Horizontal bar chart of assignee output"></canvas>
+                <canvas id="achart" role="img" aria-label="Assignee output chart"></canvas>
               </div>
             </div>
           </div>
-
-          <!-- RIGHT COLUMN -->
           <div class="mid-r">
-            <!-- Task type doughnut -->
             <div class="card">
               <div class="card-title">Task type split</div>
-              <div class="chart-wrap" style="height:165px">
-                <canvas id="tchart" role="img" aria-label="Doughnut chart of task types"></canvas>
+              <div class="chart-wrap" style="height:162px">
+                <canvas id="tchart" role="img" aria-label="Task type doughnut"></canvas>
               </div>
             </div>
-            <!-- Status overview -->
             <div class="card">
               <div class="card-title">Status overview</div>
               <div id="sOver"></div>
             </div>
-            <!-- Daily resource log -->
             <div class="card">
               <div class="card-title">Daily resource &amp; assignee log</div>
               <div class="dl-hdr">
@@ -417,8 +377,8 @@
           </div>
         </div>
 
-        <!-- TASK TABLE -->
-        <div class="tbl-wrap-outer">
+        <!-- TABLE -->
+        <div class="tbl-outer">
           <div class="tbl-top">
             <h2>Task log</h2>
             <div class="filters">
@@ -444,15 +404,24 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ═══════════════════════════════════════════════
-//  CONFIG  ← only change SHEET_ID below
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  CONFIG  ← only change SHEET_ID
+// ═══════════════════════════════════════════════════════
 const SHEET_ID    = '1YlG1-tQTjE6QC7GbJM_0JGdO3ky7GcsZ3rqoVzbBgb4';
-const MONTHS      = ['January','February','March','April','May','June',
+const YEARS       = [2026, 2027, 2028, 2029, 2030];
+const MONTH_NAMES = ['January','February','March','April','May','June',
                      'July','August','September','October','November','December'];
 const REFRESH_SEC = 30;
+// ═══════════════════════════════════════════════════════
 
-// ── MONTH COLOR PALETTE ────────────────────────────────
+// Returns the Google Sheet tab name for a given year + month
+// 2026 uses the legacy format "June Tasks"
+// 2027+ uses "June 2027 Tasks"
+function getSheetName(year, month) {
+  return year === 2026 ? month + ' Tasks' : month + ' ' + year + ' Tasks';
+}
+
+// ── MONTH COLOURS ──────────────────────────────────────
 const MONTH_CLR = {
   January  :{main:'#e11d48',dk:'#be123c',light:'#fff1f2',border:'#fecdd3'},
   February :{main:'#db2777',dk:'#be185d',light:'#fdf2f8',border:'#fbcfe8'},
@@ -468,10 +437,7 @@ const MONTH_CLR = {
   December :{main:'#0284c7',dk:'#0369a1',light:'#f0f9ff',border:'#bae6fd'},
 };
 const DEF_CLR = {main:'#64748b',dk:'#475569',light:'#f8fafc',border:'#cbd5e1'};
-function getMonthClr(name) {
-  for (const [m,c] of Object.entries(MONTH_CLR)) { if (name.includes(m)) return c; }
-  return DEF_CLR;
-}
+function getMonthClr(month) { return MONTH_CLR[month] || DEF_CLR; }
 
 // ── LOOKUPS ────────────────────────────────────────────
 const TASK_CLS  = {Annotations:'tc-a',Supervision:'tc-s','Brand sessions':'tc-b'};
@@ -488,9 +454,15 @@ function whoColor(n) {
 ['Evan','Abtahi','Rafiqa apu'].forEach(n => whoColor(n));
 
 // ── STATE ──────────────────────────────────────────────
-let charts = {p:null,t:null,a:null};
-let activeSheet=null, allData={}, sheetNames=[], currentRows=[];
-let countdown=REFRESH_SEC, timerID=null, activeMonthColor='#0d9488';
+let charts        = {p:null,t:null,a:null};
+let sheetsCache   = {};      // {year: {month: {headers,rows}}}
+let hasDataMap    = {};      // {year: Set of month names that have data}
+let expandedYears = new Set([2026]);
+let activeYear    = 2026;
+let activeMonth   = null;   // e.g. 'June'
+let currentRows   = [];
+let countdown     = REFRESH_SEC, timerID = null;
+let activeMonthColor = '#0d9488';
 
 // ── INIT ──────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -499,209 +471,331 @@ document.addEventListener('DOMContentLoaded', () => {
     setStatus('err','Not configured'); return;
   }
 
-  // ══ EVENT DELEGATION — one permanent listener on stable parent ══
-  // This is never removed so tabs can re-render freely without rebinding
+  // ONE permanent delegated listener on the stable nav parent
   const nav = $('tabsRow');
   if (nav) {
     nav.addEventListener('click', function(e) {
-      const item = e.target.closest('.sb-nav-item');
-      if (item && item.dataset.sheet) switchSheet(item.dataset.sheet);
+      const yr = e.target.closest('.yr-item');
+      const mo = e.target.closest('.mo-item');
+      if (yr && yr.dataset.year) toggleYear(parseInt(yr.dataset.year));
+      if (mo && mo.dataset.month) switchToMonth(parseInt(mo.dataset.year), mo.dataset.month);
     });
   }
 
-  // Wire filter dropdowns once
   ['sfil','tfil','afil'].forEach(id => {
-    const el = $(id); if (el) el.addEventListener('change', applyFilter);
+    const el=$(id); if(el) el.addEventListener('change', applyFilter);
   });
 
   fetchData();
   startTimer();
 });
 
-// ── FETCH via Google Sheets gviz API (no Apps Script, no CORS issues) ──
-// Google's built-in Visualization endpoint supports cross-origin requests.
-// Only requirement: sheet is shared "Anyone with the link → Viewer".
+// ── INITIAL DATA LOAD — fetches all 2026 months in parallel ──
 async function fetchData() {
   setStatus('ld','Loading…');
   try {
-    if (!SHEET_ID || SHEET_ID.includes('PASTE'))
-      throw new Error('SHEET_ID not set — open index.html and paste your Spreadsheet ID.');
+    if (!hasDataMap[2026]) hasDataMap[2026] = new Set();
+    if (!sheetsCache[2026]) sheetsCache[2026] = {};
 
-    const results = {}, found = [];
-    // Fetch all months in parallel; silently skip months that don’t exist
-    await Promise.all(MONTHS.map(async month => {
-      const name = month + ' Tasks';
+    // Fetch all 12 months of 2026 in parallel to discover which have data
+    await Promise.all(MONTH_NAMES.map(async month => {
+      if (sheetsCache[2026][month]) return; // already cached
       try {
-        const data = await fetchSheet(name);
-        if (data.headers.length > 0) { results[name] = data; found.push(name); }
-      } catch(_) {}
+        const data = await fetchSheet(getSheetName(2026, month));
+        sheetsCache[2026][month] = data;
+        if (data.rows && data.rows.length > 0) hasDataMap[2026].add(month);
+      } catch(_) {
+        sheetsCache[2026][month] = {headers:[], rows:[]};
+      }
     }));
 
-    // Sort in calendar order
-    found.sort((a,b) =>
-      MONTHS.indexOf(a.replace(' Tasks','')) - MONTHS.indexOf(b.replace(' Tasks','')));
+    // Auto-select first month with data (e.g. June)
+    if (!activeMonth) {
+      const first = MONTH_NAMES.find(m => hasDataMap[2026] && hasDataMap[2026].has(m));
+      if (first) { activeMonth = first; activeYear = 2026; }
+    }
 
-    if (!found.length) throw new Error(
-      'No sheets found. Check: (1) SHEET_ID is correct, '
-      + '(2) sheet is shared “Anyone with the link → Viewer”, '
-      + '(3) tab names are exactly “June Tasks”, “July Tasks”, etc.');
+    renderNav();
 
-    allData    = results;
-    sheetNames = found;
-    if (!activeSheet || !allData[activeSheet]) activeSheet = sheetNames[0];
-
-    setMonthTheme(activeSheet);
-    renderTabs();
-    renderSheet(activeSheet);
-    hide('ldBox'); hide('errBox'); show('content');
+    if (activeMonth) {
+      setMonthTheme(activeMonth);
+      renderSheetFromCache(activeYear, activeMonth);
+      hide('ldBox'); hide('errBox'); show('content');
+    } else {
+      // No data found at all
+      hide('ldBox'); show('content');
+      showEmptyMonth('No data found in any sheet for 2026.');
+    }
     setStatus('ok','Live · ' + fmtTime(new Date().toISOString()));
-
   } catch(err) { showErr(err.message); }
 }
 
-// Fetch one sheet from the gviz/tq endpoint
+// ── REFRESH ACTIVE MONTH (called every 30s) ────────────
+async function refreshActive() {
+  if (!activeMonth) { fetchData(); return; }
+  setStatus('ld','Refreshing…');
+  try {
+    const data = await fetchSheet(getSheetName(activeYear, activeMonth));
+    sheetsCache[activeYear][activeMonth] = data;
+    if (data.rows && data.rows.length > 0) {
+      if (!hasDataMap[activeYear]) hasDataMap[activeYear] = new Set();
+      hasDataMap[activeYear].add(activeMonth);
+    }
+    renderNav();
+    renderSheetFromCache(activeYear, activeMonth);
+    setStatus('ok','Live · ' + fmtTime(new Date().toISOString()));
+  } catch(_) { setStatus('ok','Live · ' + fmtTime(new Date().toISOString())); }
+}
+
+// ── FETCH ONE SHEET via gviz API ───────────────────────
 async function fetchSheet(sheetName) {
   const url = 'https://docs.google.com/spreadsheets/d/'
     + SHEET_ID + '/gviz/tq?tqx=out:json&sheet='
     + encodeURIComponent(sheetName) + '&t=' + Date.now();
-
-  const res  = await fetch(url);
+  const res = await fetch(url);
   if (!res.ok) throw new Error('HTTP ' + res.status);
   const text = await res.text();
-
-  // Strip Google’s wrapper: /*O_o*/\ngoogle.visualization.Query.setResponse({...});
   const jsonStr = text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1);
-  const json    = JSON.parse(jsonStr);
-
-  if (json.status === 'error') {
-    const detail = json.errors && json.errors[0] ? json.errors[0].detailed_message : '';
-    throw new Error(detail || 'Sheet not found');
-  }
+  const json = JSON.parse(jsonStr);
+  if (json.status === 'error') throw new Error('Sheet not found: ' + sheetName);
   return parseGvizTable(json.table);
 }
 
-// Parse Google Visualization table → {headers, rows}
+// ── PARSE GOOGLE VISUALIZATION TABLE ──────────────────
 function parseGvizTable(table) {
-  if (!table || !table.cols) return { headers:[], rows:[] };
-  const headers = table.cols.map(c => (c.label || c.id || '').trim());
-  const rows = (table.rows || []).map(row => {
+  if (!table || !table.cols) return {headers:[],rows:[]};
+  const headers = table.cols.map(c => (c.label||c.id||'').trim());
+  const rows = (table.rows||[]).map(row => {
     const obj = {};
     headers.forEach((h,i) => {
       if (!h) return;
       const cell = row.c ? row.c[i] : null;
-      if (!cell || cell.v === null || cell.v === undefined) { obj[h] = ''; return; }
-      // Dates arrive as Date(year,month0idx,day) — convert to readable string
-      if (typeof cell.v === 'string' && cell.v.startsWith('Date(')) {
+      if (!cell || cell.v===null || cell.v===undefined) { obj[h]=''; return; }
+      if (typeof cell.v==='string' && cell.v.startsWith('Date(')) {
         const p = cell.v.slice(5,-1).split(',').map(Number);
-        const d = new Date(p[0], p[1], p[2]);
+        const d = new Date(p[0],p[1],p[2]);
         obj[h] = d.toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'});
       } else {
-        obj[h] = (cell.f !== null && cell.f !== undefined) ? String(cell.f) : String(cell.v);
+        obj[h] = (cell.f!==null&&cell.f!==undefined) ? String(cell.f) : String(cell.v);
       }
     });
     return obj;
   });
-  return { headers, rows };
+  return {headers,rows};
 }
 
-function showErr(msg) {
-  $('errBox').innerHTML = '<strong>Could not load data.</strong> ' + msg
-    + '<br><br>✓ Sheet shared: <em>File → Share → Anyone with the link → Viewer</em><br>'
-    + '✓ <code>SHEET_ID</code> = the string between <code>/d/</code> and <code>/edit</code> in your sheet URL<br>'
-    + '✓ Tab names are exactly <em>June Tasks</em>, <em>July Tasks</em> …';
-  show('errBox'); hide('ldBox');
-  setStatus('err','Error');
+// ── TOGGLE YEAR ────────────────────────────────────────
+function toggleYear(year) {
+  if (expandedYears.has(year)) {
+    expandedYears.delete(year);
+  } else {
+    expandedYears.add(year);
+    // Pre-fetch data for future years lazily when first opened
+    if (year !== 2026 && !sheetsCache[year]) {
+      sheetsCache[year] = {};
+      if (!hasDataMap[year]) hasDataMap[year] = new Set();
+      MONTH_NAMES.forEach(async month => {
+        try {
+          const data = await fetchSheet(getSheetName(year, month));
+          sheetsCache[year][month] = data;
+          if (data.rows && data.rows.length > 0) {
+            hasDataMap[year].add(month);
+            renderNav(); // re-render to show colored dots
+          }
+        } catch(_) {
+          sheetsCache[year][month] = {headers:[],rows:[]};
+        }
+      });
+    }
+  }
+  renderNav();
 }
 
-// ── SET MONTH THEME ────────────────────────────────────────
-function setMonthTheme(name) {
-  const mc = getMonthClr(name);
+// ── SWITCH TO A MONTH ──────────────────────────────────
+async function switchToMonth(year, month) {
+  activeYear = year; activeMonth = month;
+  setMonthTheme(month);
+  renderNav();
+
+  // Check cache first
+  if (sheetsCache[year] && sheetsCache[year][month]) {
+    renderSheetFromCache(year, month);
+    return;
+  }
+
+  // Fetch if not cached
+  setStatus('ld','Loading ' + month + '…');
+  if (!sheetsCache[year]) sheetsCache[year] = {};
+  try {
+    const data = await fetchSheet(getSheetName(year, month));
+    sheetsCache[year][month] = data;
+    if (data.rows && data.rows.length > 0) {
+      if (!hasDataMap[year]) hasDataMap[year] = new Set();
+      hasDataMap[year].add(month);
+      renderNav();
+    }
+    renderSheetFromCache(year, month);
+    setStatus('ok','Live · ' + fmtTime(new Date().toISOString()));
+  } catch(_) {
+    sheetsCache[year][month] = {headers:[],rows:[]};
+    renderSheetFromCache(year, month);
+    setStatus('ok','Live · ' + fmtTime(new Date().toISOString()));
+  }
+}
+
+// ── RENDER FROM CACHE ──────────────────────────────────
+function renderSheetFromCache(year, month) {
+  const data = (sheetsCache[year] && sheetsCache[year][month]) || {headers:[],rows:[]};
+  const sheetLabel = month + ' ' + year;
+
+  if (!data.rows || data.rows.length === 0) {
+    showEmptyMonth(month, year); return;
+  }
+
+  const rows = data.rows
+    .filter(r => { const t=(r['Task']||'').trim(); return t && t!=='Weekend' && t!=='Total'; })
+    .map(r => ({
+      _task :(r['Task']                              ||'').trim(),
+      _prio :(r['Priority']                          ||'').trim(),
+      _qty  :Math.round(parseFloat(r['Production Quantity'])||0),
+      _res  :(r['Resources']                         ||'').trim(),
+      _stat :(r['Status']                            ||'').trim(),
+      _start:(r['Start date']||r['Start Date']       ||'').trim(),
+      _end  :(r['End date']  ||r['End Date']         ||'').trim(),
+      _who  :(r['Assignee']                          ||'').trim(),
+      _note :(r['Notes']                             ||'').trim(),
+    }));
+
+  if (!rows.length) { showEmptyMonth(month, year); return; }
+
+  currentRows = rows;
+  rows.forEach(r => { if(r._who) whoColor(r._who); });
+  const s = calcStats(rows);
+
+  renderHero(s, sheetLabel);
+  renderKPIs(s);
+  renderPChart(rows);
+  renderTChart(s.byType);
+  renderStatusOver(s.byStatus, rows.length);
+  renderWhoCards(s.byAssignee);
+  renderAChart(s.byAssignee);
+  renderDailyLog(rows);
+  populateTypeFilter(s.byType);
+  populateAssigneeFilter(s.byAssignee);
+  applyFilter();
+
+  // Show all dashboard content
+  $('kpiGrid').style.display = '';
+  $('heroCard').style.display = '';
+  document.querySelector('.mid').style.display = '';
+  $('tbl-outer') && ($('tbl-outer').style.display='');
+  const empt = document.getElementById('emptyMonthBox');
+  if (empt) empt.remove();
+}
+
+// ── EMPTY MONTH STATE ──────────────────────────────────
+function showEmptyMonth(month, year) {
+  // Clear charts
+  ['p','t','a'].forEach(k=>{ if(charts[k]){charts[k].destroy();charts[k]=null;} });
+  $('kpiGrid').innerHTML = '';
+  $('sOver').innerHTML = '';
+  $('whoCards').innerHTML = '';
+  $('dailyLog').innerHTML = '';
+
+  // Update hero to show month name but no data
+  const mc = typeof month === 'string' ? getMonthClr(month) : DEF_CLR;
+  const label = (typeof month === 'string' && year) ? month + ' ' + year : month;
+  const ht=$('heroTitle'); if(ht) ht.textContent = label;
+  const hs=$('heroSub');   if(hs) hs.textContent = 'No tasks recorded for this month';
+  const hp=$('heroPills'); if(hp) hp.innerHTML = '';
+  const hb=$('heroBig');   if(hb) hb.textContent = '0';
+
+  // Show empty state in table area
+  $('tWrap').innerHTML = '';
+  $('rCnt') && ($('rCnt').textContent = '');
+
+  // Insert empty state card replacing mid section
+  const existingEmpty = document.getElementById('emptyMonthBox');
+  if (existingEmpty) existingEmpty.remove();
+
+  const mid = document.querySelector('.mid');
+  if (mid) mid.style.display = 'none';
+
+  const emptyEl = document.createElement('div');
+  emptyEl.id = 'emptyMonthBox';
+  emptyEl.className = 'card empty-month';
+  emptyEl.innerHTML = `
+    <div class="empty-month-icon">📋</div>
+    <div class="empty-month-title">${label} — No data yet</div>
+    <div class="empty-month-sub">
+      No tasks have been recorded for this month.<br>
+      Update your Google Sheet with task entries and<br>
+      the dashboard will reflect them automatically.
+    </div>`;
+  const tblOuter = document.querySelector('.tbl-outer');
+  if (tblOuter) tblOuter.insertAdjacentElement('beforebegin', emptyEl);
+}
+
+// Restore mid section when showing data
+function ensureMidVisible() {
+  const mid = document.querySelector('.mid');
+  if (mid) mid.style.display = '';
+  const empt = document.getElementById('emptyMonthBox');
+  if (empt) empt.remove();
+}
+
+// ── RENDER YEAR/MONTH NAV ──────────────────────────────
+function renderNav() {
+  const nav = $('tabsRow'); if (!nav) return;
+  nav.innerHTML = YEARS.map(year => {
+    const isOpen  = expandedYears.has(year);
+    const hdm     = hasDataMap[year] || new Set();
+    const dataCount = hdm.size;
+
+    const monthsHtml = isOpen ? `<div class="mo-list">${
+      MONTH_NAMES.map(month => {
+        const isActive  = activeYear===year && activeMonth===month;
+        const hasData   = hdm.has(month);
+        const mc        = getMonthClr(month);
+        const dotColor  = hasData ? mc.main : 'rgba(255,255,255,.12)';
+        return `<div class="mo-item${isActive?' mo-active':''}${!hasData?' mo-empty':''}" data-year="${year}" data-month="${month}">
+          <span class="mo-dot" style="background:${dotColor}${isActive?';box-shadow:0 0 0 2px rgba(255,255,255,.25)':''}"></span>
+          <span class="mo-name">${month.slice(0,3)}</span>
+          ${!hasData ? '<span class="mo-dash">—</span>' : ''}
+        </div>`;
+      }).join('')
+    }</div>` : '';
+
+    return `<div class="yr-group">
+      <div class="yr-item${isOpen?' yr-open':''}" data-year="${year}">
+        <span class="yr-chevron">
+          <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M3 2l4 3-4 3"/>
+          </svg>
+        </span>
+        <span class="yr-num">${year}</span>
+        ${dataCount > 0 ? `<span class="yr-badge">${dataCount}</span>` : ''}
+      </div>
+      ${monthsHtml}
+    </div>`;
+  }).join('');
+}
+
+// ── SET MONTH THEME ────────────────────────────────────
+function setMonthTheme(month) {
+  const mc = getMonthClr(month);
   activeMonthColor = mc.main;
   const r = document.documentElement;
   r.style.setProperty('--am',    mc.main);
   r.style.setProperty('--am-dk', mc.dk);
   r.style.setProperty('--am-lt', mc.light);
   r.style.setProperty('--am-bd', mc.border);
-  const tt=$('topTitle');  if(tt) tt.textContent = name;
+  const tt=$('topTitle');  if(tt) tt.textContent = month + ' ' + activeYear;
   const av=$('topAvatar'); if(av) av.style.background = mc.main;
   const lg=$('sbLogo');    if(lg) lg.style.background = mc.main;
 }
 
-// ── RENDER TABS — no inline handlers, no per-button listeners ──
-function renderTabs() {
-  const nav = $('tabsRow'); if (!nav) return;
-  nav.innerHTML = sheetNames.map(n => {
-    const mc  = getMonthClr(n);
-    const act = n === activeSheet;
-    const lbl = n.replace(/ [Tt]asks$/,'');
-    // data-sheet stores full name; click is caught by delegated listener on parent
-    return `<div class="sb-nav-item${act?' active':''}" data-sheet="${n}">
-      <span class="sb-nav-dot" style="background:${mc.main}"></span>
-      <span class="sb-nav-lbl">${lbl}</span>
-    </div>`;
-  }).join('');
-}
-
-// ── SWITCH SHEET ──────────────────────────────────────
-function switchSheet(name) {
-  if (activeSheet === name) return;
-  activeSheet = name;
-  setMonthTheme(name);
-  renderTabs();
-  renderSheet(name);
-}
-
-// ── RENDER SHEET ──────────────────────────────────────
-function renderSheet(name) {
-  try {
-    const raw = (allData[name]||{}).rows || [];
-    const rows = raw
-      .filter(r => { const t=(r['Task']||'').trim(); return t && t!=='Weekend' && t!=='Total'; })
-      .map(r => ({
-        _task : (r['Task']                              ||'').trim(),
-        _prio : (r['Priority']                          ||'').trim(),
-        _qty  : Math.round(parseFloat(r['Production Quantity'])||0),
-        _res  : (r['Resources']                         ||'').trim(),
-        _stat : (r['Status']                            ||'').trim(),
-        _start: (r['Start date']||r['Start Date']       ||'').trim(),
-        _end  : (r['End date']  ||r['End Date']         ||'').trim(),
-        _who  : (r['Assignee']                          ||'').trim(),
-        _note : (r['Notes']                             ||'').trim(),
-      }));
-
-    if (!rows.length) { renderEmpty(name); return; }
-    currentRows = rows;
-    rows.forEach(r => { if(r._who) whoColor(r._who); });
-    const s = calcStats(rows);
-    renderHero(s,name);
-    renderKPIs(s);
-    renderPChart(rows);
-    renderTChart(s.byType);
-    renderStatusOver(s.byStatus, rows.length);
-    renderWhoCards(s.byAssignee);
-    renderAChart(s.byAssignee);
-    renderDailyLog(rows);
-    populateTypeFilter(s.byType);
-    populateAssigneeFilter(s.byAssignee);
-    applyFilter();
-  } catch(err) {
-    console.error('renderSheet:', err);
-    const tw=$('tWrap');
-    if(tw) tw.innerHTML=`<div class="state-msg">Render error: ${err.message}</div>`;
-  }
-}
-
-function renderEmpty(name) {
-  $('kpiGrid').innerHTML=''; $('sOver').innerHTML=''; $('whoCards').innerHTML=''; $('dailyLog').innerHTML='';
-  $('tWrap').innerHTML=`<div class="state-msg">No tasks in "${name}" yet.<br>Add rows in Google Sheets — they appear here automatically.</div>`;
-  ['p','t','a'].forEach(k=>{ if(charts[k]){charts[k].destroy();charts[k]=null;} });
-  const ht=$('heroTitle'); if(ht) ht.textContent=name;
-  const hs=$('heroSub');   if(hs) hs.textContent='No data yet';
-  const hp=$('heroPills'); if(hp) hp.innerHTML='';
-  const hb=$('heroBig');   if(hb) hb.textContent='0';
-}
-
-// ── STATS ─────────────────────────────────────────────
+// ── STATS ──────────────────────────────────────────────
 function calcStats(rows) {
   const byStatus={},byType={},byDate={},byAssignee={};
   let total=0;
@@ -719,22 +813,22 @@ function calcStats(rows) {
   return {total,byStatus,byType,byDate,byAssignee,n:rows.length};
 }
 
-// ── HERO ──────────────────────────────────────────────
-function renderHero(s,name) {
+// ── HERO ───────────────────────────────────────────────
+function renderHero(s,label) {
   const done=s.byStatus['Completed']||0;
   const rate=s.n?Math.round(done/s.n*100):0;
-  const month=name.replace(/ [Tt]asks$/,'');
-  const ht=$('heroTitle'); if(ht) ht.textContent=month+' Tasks';
+  const ht=$('heroTitle'); if(ht) ht.textContent=label+' Tasks';
   const hs=$('heroSub');   if(hs) hs.textContent=s.n+' tasks tracked · Refreshes every 30s';
   const hb=$('heroBig');   if(hb) hb.textContent=s.total.toLocaleString();
   const hp=$('heroPills');
-  if(hp) hp.innerHTML=
-    `<div class="hero-pill"><div class="hero-pill-val">${done}</div><div class="hero-pill-lbl">Completed</div></div>
-     <div class="hero-pill"><div class="hero-pill-val">${rate}%</div><div class="hero-pill-lbl">Success rate</div></div>
-     <div class="hero-pill"><div class="hero-pill-val">${s.byStatus['Blocked']||0}</div><div class="hero-pill-lbl">Blocked</div></div>`;
+  if(hp) hp.innerHTML=`
+    <div class="hero-pill"><div class="hero-pill-val">${done}</div><div class="hero-pill-lbl">Completed</div></div>
+    <div class="hero-pill"><div class="hero-pill-val">${rate}%</div><div class="hero-pill-lbl">Rate</div></div>
+    <div class="hero-pill"><div class="hero-pill-val">${s.byStatus['Blocked']||0}</div><div class="hero-pill-lbl">Blocked</div></div>`;
+  ensureMidVisible();
 }
 
-// ── KPI CARDS ─────────────────────────────────────────
+// ── KPI CARDS ──────────────────────────────────────────
 function renderKPIs(s) {
   const done=s.byStatus['Completed']||0;
   const blk =s.byStatus['Blocked']||0;
@@ -742,30 +836,26 @@ function renderKPIs(s) {
   const rate=s.n?Math.round(done/s.n*100):0;
   const ann =s.byType['Annotations']||{qty:0,count:0};
   const sup =s.byType['Supervision']||{qty:0,count:0};
-
-  const wave=(color,d)=>`<svg viewBox="0 0 120 30" xmlns="http://www.w3.org/2000/svg">
-    <path d="${d}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" opacity=".45"/></svg>`;
+  const wave=(c,d)=>`<svg viewBox="0 0 120 28" xmlns="http://www.w3.org/2000/svg"><path d="${d}" fill="none" stroke="${c}" stroke-width="1.5" stroke-linecap="round" opacity=".4"/></svg>`;
   const w1=wave(activeMonthColor,'M0 22 Q20 8 40 16 Q60 24 80 10 Q100 2 120 14');
   const w2=wave('#16a34a',       'M0 18 Q25 6 50 20 Q75 28 100 10 Q110 6 120 14');
   const w3=wave('#dc2626',       'M0 14 Q30 26 60 8 Q90 2 120 18');
   const w4=wave('#2563eb',       'M0 8 Q20 22 45 12 Q70 4 95 18 Q110 24 120 12');
-
-  const k=(color,lbl,val,sub,pill,pilllcls,wv)=>
+  const k=(color,lbl,val,sub,pill,pcls,wv)=>
     `<div class="kpi">
-      <div class="kpi-top"><div class="kpi-lbl">${lbl}</div>${pill?`<span class="kpi-pill ${pilllcls}">${pill}</span>`:''}</div>
+      <div class="kpi-top"><div class="kpi-lbl">${lbl}</div>${pill?`<span class="kpi-pill ${pcls}">${pill}</span>`:''}</div>
       <div class="kpi-val" style="color:${color}">${val}</div>
       <div class="kpi-sub">${sub}</div>
       <div class="kpi-wave">${wv}</div>
     </div>`;
-
   $('kpiGrid').innerHTML=
     k(activeMonthColor,'Total production',s.total.toLocaleString(),'items this month','','',w1)+
-    k('#16a34a','Completed tasks',done,rate+'% completion rate',rate+'%','up',w2)+
-    k('#dc2626','Blocked tasks',blk,prog+' task'+(prog!==1?'s':'')+' in progress',blk>0?blk:'0',blk>0?'down':'neu',w3)+
-    k('#2563eb','Supervision qty',sup.qty.toLocaleString(),sup.count+' supv · '+ann.count+' annot tasks','','',w4);
+    k('#16a34a','Completed',done,rate+'% completion rate',rate+'%','up',w2)+
+    k('#dc2626','Blocked',blk,prog+' in progress',blk>0?blk:'0',blk>0?'down':'neu',w3)+
+    k('#2563eb','Supervision qty',sup.qty.toLocaleString(),sup.count+' supv · '+ann.count+' annot','','',w4);
 }
 
-// ── PRODUCTION CHART ──────────────────────────────────
+// ── PRODUCTION BAR CHART ───────────────────────────────
 function renderPChart(rows) {
   const map={};
   rows.forEach(r=>{
@@ -793,7 +883,7 @@ function renderPChart(rows) {
   });
 }
 
-// ── TYPE DOUGHNUT ─────────────────────────────────────
+// ── TYPE DOUGHNUT ──────────────────────────────────────
 function renderTChart(byType) {
   const labels=Object.keys(byType);
   const data=labels.map(l=>byType[l].qty);
@@ -808,7 +898,7 @@ function renderTChart(byType) {
   });
 }
 
-// ── STATUS OVERVIEW ───────────────────────────────────
+// ── STATUS BARS ────────────────────────────────────────
 function renderStatusOver(byStatus,total) {
   const order=['Completed','In progress','Blocked'];
   const all=[...order,...Object.keys(byStatus).filter(k=>!order.includes(k))];
@@ -818,13 +908,10 @@ function renderStatusOver(byStatus,total) {
   }));
   $('sOver').innerHTML=
     `<div class="pbar">${items.map(i=>`<div class="pb-s" style="width:${i.pct}%;background:${i.color}"></div>`).join('')}</div>`+
-    items.map(i=>`<div class="s-row">
-      <span class="s-lbl"><span class="s-sq" style="background:${i.color}"></span>${i.label}</span>
-      <span class="s-val" style="color:${i.color}">${i.count}</span>
-    </div>`).join('');
+    items.map(i=>`<div class="s-row"><span class="s-lbl"><span class="s-sq" style="background:${i.color}"></span>${i.label}</span><span class="s-val" style="color:${i.color}">${i.count}</span></div>`).join('');
 }
 
-// ── ASSIGNEE CARDS ────────────────────────────────────
+// ── ASSIGNEE CARDS ─────────────────────────────────────
 function renderWhoCards(byAssignee) {
   const el=$('whoCards'); if(!el) return;
   el.innerHTML=Object.entries(byAssignee).map(([n,d])=>`
@@ -834,7 +921,7 @@ function renderWhoCards(byAssignee) {
     </div>`).join('');
 }
 
-// ── ASSIGNEE CHART ────────────────────────────────────
+// ── ASSIGNEE BAR CHART ─────────────────────────────────
 function renderAChart(byAssignee) {
   const labels=Object.keys(byAssignee);
   const data=labels.map(l=>byAssignee[l].qty);
@@ -844,13 +931,13 @@ function renderAChart(byAssignee) {
     type:'bar',
     data:{labels,datasets:[{data,backgroundColor:colors,borderRadius:5,borderSkipped:'bottom'}]},
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:i=>'Output: '+i.raw.toLocaleString()+' items ('+byAssignee[i.label].count+' tasks)'}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:i=>'Output: '+i.raw.toLocaleString()+' ('+byAssignee[i.label].count+' tasks)'}}},
       scales:{x:{beginAtZero:true,ticks:{font:{size:11}},grid:{color:'#f0eef8'}},y:{grid:{display:false},ticks:{font:{size:12},color:'#1a1928'}}}
     }
   });
 }
 
-// ── DAILY LOG ─────────────────────────────────────────
+// ── DAILY LOG ──────────────────────────────────────────
 function renderDailyLog(rows) {
   const dm={};
   rows.forEach(r=>{
@@ -863,15 +950,11 @@ function renderDailyLog(rows) {
   el.innerHTML=Object.entries(dm).map(([date,d])=>{
     const sd=date.length>6?date.slice(0,6):date;
     const wh=[...d.who].map(w=>`<span class="who-pip"><span class="who-dot" style="background:${whoColor(w)}"></span>${w}</span>`).join('<span style="color:#d1d5db;margin:0 2px">·</span>')||'<span style="color:var(--muted)">—</span>';
-    return `<div class="dl-row">
-      <span class="dl-dt">${sd}</span>
-      <span class="dl-who">${wh}</span>
-      <span class="dl-qty">${d.qty>0?d.qty.toLocaleString():'—'}</span>
-    </div>`;
+    return `<div class="dl-row"><span class="dl-dt">${sd}</span><span class="dl-who">${wh}</span><span class="dl-qty">${d.qty>0?d.qty.toLocaleString():'—'}</span></div>`;
   }).join('')||'<div style="color:var(--muted);padding:.5rem;font-size:12px">No data.</div>';
 }
 
-// ── FILTERS ───────────────────────────────────────────
+// ── FILTERS ────────────────────────────────────────────
 function populateTypeFilter(byType) {
   const sel=$('tfil'); if(!sel) return;
   Array.from(sel.options).forEach(o=>{if(o.value!=='All'&&!byType[o.value])o.remove();});
@@ -895,10 +978,10 @@ function applyFilter() {
   renderTable(rows);
 }
 
-// ── TABLE ─────────────────────────────────────────────
+// ── TABLE ──────────────────────────────────────────────
 function renderTable(rows) {
   const maxQ=Math.max(...currentRows.map(r=>r._qty),1);
-  $('rCnt').textContent=rows.length+' rows';
+  if($('rCnt')) $('rCnt').textContent=rows.length+' rows';
   if(!rows.length){$('tWrap').innerHTML='<div class="state-msg">No tasks match filters.</div>';return;}
   const body=rows.map(r=>{
     const qCell=r._qty>0
@@ -925,18 +1008,28 @@ function renderTable(rows) {
   </tr></thead><tbody>${body}</tbody></table>`;
 }
 
-// ── TIMER ─────────────────────────────────────────────
+// ── TIMER ──────────────────────────────────────────────
 function startTimer() {
   countdown=REFRESH_SEC;
   if(timerID) clearInterval(timerID);
   timerID=setInterval(()=>{
     countdown--;
     const c=$('cChip'); if(c) c.textContent=countdown+'s';
-    if(countdown<=0){countdown=REFRESH_SEC;fetchData();}
+    if(countdown<=0){countdown=REFRESH_SEC;refreshActive();}
   },1000);
 }
 
-// ── HELPERS ───────────────────────────────────────────
+// ── ERROR ──────────────────────────────────────────────
+function showErr(msg) {
+  $('errBox').innerHTML='<strong>Could not load data.</strong> '+msg
+    +'<br><br>✓ Sheet shared: <em>Anyone with the link → Viewer</em><br>'
+    +'✓ <code>SHEET_ID</code> = the string between <code>/d/</code> and <code>/edit</code><br>'
+    +'✓ Tab names are exactly <em>June Tasks</em>, <em>July Tasks</em> …';
+  show('errBox'); hide('ldBox');
+  setStatus('err','Error');
+}
+
+// ── HELPERS ────────────────────────────────────────────
 function isSun(s){try{const d=new Date(s);return !isNaN(d)&&d.getDay()===0;}catch{return false;}}
 function $(id){return document.getElementById(id);}
 function show(id){const e=$(id);if(e)e.style.removeProperty('display');}

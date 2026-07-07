@@ -132,7 +132,7 @@
     .hero-deco { position:absolute; right:0; top:0; bottom:0; width:300px; pointer-events:none; z-index:0; }
 
     /* ── KPI ── */
-    .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(162px,1fr)); gap:12px; margin-bottom:1.4rem; }
+    .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(138px,1fr)); gap:12px; margin-bottom:1.4rem; }
     .kpi { background:var(--card); border-radius:var(--radius); padding:1.1rem 1.2rem; box-shadow:var(--shadow); }
     .kpi-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:.4rem; }
     .kpi-lbl  { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
@@ -664,6 +664,10 @@ function renderSheetFromCache(year, month) {
       _end  :(r['End date']  ||r['End Date']         ||'').trim(),
       _who  :(r['Assignee']                          ||'').trim(),
       _note :(r['Notes']                             ||'').trim(),
+      // New columns — defaults to 0 if column doesn't exist in sheet yet
+      _upl  :Math.round(parseFloat(r['Uploaded']    )||0),
+      _col  :Math.round(parseFloat(r['Collection']  )||0),
+      _dwn  :Math.round(parseFloat(r['Downloaded']  )||0),
     }));
 
   if (!rows.length) { showEmptyMonth(month, year); return; }
@@ -798,9 +802,12 @@ function setMonthTheme(month) {
 // ── STATS ──────────────────────────────────────────────
 function calcStats(rows) {
   const byStatus={},byType={},byDate={},byAssignee={};
-  let total=0;
+  let total=0, totalUploaded=0, totalCollection=0, totalDownloaded=0;
   rows.forEach(r=>{
-    total+=r._qty;
+    total          += r._qty;
+    totalUploaded  += r._upl  || 0;
+    totalCollection+= r._col  || 0;
+    totalDownloaded+= r._dwn  || 0;
     byStatus[r._stat]=(byStatus[r._stat]||0)+1;
     if(!byType[r._task]) byType[r._task]={count:0,qty:0};
     byType[r._task].count++; byType[r._task].qty+=r._qty;
@@ -810,7 +817,7 @@ function calcStats(rows) {
       byAssignee[r._who].count++; byAssignee[r._who].qty+=r._qty;
     }
   });
-  return {total,byStatus,byType,byDate,byAssignee,n:rows.length};
+  return {total,totalUploaded,totalCollection,totalDownloaded,byStatus,byType,byDate,byAssignee,n:rows.length};
 }
 
 // ── HERO ───────────────────────────────────────────────
@@ -836,23 +843,36 @@ function renderKPIs(s) {
   const rate=s.n?Math.round(done/s.n*100):0;
   const ann =s.byType['Annotations']||{qty:0,count:0};
   const sup =s.byType['Supervision']||{qty:0,count:0};
+
+  // Sparkline wave paths — each card has a unique wave shape
   const wave=(c,d)=>`<svg viewBox="0 0 120 28" xmlns="http://www.w3.org/2000/svg"><path d="${d}" fill="none" stroke="${c}" stroke-width="1.5" stroke-linecap="round" opacity=".4"/></svg>`;
   const w1=wave(activeMonthColor,'M0 22 Q20 8 40 16 Q60 24 80 10 Q100 2 120 14');
   const w2=wave('#16a34a',       'M0 18 Q25 6 50 20 Q75 28 100 10 Q110 6 120 14');
   const w3=wave('#dc2626',       'M0 14 Q30 26 60 8 Q90 2 120 18');
   const w4=wave('#2563eb',       'M0 8 Q20 22 45 12 Q70 4 95 18 Q110 24 120 12');
-  const k=(color,lbl,val,sub,pill,pcls,wv)=>
+  const w5=wave('#f59e0b',       'M0 20 Q15 4 35 14 Q55 24 75 6 Q95 2 120 16');
+  const w6=wave('#7c3aed',       'M0 10 Q25 26 50 14 Q75 4 100 20 Q112 26 120 18');
+  const w7=wave('#0ea5e9',       'M0 24 Q20 10 40 18 Q60 26 85 8 Q105 4 120 12');
+
+  const k=(color,icon,lbl,val,sub,pill,pcls,wv)=>
     `<div class="kpi">
-      <div class="kpi-top"><div class="kpi-lbl">${lbl}</div>${pill?`<span class="kpi-pill ${pcls}">${pill}</span>`:''}</div>
+      <div class="kpi-top">
+        <div class="kpi-lbl">${icon} ${lbl}</div>
+        ${pill?`<span class="kpi-pill ${pcls}">${pill}</span>`:''}
+      </div>
       <div class="kpi-val" style="color:${color}">${val}</div>
       <div class="kpi-sub">${sub}</div>
       <div class="kpi-wave">${wv}</div>
     </div>`;
+
   $('kpiGrid').innerHTML=
-    k(activeMonthColor,'Total production',s.total.toLocaleString(),'items this month','','',w1)+
-    k('#16a34a','Completed',done,rate+'% completion rate',rate+'%','up',w2)+
-    k('#dc2626','Blocked',blk,prog+' in progress',blk>0?blk:'0',blk>0?'down':'neu',w3)+
-    k('#2563eb','Supervision qty',sup.qty.toLocaleString(),sup.count+' supv · '+ann.count+' annot','','',w4);
+    k(activeMonthColor,'📦','Total production', s.total.toLocaleString(),          'items this month',               '',                 '',      w1)+
+    k('#16a34a',       '✅','Completed',         done,                              rate+'% completion rate',         rate+'%',          'up',    w2)+
+    k('#dc2626',       '🚫','Blocked',            blk,                               prog+' in progress',              blk>0?blk:'0',     blk>0?'down':'neu', w3)+
+    k('#2563eb',       '🔬','Supervision qty',    sup.qty.toLocaleString(),          sup.count+' supv · '+ann.count+' annot', '',          '',      w4)+
+    k('#f59e0b',       '⬆️','Uploaded',           s.totalUploaded.toLocaleString(), 'files sent to platform',         s.totalUploaded>0?'↑'+s.totalUploaded:'—', s.totalUploaded>0?'up':'neu', w5)+
+    k('#7c3aed',       '🗂️','Collection',         s.totalCollection.toLocaleString(),'items gathered',                s.totalCollection>0?s.totalCollection:'—', s.totalCollection>0?'up':'neu', w6)+
+    k('#0ea5e9',       '⬇️','Downloaded',         s.totalDownloaded.toLocaleString(),'files received',                s.totalDownloaded>0?'↓'+s.totalDownloaded:'—', s.totalDownloaded>0?'up':'neu', w7);
 }
 
 // ── PRODUCTION BAR CHART ───────────────────────────────

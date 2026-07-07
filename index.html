@@ -652,22 +652,42 @@ function renderSheetFromCache(year, month) {
     showEmptyMonth(month, year); return;
   }
 
+  // ── Case-insensitive column getter ──
+  // Finds a value in a row regardless of how the column header is capitalised
+  // or whether there is extra whitespace. Tries multiple name variants.
+  function col(r, ...names) {
+    for (const name of names) {
+      // Exact match first (fastest)
+      if (r[name] !== undefined && r[name] !== '') return r[name];
+    }
+    // Fallback: case-insensitive scan of all keys in this row
+    const keys = Object.keys(r);
+    for (const name of names) {
+      const low = name.trim().toLowerCase();
+      for (const k of keys) {
+        if (k.trim().toLowerCase() === low && r[k] !== '') return r[k];
+      }
+    }
+    return '';
+  }
+
   const rows = data.rows
-    .filter(r => { const t=(r['Task']||'').trim(); return t && t!=='Weekend' && t!=='Total'; })
+    .filter(r => { const t=(col(r,'Task')||'').trim(); return t && t!=='Weekend' && t!=='Total'; })
     .map(r => ({
-      _task :(r['Task']                              ||'').trim(),
-      _prio :(r['Priority']                          ||'').trim(),
-      _qty  :Math.round(parseFloat(r['Production Quantity'])||0),
-      _res  :(r['Resources']                         ||'').trim(),
-      _stat :(r['Status']                            ||'').trim(),
-      _start:(r['Start date']||r['Start Date']       ||'').trim(),
-      _end  :(r['End date']  ||r['End Date']         ||'').trim(),
-      _who  :(r['Assignee']                          ||'').trim(),
-      _note :(r['Notes']                             ||'').trim(),
-      // New columns — defaults to 0 if column doesn't exist in sheet yet
-      _upl  :Math.round(parseFloat(r['Uploaded']    )||0),
-      _col  :Math.round(parseFloat(r['Collection']  )||0),
-      _dwn  :Math.round(parseFloat(r['Downloaded']  )||0),
+      _task :(col(r,'Task')                                          ||'').trim(),
+      _prio :(col(r,'Priority')                                      ||'').trim(),
+      _qty  :Math.round(parseFloat(col(r,'Production Quantity','Qty','production quantity'))||0),
+      _res  :(col(r,'Resources','Resource')                          ||'').trim(),
+      _stat :(col(r,'Status')                                        ||'').trim(),
+      _start:(col(r,'Start date','Start Date','start date','StartDate')||'').trim(),
+      _end  :(col(r,'End date','End Date','end date','EndDate')      ||'').trim(),
+      _who  :(col(r,'Assignee','assignee','Assigned To')             ||'').trim(),
+      _note :(col(r,'Notes','Note','notes')                          ||'').trim(),
+      // Uploaded, Collection, Downloaded — matched case-insensitively
+      // so "uploaded", "UPLOADED", "Upload" etc. all work
+      _upl  :Math.round(parseFloat(col(r,'Uploaded','Upload','uploaded','UPLOADED','File Uploaded','Files Uploaded'))||0),
+      _col  :Math.round(parseFloat(col(r,'Collection','collection','COLLECTION','Collections','Collect'))||0),
+      _dwn  :Math.round(parseFloat(col(r,'Downloaded','Download','downloaded','DOWNLOADED','File Downloaded','Files Downloaded'))||0),
     }));
 
   if (!rows.length) { showEmptyMonth(month, year); return; }
@@ -870,9 +890,21 @@ function renderKPIs(s) {
     k('#16a34a',       '✅','Completed',         done,                              rate+'% completion rate',         rate+'%',          'up',    w2)+
     k('#dc2626',       '🚫','Blocked',            blk,                               prog+' in progress',              blk>0?blk:'0',     blk>0?'down':'neu', w3)+
     k('#2563eb',       '🔬','Supervision qty',    sup.qty.toLocaleString(),          sup.count+' supv · '+ann.count+' annot', '',          '',      w4)+
-    k('#f59e0b',       '⬆️','Uploaded',           s.totalUploaded.toLocaleString(), 'files sent to platform',         s.totalUploaded>0?'↑'+s.totalUploaded:'—', s.totalUploaded>0?'up':'neu', w5)+
-    k('#7c3aed',       '🗂️','Collection',         s.totalCollection.toLocaleString(),'items gathered',                s.totalCollection>0?s.totalCollection:'—', s.totalCollection>0?'up':'neu', w6)+
-    k('#0ea5e9',       '⬇️','Downloaded',         s.totalDownloaded.toLocaleString(),'files received',                s.totalDownloaded>0?'↓'+s.totalDownloaded:'—', s.totalDownloaded>0?'up':'neu', w7);
+    k('#f59e0b','⬆️','Uploaded',
+        s.totalUploaded.toLocaleString(),
+        s.totalUploaded > 0 ? 'files sent to platform' : 'add "Uploaded" column to sheet',
+        s.totalUploaded > 0 ? '↑'+s.totalUploaded.toLocaleString() : '—',
+        s.totalUploaded > 0 ? 'up' : 'neu', w5)+
+    k('#7c3aed','🗂️','Collection',
+        s.totalCollection.toLocaleString(),
+        s.totalCollection > 0 ? 'items gathered' : 'add "Collection" column to sheet',
+        s.totalCollection > 0 ? s.totalCollection.toLocaleString() : '—',
+        s.totalCollection > 0 ? 'up' : 'neu', w6)+
+    k('#0ea5e9','⬇️','Downloaded',
+        s.totalDownloaded.toLocaleString(),
+        s.totalDownloaded > 0 ? 'files received' : 'add "Downloaded" column to sheet',
+        s.totalDownloaded > 0 ? '↓'+s.totalDownloaded.toLocaleString() : '—',
+        s.totalDownloaded > 0 ? 'up' : 'neu', w7);
 }
 
 // ── PRODUCTION BAR CHART ───────────────────────────────

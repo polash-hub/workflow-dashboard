@@ -879,14 +879,18 @@ function renderHero(s,label) {
 
 // ── KPI CARDS ──────────────────────────────────────────
 function renderKPIs(s) {
-  const done=s.byStatus['Completed']||0;
-  const blk =s.byStatus['Blocked']||0;
-  const prog=s.byStatus['In progress']||0;
-  const rate=s.n?Math.round(done/s.n*100):0;
-  const ann =s.byType['Annotations']||{qty:0,count:0};
-  const sup =s.byType['Supervision']||{qty:0,count:0};
+  // Status-based counts (same approach as Completed & Blocked)
+  const done = s.byStatus['Completed']   || 0;
+  const blk  = s.byStatus['Blocked']     || 0;
+  const prog = s.byStatus['In progress'] || 0;
+  const upl  = s.byStatus['Uploaded']    || 0;
+  const col  = s.byStatus['Collection']  || 0;
+  const dwn  = s.byStatus['Downloaded']  || 0;
+  const rate = s.n ? Math.round(done/s.n*100) : 0;
+  const ann  = s.byType['Annotations'] || {qty:0,count:0};
+  const sup  = s.byType['Supervision'] || {qty:0,count:0};
 
-  // Sparkline wave paths — each card has a unique wave shape
+  // Unique sparkline wave per card
   const wave=(c,d)=>`<svg viewBox="0 0 120 28" xmlns="http://www.w3.org/2000/svg"><path d="${d}" fill="none" stroke="${c}" stroke-width="1.5" stroke-linecap="round" opacity=".4"/></svg>`;
   const w1=wave(activeMonthColor,'M0 22 Q20 8 40 16 Q60 24 80 10 Q100 2 120 14');
   const w2=wave('#16a34a',       'M0 18 Q25 6 50 20 Q75 28 100 10 Q110 6 120 14');
@@ -907,26 +911,33 @@ function renderKPIs(s) {
       <div class="kpi-wave">${wv}</div>
     </div>`;
 
-  $('kpiGrid').innerHTML=
-    k(activeMonthColor,'📦','Total production', s.total.toLocaleString(),          'items this month',               '',                 '',      w1)+
-    k('#16a34a',       '✅','Completed',         done,                              rate+'% completion rate',         rate+'%',          'up',    w2)+
-    k('#dc2626',       '🚫','Blocked',            blk,                               prog+' in progress',              blk>0?blk:'0',     blk>0?'down':'neu', w3)+
-    k('#2563eb',       '🔬','Supervision qty',    sup.qty.toLocaleString(),          sup.count+' supv · '+ann.count+' annot', '',          '',      w4)+
+  $('kpiGrid').innerHTML =
+    // Row 1 — core production metrics
+    k(activeMonthColor,'📦','Total production',
+        s.total.toLocaleString(), 'items this month', '', '', w1) +
+    k('#16a34a','✅','Completed',
+        done, rate+'% completion rate', rate+'%', 'up', w2) +
+    k('#dc2626','🚫','Blocked',
+        blk, prog+' task'+(prog!==1?'s':'')+' in progress',
+        blk>0?blk:'0', blk>0?'down':'neu', w3) +
+    k('#2563eb','🔬','Supervision qty',
+        sup.qty.toLocaleString(), sup.count+' supv · '+ann.count+' annot', '', '', w4) +
+    // Row 2 — workflow status cards (read from Status column, same as Blocked/Completed)
     k('#f59e0b','⬆️','Uploaded',
-        s.totalUploaded.toLocaleString(),
-        s.totalUploaded > 0 ? 'files sent to platform' : 'add "Uploaded" column to sheet',
-        s.totalUploaded > 0 ? '↑'+s.totalUploaded.toLocaleString() : '—',
-        s.totalUploaded > 0 ? 'up' : 'neu', w5)+
+        upl,
+        upl > 0 ? upl+' task'+(upl!==1?'s':'')+' marked Uploaded'
+                : 'No tasks with status Uploaded yet',
+        upl>0?upl:'0', upl>0?'up':'neu', w5) +
     k('#7c3aed','🗂️','Collection',
-        s.totalCollection.toLocaleString(),
-        s.totalCollection > 0 ? 'items gathered' : 'add "Collection" column to sheet',
-        s.totalCollection > 0 ? s.totalCollection.toLocaleString() : '—',
-        s.totalCollection > 0 ? 'up' : 'neu', w6)+
+        col,
+        col > 0 ? col+' task'+(col!==1?'s':'')+' marked Collection'
+                : 'No tasks with status Collection yet',
+        col>0?col:'0', col>0?'up':'neu', w6) +
     k('#0ea5e9','⬇️','Downloaded',
-        s.totalDownloaded.toLocaleString(),
-        s.totalDownloaded > 0 ? 'files received' : 'add "Downloaded" column to sheet',
-        s.totalDownloaded > 0 ? '↓'+s.totalDownloaded.toLocaleString() : '—',
-        s.totalDownloaded > 0 ? 'up' : 'neu', w7);
+        dwn,
+        dwn > 0 ? dwn+' task'+(dwn!==1?'s':'')+' marked Downloaded'
+                : 'No tasks with status Downloaded yet',
+        dwn>0?dwn:'0', dwn>0?'up':'neu', w7);
 }
 
 // ── PRODUCTION BAR CHART ───────────────────────────────

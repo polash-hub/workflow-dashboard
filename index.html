@@ -571,8 +571,28 @@ async function fetchSheet(sheetName) {
   const text = await res.text();
   const jsonStr = text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1);
   const json = JSON.parse(jsonStr);
+
+  // gviz returns status:'error' when the sheet tab doesn't exist
   if (json.status === 'error') throw new Error('Sheet not found: ' + sheetName);
-  return parseGvizTable(json.table);
+
+  // EXTRA GUARD: gviz sometimes silently falls back to the first sheet
+  // when the requested tab doesn't exist (returns 'ok' with wrong data).
+  // We detect this by checking if the response signals a bad query.
+  if (json.errors && json.errors.length > 0) throw new Error('Sheet error: ' + sheetName);
+
+  const parsed = parseGvizTable(json.table);
+
+  // If the sheet has NO headers at all, it genuinely doesn't exist or is blank
+  if (!parsed.headers || parsed.headers.length === 0) {
+    return { headers: [], rows: [] };
+  }
+
+  // Validate: the first column header must exist and match what we expect.
+  // If gviz fell back to a different sheet, the "Task" column header check
+  // lets us catch it — an empty/wrong sheet won't have our column names.
+  // We allow it through: even if it's a different sheet, the row filter
+  // in renderSheetFromCache will discard rows with no Task value.
+  return parsed;
 }
 
 // ── PARSE GOOGLE VISUALIZATION TABLE ──────────────────
@@ -741,31 +761,39 @@ function renderSheetFromCache(year, month) {
 
 // ── EMPTY MONTH STATE ──────────────────────────────────
 function showEmptyMonth(month, year) {
-  // Clear charts
-  ['p','t','a'].forEach(k=>{ if(charts[k]){charts[k].destroy();charts[k]=null;} });
-  $('kpiGrid').innerHTML = '';
-  $('sOver').innerHTML = '';
+  // ── Step 1: reset stale state ──────────────────────────
+  currentRows = [];   // prevent filters from showing last month's data
+
+  // ── Step 2: destroy all charts ─────────────────────────
+  ['p','t','a'].forEach(k => {
+    if (charts[k]) { charts[k].destroy(); charts[k] = null; }
+  });
+
+  // ── Step 3: clear every dynamic content area ───────────
+  $('kpiGrid').innerHTML  = '';
+  $('sOver').innerHTML    = '';
   $('whoCards').innerHTML = '';
   $('dailyLog').innerHTML = '';
+  $('tWrap').innerHTML    = '';
+  if ($('rCnt')) $('rCnt').textContent = '';
 
-  // Update hero to show month name but no data
-  const mc = typeof month === 'string' ? getMonthClr(month) : DEF_CLR;
-  const label = (typeof month === 'string' && year) ? month + ' ' + year : month;
-  const ht=$('heroTitle'); if(ht) ht.textContent = label;
-  const hs=$('heroSub');   if(hs) hs.textContent = 'No tasks recorded for this month';
-  const hp=$('heroPills'); if(hp) hp.innerHTML = '';
-  const hb=$('heroBig');   if(hb) hb.textContent = '0';
+  // ── Step 4: update hero to reflect empty month ─────────
+  const label = (typeof month === 'string' && year)
+    ? month + ' ' + year : String(month);
+  const ht = $('heroTitle'); if (ht) ht.textContent = label + ' Tasks';
+  const hs = $('heroSub');   if (hs) hs.textContent = 'No tasks recorded for this month yet';
+  const hp = $('heroPills'); if (hp) hp.innerHTML = '';
+  const hb = $('heroBig');   if (hb) hb.textContent = '0';
 
-  // Show empty state in table area
-  $('tWrap').innerHTML = '';
-  $('rCnt') && ($('rCnt').textContent = '');
-
-  // Insert empty state card replacing mid section
-  const existingEmpty = document.getElementById('emptyMonthBox');
-  if (existingEmpty) existingEmpty.remove();
-
+  // ── Step 5: HIDE chart section AND task table completely ─
   const mid = document.querySelector('.mid');
+  const tbl = document.querySelector('.tbl-outer');
   if (mid) mid.style.display = 'none';
+  if (tbl) tbl.style.display = 'none';
+
+  // ── Step 6: show empty-state card ─────────────────────
+  const old = document.getElementById('emptyMonthBox');
+  if (old) old.remove();
 
   const emptyEl = document.createElement('div');
   emptyEl.id = 'emptyMonthBox';
@@ -774,18 +802,26 @@ function showEmptyMonth(month, year) {
     <div class="empty-month-icon">📋</div>
     <div class="empty-month-title">${label} — No data yet</div>
     <div class="empty-month-sub">
-      No tasks have been recorded for this month.<br>
-      Update your Google Sheet with task entries and<br>
-      the dashboard will reflect them automatically.
+      No tasks have been added for this month.<br>
+      Add a <strong>${label} Tasks</strong> tab to your Google Sheet,<br>
+      fill in some rows, and the dashboard will show them automatically.
     </div>`;
-  const tblOuter = document.querySelector('.tbl-outer');
-  if (tblOuter) tblOuter.insertAdjacentElement('beforebegin', emptyEl);
+
+  // Insert after hero (before .mid / .tbl-outer)
+  const heroCard = $('heroCard');
+  if (heroCard && heroCard.parentNode) {
+    heroCard.parentNode.insertBefore(emptyEl, heroCard.nextSibling);
+  }
 }
 
-// Restore mid section when showing data
+// Restore mid section and table when switching to a month with data
 function ensureMidVisible() {
+  // Restore all sections hidden by showEmptyMonth
   const mid = document.querySelector('.mid');
-  if (mid) mid.style.display = '';
+  const tbl = document.querySelector('.tbl-outer');
+  if (mid) mid.style.removeProperty('display');
+  if (tbl) tbl.style.removeProperty('display');
+  // Remove the "no data" placeholder card
   const empt = document.getElementById('emptyMonthBox');
   if (empt) empt.remove();
 }

@@ -29,56 +29,46 @@
     }
     body { font-family:'Inter',-apple-system,sans-serif; background:var(--pg-bg); color:var(--text); font-size:14px; line-height:1.5; }
 
-    /* ── APP ── */
     .app { display:flex; min-height:100vh; }
 
-    /* ── SIDEBAR ── */
+    /* SIDEBAR */
     .sidebar { width:var(--sb-w); background:var(--sb-bg); display:flex; flex-direction:column; position:sticky; top:0; height:100vh; flex-shrink:0; }
-    .sb-top { padding:1.4rem 1.1rem 1rem; flex-shrink:0; }
+    .sb-top  { padding:1.4rem 1.1rem 1rem; flex-shrink:0; }
     .sb-logo-row { display:flex; align-items:center; gap:9px; margin-bottom:1.2rem; }
     .sb-logo { width:38px; height:38px; border-radius:10px; background:var(--am); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background .35s; }
     .sb-logo svg { width:20px; height:20px; fill:#fff; }
-    .sb-app-name { font-size:14px; font-weight:700; color:#fff; line-height:1.2; }
+    .sb-app-name { font-size:14px; font-weight:700; color:#fff; }
     .sb-app-sub  { font-size:10px; color:rgba(255,255,255,.4); margin-top:1px; }
-    .sb-profile { background:rgba(255,255,255,.07); border-radius:var(--rad-sm); padding:.65rem .85rem; }
+    .sb-profile  { background:rgba(255,255,255,.07); border-radius:var(--rad-sm); padding:.65rem .85rem; }
     .sb-prof-tag  { font-size:10px; color:rgba(255,255,255,.38); text-transform:uppercase; letter-spacing:.07em; }
-    .sb-prof-name { font-size:13px; font-weight:600; color:#fff; margin-top:3px; line-height:1.3; }
-    .sb-prof-role { font-size:10px; color:rgba(255,255,255,.45); margin-top:3px; line-height:1.3; }
+    .sb-prof-name { font-size:13px; font-weight:600; color:#fff; margin-top:3px; }
+    .sb-prof-role { font-size:10px; color:rgba(255,255,255,.45); margin-top:2px; }
     .sb-divider   { height:1px; background:rgba(255,255,255,.08); margin:.85rem 0; flex-shrink:0; }
     .sb-section   { font-size:9px; color:rgba(255,255,255,.28); text-transform:uppercase; letter-spacing:.1em; padding:0 1.1rem .4rem; flex-shrink:0; }
 
-    /* Year / month nav */
+    /* Year / tab nav */
     #tabsRow { flex:1; overflow-y:auto; padding:.1rem .6rem .5rem; }
     #tabsRow::-webkit-scrollbar { width:3px; }
     #tabsRow::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); border-radius:2px; }
 
     .yr-group { margin-bottom:2px; }
-    .yr-item {
-      display:flex; align-items:center; gap:7px; padding:.5rem .65rem;
-      border-radius:var(--rad-sm); cursor:pointer; color:rgba(255,255,255,.55);
-      transition:all .18s; user-select:none; font-size:13px; font-weight:600;
-    }
+    .yr-item  { display:flex; align-items:center; gap:7px; padding:.5rem .65rem; border-radius:var(--rad-sm); cursor:pointer; color:rgba(255,255,255,.55); transition:all .18s; user-select:none; font-size:13px; font-weight:600; }
     .yr-item:hover { background:rgba(255,255,255,.07); color:rgba(255,255,255,.88); }
     .yr-item.yr-open { color:#fff; }
     .yr-chevron { display:flex; align-items:center; justify-content:center; width:14px; height:14px; flex-shrink:0; transition:transform .22s; }
     .yr-item.yr-open .yr-chevron { transform:rotate(90deg); }
     .yr-chevron svg { width:10px; height:10px; }
-    .yr-num { flex:1; }
+    .yr-num   { flex:1; }
     .yr-badge { font-size:10px; font-family:var(--mono); background:rgba(255,255,255,.1); border-radius:20px; padding:1px 6px; color:rgba(255,255,255,.4); }
 
     .mo-list { padding:2px 0 3px 18px; }
-    .mo-item {
-      display:flex; align-items:center; gap:7px; padding:.38rem .6rem;
-      border-radius:7px; cursor:pointer; color:rgba(255,255,255,.38);
-      transition:all .15s; font-size:12px; user-select:none;
-    }
-    .mo-item:hover { color:rgba(255,255,255,.75); background:rgba(255,255,255,.05); }
-    .mo-item.mo-active { background:rgba(255,255,255,.13); color:#fff; font-weight:500; }
-    .mo-item.mo-empty  { color:rgba(255,255,255,.2); }
-    .mo-item.mo-empty:hover { color:rgba(255,255,255,.35); background:rgba(255,255,255,.03); }
-    .mo-dot  { width:6px; height:6px; border-radius:50%; flex-shrink:0; background:rgba(255,255,255,.12); transition:background .3s; }
-    .mo-name { flex:1; }
-    .mo-dash { font-size:10px; color:rgba(255,255,255,.14); font-family:var(--mono); }
+    .mo-item { display:flex; align-items:center; gap:7px; padding:.4rem .6rem; border-radius:7px; cursor:pointer; color:rgba(255,255,255,.4); transition:all .15s; font-size:12px; user-select:none; }
+    .mo-item:hover  { color:rgba(255,255,255,.8); background:rgba(255,255,255,.05); }
+    .mo-item.mo-active { background:rgba(255,255,255,.14); color:#fff; font-weight:500; }
+    .mo-item.mo-empty  { color:rgba(255,255,255,.22); }
+    .mo-item.mo-empty:hover { color:rgba(255,255,255,.4); background:rgba(255,255,255,.03); }
+    .mo-dot  { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .mo-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
     .sb-footer { padding:.9rem 1.1rem; border-top:1px solid rgba(255,255,255,.07); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
     .sb-status { display:flex; align-items:center; gap:6px; font-size:11px; color:rgba(255,255,255,.38); }
@@ -95,8 +85,9 @@
     @keyframes expand { 0%{transform:scale(.7);opacity:.9}100%{transform:scale(2.2);opacity:0} }
     @keyframes blink  { 0%,100%{opacity:1}50%{opacity:.2} }
 
-    /* ── MAIN ── */
     .main-wrap { flex:1; display:flex; flex-direction:column; min-width:0; overflow:hidden; }
+
+    /* TOPBAR */
     .topbar { background:var(--card); border-bottom:1px solid var(--border); padding:.8rem 1.75rem; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
     .topbar-title { font-size:19px; font-weight:700; color:var(--am); transition:color .35s; }
     .topbar-sub   { font-size:11px; color:var(--muted); margin-top:2px; }
@@ -107,7 +98,7 @@
 
     .page { flex:1; overflow-y:auto; padding:1.5rem 1.75rem 2.5rem; }
 
-    /* ── ALERTS / STATES ── */
+    /* ALERTS */
     .alert { border-radius:var(--rad-sm); padding:1rem 1.25rem; font-size:13px; margin-bottom:1.2rem; border:1px solid; line-height:1.7; }
     .a-setup { background:var(--info-lt); border-color:var(--info-bd); color:#1e40af; }
     .a-err   { background:var(--err-lt);  border-color:var(--err-bd);  color:#991b1b; }
@@ -115,7 +106,7 @@
     code { background:rgba(0,0,0,.07); border-radius:4px; padding:1px 5px; font-family:var(--mono); font-size:12px; }
     .state-msg { text-align:center; padding:5rem 2rem; color:var(--muted); font-size:13px; line-height:1.9; }
 
-    /* ── HERO ── */
+    /* HERO */
     .hero { border-radius:var(--radius); margin-bottom:1.4rem; background:linear-gradient(135deg,var(--am) 0%,var(--am-dk) 100%); padding:1.8rem 2rem; display:flex; justify-content:space-between; align-items:center; position:relative; overflow:hidden; min-height:148px; box-shadow:var(--shad-md); transition:background .4s; }
     .hero-left  { position:relative; z-index:1; }
     .hero-right { position:relative; z-index:1; }
@@ -131,7 +122,7 @@
     .hero-badge-lbl { font-size:11px; color:rgba(255,255,255,.65); margin-top:5px; }
     .hero-deco { position:absolute; right:0; top:0; bottom:0; width:300px; pointer-events:none; z-index:0; }
 
-    /* ── KPI ── */
+    /* KPI */
     .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(138px,1fr)); gap:12px; margin-bottom:1.4rem; }
     .kpi { background:var(--card); border-radius:var(--radius); padding:1.1rem 1.2rem; box-shadow:var(--shadow); }
     .kpi-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:.4rem; }
@@ -145,7 +136,7 @@
     .kpi-wave { margin-top:.55rem; overflow:hidden; }
     .kpi-wave svg { width:100%; height:28px; display:block; }
 
-    /* ── MID ── */
+    /* MID */
     .mid { display:grid; grid-template-columns:1.5fr 1fr; gap:14px; margin-bottom:1.4rem; }
     .mid-l { display:flex; flex-direction:column; gap:14px; }
     .mid-r { display:flex; flex-direction:column; gap:14px; }
@@ -179,7 +170,7 @@
     .who-pip { display:inline-flex; align-items:center; gap:3px; }
     .who-dot { display:inline-block; width:6px; height:6px; border-radius:50%; flex-shrink:0; }
 
-    /* ── TABLE ── */
+    /* TABLE */
     .tbl-outer { background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:1.5rem; overflow:hidden; }
     .tbl-top { padding:.9rem 1.25rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
     .tbl-top h2 { font-size:14px; font-weight:600; }
@@ -201,7 +192,7 @@
     .b-uploaded   { background:#fff7ed; color:#c2410c; border-color:#fed7aa; }
     .b-downloaded { background:#f0f9ff; color:#0369a1; border-color:#bae6fd; }
     .b-collection { background:#f5f3ff; color:#6d28d9; border-color:#ddd6fe; }
-    .b-def   { background:#f4f3ff; color:var(--muted); border-color:var(--border); }
+    .b-def        { background:#f4f3ff; color:var(--muted); border-color:var(--border); }
     .tc-a { color:#0d9488; font-weight:500; }
     .tc-s { color:#16a34a; font-weight:500; }
     .tc-b { color:#d97706; font-weight:500; }
@@ -213,18 +204,16 @@
     .qf { height:100%; border-radius:2px; background:var(--am); }
     .who-pill { display:inline-flex; align-items:center; gap:5px; font-size:12px; }
 
-    /* ── EMPTY MONTH STATE ── */
-    .empty-month { text-align:center; padding:4rem 2rem; }
-    .empty-month-icon { font-size:40px; margin-bottom:1rem; opacity:.3; }
-    .empty-month-title { font-size:15px; font-weight:600; color:var(--text); margin-bottom:.4rem; }
-    .empty-month-sub   { font-size:13px; color:var(--muted); line-height:1.7; }
+    /* EMPTY STATE */
+    .empty-month { text-align:center; padding:4rem 2rem; margin-bottom:1.4rem; }
+    .empty-month-icon  { font-size:44px; margin-bottom:1rem; opacity:.35; }
+    .empty-month-title { font-size:16px; font-weight:600; color:var(--text); margin-bottom:.5rem; }
+    .empty-month-sub   { font-size:13px; color:var(--muted); line-height:1.8; }
 
-    /* ── RESPONSIVE ── */
     @media (max-width:1100px) { .mid { grid-template-columns:1fr; } }
     @media (max-width:840px) {
       .sidebar { width:60px; }
-      .sb-app-name,.sb-app-sub,.sb-profile,.sb-section,
-      .yr-num,.yr-badge,.mo-name,.mo-dash,.sb-status span { display:none; }
+      .sb-app-name,.sb-app-sub,.sb-profile,.sb-section,.mo-name,.yr-num,.yr-badge { display:none; }
       .sb-top { padding:.8rem .5rem .6rem; }
       .sb-logo-row { justify-content:center; }
       #tabsRow { padding:.2rem .3rem; }
@@ -266,13 +255,10 @@
         <div class="sb-prof-role">Data Preparation Manager</div>
       </div>
     </div>
-
     <div class="sb-divider"></div>
     <div class="sb-section">Workspace</div>
-
-    <!-- Year/Month nav — single delegated listener wired in JS -->
+    <!-- ONE permanent delegated listener attached in JS -->
     <nav id="tabsRow"></nav>
-
     <div class="sb-footer">
       <div class="sb-status">
         <div class="pr ld" id="pRing"><div class="ring"></div><div class="dot"></div></div>
@@ -284,7 +270,6 @@
 
   <!-- MAIN -->
   <div class="main-wrap">
-
     <div class="topbar">
       <div>
         <div class="topbar-title" id="topTitle">Dashboard</div>
@@ -307,16 +292,15 @@
         Also share your sheet: <strong>File → Share → Anyone with the link → Viewer</strong>.
       </div>
       <div class="alert a-err" id="errBox" style="display:none"></div>
-      <div class="state-msg" id="ldBox">Loading workspace data…</div>
+      <div class="state-msg" id="ldBox">Discovering sheets from your spreadsheet…</div>
 
       <div id="content" style="display:none">
-
         <!-- HERO -->
         <div class="hero" id="heroCard">
           <div class="hero-left">
             <div class="hero-eye">Advanced AI Lab · Data Preparation</div>
             <div class="hero-title" id="heroTitle">Loading…</div>
-            <div class="hero-sub"  id="heroSub">Monthly overview</div>
+            <div class="hero-sub"  id="heroSub">Sheet overview</div>
             <div class="hero-pills" id="heroPills"></div>
           </div>
           <div class="hero-right">
@@ -342,9 +326,7 @@
           <div class="mid-l">
             <div class="card">
               <div class="card-title">Daily production output</div>
-              <div class="chart-wrap" style="height:200px">
-                <canvas id="pchart" role="img" aria-label="Production bar chart"></canvas>
-              </div>
+              <div class="chart-wrap" style="height:200px"><canvas id="pchart"></canvas></div>
               <div class="legend">
                 <div class="leg-i"><span class="leg-sq" style="background:var(--am)"></span>Working day</div>
                 <div class="leg-i"><span class="leg-sq" style="background:#7c3aed"></span>Sunday worked</div>
@@ -354,17 +336,13 @@
             <div class="card">
               <div class="card-title">Assignee workload</div>
               <div id="whoCards" class="who-grid"></div>
-              <div class="chart-wrap" style="height:120px">
-                <canvas id="achart" role="img" aria-label="Assignee output chart"></canvas>
-              </div>
+              <div class="chart-wrap" style="height:120px"><canvas id="achart"></canvas></div>
             </div>
           </div>
           <div class="mid-r">
             <div class="card">
               <div class="card-title">Task type split</div>
-              <div class="chart-wrap" style="height:162px">
-                <canvas id="tchart" role="img" aria-label="Task type doughnut"></canvas>
-              </div>
+              <div class="chart-wrap" style="height:162px"><canvas id="tchart"></canvas></div>
             </div>
             <div class="card">
               <div class="card-title">Status overview</div>
@@ -372,9 +350,7 @@
             </div>
             <div class="card">
               <div class="card-title">Daily resource &amp; assignee log</div>
-              <div class="dl-hdr">
-                <span>Date</span><span>Assignee(s)</span><span style="text-align:right">Items</span>
-              </div>
+              <div class="dl-hdr"><span>Date</span><span>Assignee(s)</span><span style="text-align:right">Items</span></div>
               <div class="dl-wrap" id="dailyLog"></div>
             </div>
           </div>
@@ -386,9 +362,7 @@
             <h2>Task log</h2>
             <div class="filters">
               <span class="fl">Filter:</span>
-              <select id="sfil">
-                <option value="All">All statuses</option>
-              </select>
+              <select id="sfil"><option value="All">All statuses</option></select>
               <select id="tfil"><option value="All">All types</option></select>
               <select id="afil"><option value="All">All assignees</option></select>
               <span class="row-chip" id="rCnt"></span>
@@ -405,23 +379,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════
-//  CONFIG  ← only change SHEET_ID
+//  CONFIG — only change SHEET_ID
 // ═══════════════════════════════════════════════════════
 const SHEET_ID    = '1YlG1-tQTjE6QC7GbJM_0JGdO3ky7GcsZ3rqoVzbBgb4';
-const YEARS       = [2026, 2027, 2028, 2029, 2030];
-const MONTH_NAMES = ['January','February','March','April','May','June',
-                     'July','August','September','October','November','December'];
 const REFRESH_SEC = 30;
 // ═══════════════════════════════════════════════════════
 
-// Returns the Google Sheet tab name for a given year + month
-// 2026 uses the legacy format "June Tasks"
-// 2027+ uses "June 2027 Tasks"
-function getSheetName(year, month) {
-  return year === 2026 ? month + ' Tasks' : month + ' ' + year + ' Tasks';
-}
-
-// ── MONTH COLOURS ──────────────────────────────────────
+// ── MONTH COLOURS (detected from any tab name) ──────────
 const MONTH_CLR = {
   January  :{main:'#e11d48',dk:'#be123c',light:'#fff1f2',border:'#fecdd3'},
   February :{main:'#db2777',dk:'#be185d',light:'#fdf2f8',border:'#fbcfe8'},
@@ -437,27 +401,18 @@ const MONTH_CLR = {
   December :{main:'#0284c7',dk:'#0369a1',light:'#f0f9ff',border:'#bae6fd'},
 };
 const DEF_CLR = {main:'#64748b',dk:'#475569',light:'#f8fafc',border:'#cbd5e1'};
-function getMonthClr(month) { return MONTH_CLR[month] || DEF_CLR; }
+const MONTH_ORDER = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-// ── LOOKUPS ────────────────────────────────────────────
+function getTabColor(tabName) {
+  for (const [m,c] of Object.entries(MONTH_CLR)) { if (tabName.includes(m)) return c; }
+  return DEF_CLR;
+}
+
+// ── LOOKUPS ──────────────────────────────────────────────
 const TASK_CLS  = {Annotations:'tc-a',Supervision:'tc-s','Brand sessions':'tc-b'};
-const BADGE_CLS = {
-  'Completed'  :'b-done',
-  'Blocked'    :'b-block',
-  'In progress':'b-prog',
-  'Uploaded'   :'b-uploaded',
-  'Downloaded' :'b-downloaded',
-  'Collection' :'b-collection',
-};
+const BADGE_CLS = {'Completed':'b-done','Blocked':'b-block','In progress':'b-prog','Uploaded':'b-uploaded','Downloaded':'b-downloaded','Collection':'b-collection'};
 const TYPE_CLR  = {Annotations:'#0d9488',Supervision:'#16a34a','Brand sessions':'#d97706'};
-const STAT_CFG  = {
-  'Completed'  :{color:'#16a34a'},
-  'In progress':{color:'#2563eb'},
-  'Blocked'    :{color:'#dc2626'},
-  'Uploaded'   :{color:'#f59e0b'},
-  'Downloaded' :{color:'#0ea5e9'},
-  'Collection' :{color:'#7c3aed'},
-};
+const STAT_CFG  = {'Completed':{color:'#16a34a'},'In progress':{color:'#2563eb'},'Blocked':{color:'#dc2626'},'Uploaded':{color:'#f59e0b'},'Downloaded':{color:'#0ea5e9'},'Collection':{color:'#7c3aed'}};
 const WHO_PAL   = ['#0d9488','#7c3aed','#d97706','#2563eb','#16a34a','#e11d48'];
 const WHO_MAP   = {};
 function whoColor(n) {
@@ -467,135 +422,174 @@ function whoColor(n) {
 }
 ['Evan','Abtahi','Rafiqa apu'].forEach(n => whoColor(n));
 
-// ── STATE ──────────────────────────────────────────────
-let charts        = {p:null,t:null,a:null};
-let sheetsCache   = {};      // {year: {month: {headers,rows}}}
-let hasDataMap    = {};      // {year: Set of month names that have data}
-let expandedYears = new Set([2026]);
-let activeYear    = 2026;
-let activeMonth   = null;   // e.g. 'June'
-let currentRows   = [];
-let countdown     = REFRESH_SEC, timerID = null;
+// ── STATE ────────────────────────────────────────────────
+let charts         = {p:null,t:null,a:null};
+let sheetsCache    = {};          // {tabName: {headers,rows} | null}
+let expandedGroups = new Set();   // which year groups are open
+let activeTab      = null;        // current tab name
+let tabGroups      = {};          // {year: [tabName,...]}
+let ungroupedTabs  = [];          // tabs with no year found
+let allTabs        = [];          // every tab name discovered
+let currentRows    = [];
+let countdown      = REFRESH_SEC, timerID = null;
 let activeMonthColor = '#0d9488';
 
-// ── INIT ──────────────────────────────────────────────
+// ── INIT ─────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   if (!SHEET_ID || SHEET_ID.includes('PASTE')) {
     show('setupBox'); hide('ldBox');
     setStatus('err','Not configured'); return;
   }
 
-  // ONE permanent delegated listener on the stable nav parent
+  // ONE permanent listener — never removed, so nav re-renders safely
   const nav = $('tabsRow');
   if (nav) {
     nav.addEventListener('click', function(e) {
-      const yr = e.target.closest('.yr-item');
-      const mo = e.target.closest('.mo-item');
-      if (yr && yr.dataset.year) toggleYear(parseInt(yr.dataset.year));
-      if (mo && mo.dataset.month) switchToMonth(parseInt(mo.dataset.year), mo.dataset.month);
+      const grpEl = e.target.closest('.yr-item');
+      const tabEl = e.target.closest('.mo-item');
+      if (grpEl && grpEl.dataset.group) toggleGroup(grpEl.dataset.group);
+      if (tabEl && tabEl.dataset.tab)   switchToTab(tabEl.dataset.tab);
     });
   }
 
   ['sfil','tfil','afil'].forEach(id => {
-    const el=$(id); if(el) el.addEventListener('change', applyFilter);
+    const el = $(id); if (el) el.addEventListener('change', applyFilter);
   });
 
   fetchData();
   startTimer();
 });
 
-// ── INITIAL DATA LOAD — fetches all 2026 months in parallel ──
-async function fetchData() {
-  setStatus('ld','Loading…');
-  try {
-    if (!hasDataMap[2026]) hasDataMap[2026] = new Set();
-    if (!sheetsCache[2026]) sheetsCache[2026] = {};
+// ── AUTO-DISCOVER ALL SHEET TAB NAMES ────────────────────
+// Uses Google's public Sheets v3 Feeds API — works for publicly shared sheets.
+async function discoverSheets() {
+  const url = 'https://spreadsheets.google.com/feeds/worksheets/'
+    + SHEET_ID + '/public/full?alt=json&t=' + Date.now();
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Could not discover sheets (HTTP ' + res.status
+    + '). Make sure the sheet is shared "Anyone with the link can view".');
+  const json = await res.json();
+  const entries = json.feed ? (json.feed.entry || []) : [];
+  if (!entries.length) throw new Error('No sheet tabs found in this spreadsheet.');
+  return entries.map(e => e.title['$t']);
+}
 
-    // Fetch all 12 months of 2026 in parallel to discover which have data
-    await Promise.all(MONTH_NAMES.map(async month => {
-      if (sheetsCache[2026][month]) return; // already cached
+// ── GROUP TABS BY YEAR ────────────────────────────────────
+function groupTabsByYear(tabs) {
+  const groups = {}, ungrouped = [];
+  const YEAR_RE = /\b(20\d\d)\b/;
+  tabs.forEach(name => {
+    const m = name.match(YEAR_RE);
+    if (m) {
+      const y = m[1];
+      if (!groups[y]) groups[y] = [];
+      groups[y].push(name);
+    } else {
+      ungrouped.push(name);
+    }
+  });
+  // Sort months within each year group by calendar order
+  Object.keys(groups).forEach(y => {
+    groups[y].sort((a,b) => {
+      const ai = MONTH_ORDER.findIndex(m => a.includes(m));
+      const bi = MONTH_ORDER.findIndex(m => b.includes(m));
+      if (ai !== -1 && bi !== -1) return ai - bi;
+      return a.localeCompare(b);
+    });
+  });
+  return { groups, ungrouped };
+}
+
+// Get a clean short label for a tab (strip year + "Tasks" suffix for display)
+function getTabLabel(tabName, year) {
+  let s = tabName;
+  if (year) s = s.replace(new RegExp('\\b'+year+'\\b','g'), '');
+  s = s.replace(/\s*tasks?\s*$/i,'').replace(/[-_\s]+$/,'').replace(/^[-_\s]+/,'').trim();
+  return s || tabName;
+}
+
+// ── INITIAL DATA LOAD ─────────────────────────────────────
+async function fetchData() {
+  setStatus('ld','Discovering sheets…');
+  try {
+    // Step 1: discover all tab names from the spreadsheet
+    const discovered = await discoverSheets();
+    allTabs = discovered;
+    const { groups, ungrouped } = groupTabsByYear(discovered);
+    tabGroups    = groups;
+    ungroupedTabs = ungrouped;
+
+    // Step 2: auto-expand the first (or most recent) year group
+    const years = Object.keys(groups).sort();
+    const firstYear = years[years.length - 1] || null; // latest year
+    if (firstYear) expandedGroups.add(firstYear);
+    else if (ungrouped.length) expandedGroups.add('__general__');
+
+    // Step 3: render nav so user sees the tab list immediately
+    renderNav();
+
+    // Step 4: load all tabs in the first group in parallel (discover which have data)
+    const firstGroupTabs = firstYear ? groups[firstYear] : ungrouped;
+    await Promise.all(firstGroupTabs.map(async tab => {
+      if (sheetsCache[tab] !== undefined) return;
       try {
-        const data = await fetchSheet(getSheetName(2026, month));
-        sheetsCache[2026][month] = data;
-        if (data.rows && data.rows.length > 0) hasDataMap[2026].add(month);
+        sheetsCache[tab] = await fetchSheet(tab);
       } catch(_) {
-        sheetsCache[2026][month] = {headers:[], rows:[]};
+        sheetsCache[tab] = {headers:[], rows:[]};
       }
     }));
 
-    // Auto-select first month with data (e.g. June)
-    if (!activeMonth) {
-      const first = MONTH_NAMES.find(m => hasDataMap[2026] && hasDataMap[2026].has(m));
-      if (first) { activeMonth = first; activeYear = 2026; }
+    // Step 5: select first tab that has data
+    if (!activeTab) {
+      activeTab = firstGroupTabs.find(t => {
+        const d = sheetsCache[t];
+        return d && d.rows && d.rows.length > 0;
+      }) || firstGroupTabs[0] || discovered[0];
     }
 
-    renderNav();
-
-    if (activeMonth) {
-      setMonthTheme(activeMonth);
-      renderSheetFromCache(activeYear, activeMonth);
+    if (activeTab) {
+      setTabTheme(activeTab);
+      renderNav();
+      renderFromCache(activeTab);
       hide('ldBox'); hide('errBox'); show('content');
     } else {
-      // No data found at all
       hide('ldBox'); show('content');
-      showEmptyMonth('No data found in any sheet for 2026.');
+      showEmptyTab('No data found');
     }
+
     setStatus('ok','Live · ' + fmtTime(new Date().toISOString()));
   } catch(err) { showErr(err.message); }
 }
 
-// ── REFRESH ACTIVE MONTH (called every 30s) ────────────
+// ── REFRESH ACTIVE TAB (every 30s) ────────────────────────
 async function refreshActive() {
-  if (!activeMonth) { fetchData(); return; }
+  if (!activeTab) { fetchData(); return; }
   setStatus('ld','Refreshing…');
   try {
-    const data = await fetchSheet(getSheetName(activeYear, activeMonth));
-    sheetsCache[activeYear][activeMonth] = data;
-    if (data.rows && data.rows.length > 0) {
-      if (!hasDataMap[activeYear]) hasDataMap[activeYear] = new Set();
-      hasDataMap[activeYear].add(activeMonth);
-    }
+    sheetsCache[activeTab] = await fetchSheet(activeTab);
+    renderFromCache(activeTab);
     renderNav();
-    renderSheetFromCache(activeYear, activeMonth);
     setStatus('ok','Live · ' + fmtTime(new Date().toISOString()));
-  } catch(_) { setStatus('ok','Live · ' + fmtTime(new Date().toISOString())); }
+  } catch(_) {
+    setStatus('ok','Live · ' + fmtTime(new Date().toISOString()));
+  }
 }
 
-// ── FETCH ONE SHEET via gviz API ───────────────────────
-async function fetchSheet(sheetName) {
+// ── FETCH ONE SHEET via gviz/tq ───────────────────────────
+async function fetchSheet(tabName) {
   const url = 'https://docs.google.com/spreadsheets/d/'
     + SHEET_ID + '/gviz/tq?tqx=out:json&sheet='
-    + encodeURIComponent(sheetName) + '&t=' + Date.now();
-  const res = await fetch(url);
+    + encodeURIComponent(tabName) + '&t=' + Date.now();
+  const res  = await fetch(url);
   if (!res.ok) throw new Error('HTTP ' + res.status);
   const text = await res.text();
   const jsonStr = text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1);
   const json = JSON.parse(jsonStr);
-
-  // gviz returns status:'error' when the sheet tab doesn't exist
-  if (json.status === 'error') throw new Error('Sheet not found: ' + sheetName);
-
-  // EXTRA GUARD: gviz sometimes silently falls back to the first sheet
-  // when the requested tab doesn't exist (returns 'ok' with wrong data).
-  // We detect this by checking if the response signals a bad query.
-  if (json.errors && json.errors.length > 0) throw new Error('Sheet error: ' + sheetName);
-
-  const parsed = parseGvizTable(json.table);
-
-  // If the sheet has NO headers at all, it genuinely doesn't exist or is blank
-  if (!parsed.headers || parsed.headers.length === 0) {
-    return { headers: [], rows: [] };
-  }
-
-  // Validate: the first column header must exist and match what we expect.
-  // If gviz fell back to a different sheet, the "Task" column header check
-  // lets us catch it — an empty/wrong sheet won't have our column names.
-  // We allow it through: even if it's a different sheet, the row filter
-  // in renderSheetFromCache will discard rows with no Task value.
-  return parsed;
+  if (json.status === 'error') return {headers:[], rows:[]};
+  return parseGvizTable(json.table);
 }
 
-// ── PARSE GOOGLE VISUALIZATION TABLE ──────────────────
+// ── PARSE GOOGLE VISUALIZATION TABLE ─────────────────────
 function parseGvizTable(table) {
   if (!table || !table.cols) return {headers:[],rows:[]};
   const headers = table.cols.map(c => (c.label||c.id||'').trim());
@@ -605,12 +599,13 @@ function parseGvizTable(table) {
       if (!h) return;
       const cell = row.c ? row.c[i] : null;
       if (!cell || cell.v===null || cell.v===undefined) { obj[h]=''; return; }
-      if (typeof cell.v==='string' && cell.v.startsWith('Date(')) {
+      if (typeof cell.v === 'number') {
+        obj[h] = String(cell.v); // use raw number — avoids "1,000" comma issue
+      } else if (typeof cell.v==='string' && cell.v.startsWith('Date(')) {
         const p = cell.v.slice(5,-1).split(',').map(Number);
-        const d = new Date(p[0],p[1],p[2]);
-        obj[h] = d.toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'});
+        obj[h] = new Date(p[0],p[1],p[2]).toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'});
       } else {
-        obj[h] = (cell.f!==null&&cell.f!==undefined) ? String(cell.f) : String(cell.v);
+        obj[h] = cell.f!==null&&cell.f!==undefined ? String(cell.f) : String(cell.v);
       }
     });
     return obj;
@@ -618,126 +613,73 @@ function parseGvizTable(table) {
   return {headers,rows};
 }
 
-// ── TOGGLE YEAR ────────────────────────────────────────
-function toggleYear(year) {
-  if (expandedYears.has(year)) {
-    expandedYears.delete(year);
+// ── TOGGLE YEAR GROUP ─────────────────────────────────────
+function toggleGroup(groupKey) {
+  if (expandedGroups.has(groupKey)) {
+    expandedGroups.delete(groupKey);
   } else {
-    expandedYears.add(year);
-    // Pre-fetch data for future years lazily when first opened
-    if (year !== 2026 && !sheetsCache[year]) {
-      sheetsCache[year] = {};
-      if (!hasDataMap[year]) hasDataMap[year] = new Set();
-      MONTH_NAMES.forEach(async month => {
-        try {
-          const data = await fetchSheet(getSheetName(year, month));
-          sheetsCache[year][month] = data;
-          if (data.rows && data.rows.length > 0) {
-            hasDataMap[year].add(month);
-            renderNav(); // re-render to show colored dots
-          }
-        } catch(_) {
-          sheetsCache[year][month] = {headers:[],rows:[]};
-        }
-      });
-    }
+    expandedGroups.add(groupKey);
+    // Lazily load tabs in this group when first expanded
+    const tabs = groupKey === '__general__' ? ungroupedTabs : (tabGroups[groupKey] || []);
+    tabs.forEach(async tab => {
+      if (sheetsCache[tab] !== undefined) return;
+      try { sheetsCache[tab] = await fetchSheet(tab); }
+      catch(_) { sheetsCache[tab] = {headers:[],rows:[]}; }
+      renderNav(); // update dots as data arrives
+    });
   }
   renderNav();
 }
 
-// ── SWITCH TO A MONTH ──────────────────────────────────
-async function switchToMonth(year, month) {
-  activeYear = year; activeMonth = month;
-  setMonthTheme(month);
+// ── SWITCH TO A TAB ───────────────────────────────────────
+async function switchToTab(tabName) {
+  if (activeTab === tabName) return;
+  activeTab = tabName;
+  setTabTheme(tabName);
   renderNav();
 
-  // Check cache first
-  if (sheetsCache[year] && sheetsCache[year][month]) {
-    renderSheetFromCache(year, month);
-    return;
+  // Use cache if available
+  if (sheetsCache[tabName] !== undefined) {
+    renderFromCache(tabName); return;
   }
 
-  // Fetch if not cached
-  setStatus('ld','Loading ' + month + '…');
-  if (!sheetsCache[year]) sheetsCache[year] = {};
-  try {
-    const data = await fetchSheet(getSheetName(year, month));
-    sheetsCache[year][month] = data;
-    if (data.rows && data.rows.length > 0) {
-      if (!hasDataMap[year]) hasDataMap[year] = new Set();
-      hasDataMap[year].add(month);
-      renderNav();
-    }
-    renderSheetFromCache(year, month);
-    setStatus('ok','Live · ' + fmtTime(new Date().toISOString()));
-  } catch(_) {
-    sheetsCache[year][month] = {headers:[],rows:[]};
-    renderSheetFromCache(year, month);
-    setStatus('ok','Live · ' + fmtTime(new Date().toISOString()));
-  }
+  setStatus('ld','Loading…');
+  try { sheetsCache[tabName] = await fetchSheet(tabName); }
+  catch(_) { sheetsCache[tabName] = {headers:[],rows:[]}; }
+  renderFromCache(tabName);
+  setStatus('ok','Live · ' + fmtTime(new Date().toISOString()));
 }
 
-// ── RENDER FROM CACHE ──────────────────────────────────
-function renderSheetFromCache(year, month) {
-  const data = (sheetsCache[year] && sheetsCache[year][month]) || {headers:[],rows:[]};
-  const sheetLabel = month + ' ' + year;
+// ── RENDER FROM CACHE ─────────────────────────────────────
+function renderFromCache(tabName) {
+  const data = sheetsCache[tabName] || {headers:[],rows:[]};
 
+  // If the sheet is empty or wasn't found, show empty state
   if (!data.rows || data.rows.length === 0) {
-    showEmptyMonth(month, year); return;
-  }
-
-  // ── Case-insensitive column getter ──
-  // Finds a value in a row regardless of how the column header is capitalised
-  // or whether there is extra whitespace. Tries multiple name variants.
-  function col(r, ...names) {
-    for (const name of names) {
-      // Exact match first (fastest)
-      if (r[name] !== undefined && r[name] !== '') return r[name];
-    }
-    // Fallback: case-insensitive scan of all keys in this row
-    const keys = Object.keys(r);
-    for (const name of names) {
-      const low = name.trim().toLowerCase();
-      for (const k of keys) {
-        if (k.trim().toLowerCase() === low && r[k] !== '') return r[k];
-      }
-    }
-    return '';
+    showEmptyTab(tabName); return;
   }
 
   const rows = data.rows
-    .filter(r => { const t=(col(r,'Task')||'').trim(); return t && t!=='Weekend' && t!=='Total'; })
+    .filter(r => { const t=(r['Task']||'').trim(); return t && t!=='Weekend' && t!=='Total'; })
     .map(r => ({
-      _task :(col(r,'Task')                                          ||'').trim(),
-      _prio :(col(r,'Priority')                                      ||'').trim(),
-      _qty  :Math.round(parseFloat(col(r,'Production Quantity','Qty','production quantity'))||0),
-      _res  :(col(r,'Resources','Resource')                          ||'').trim(),
-      _stat :(col(r,'Status')                                        ||'').trim(),
-      _start:(col(r,'Start date','Start Date','start date','StartDate')||'').trim(),
-      _end  :(col(r,'End date','End Date','end date','EndDate')      ||'').trim(),
-      _who  :(col(r,'Assignee','assignee','Assigned To')             ||'').trim(),
-      _note :(col(r,'Notes','Note','notes')                          ||'').trim(),
-      // Uploaded, Collection, Downloaded — matched case-insensitively
-      // so "uploaded", "UPLOADED", "Upload" etc. all work
-      _upl  :Math.round(parseFloat(col(r,'Uploaded','Upload','uploaded','UPLOADED','File Uploaded','Files Uploaded'))||0),
-      _col  :Math.round(parseFloat(col(r,'Collection','collection','COLLECTION','Collections','Collect'))||0),
-      _dwn  :Math.round(parseFloat(col(r,'Downloaded','Download','downloaded','DOWNLOADED','File Downloaded','Files Downloaded'))||0),
+      _task :(r['Task']                              ||'').trim(),
+      _prio :(r['Priority']                          ||'').trim(),
+      _qty  :Math.round(parseFloat(r['Production Quantity'])||0),
+      _res  :(r['Resources']                         ||'').trim(),
+      _stat :(r['Status']                            ||'').trim(),
+      _start:(r['Start date']||r['Start Date']       ||'').trim(),
+      _end  :(r['End date']  ||r['End Date']         ||'').trim(),
+      _who  :(r['Assignee']                          ||'').trim(),
+      _note :(r['Notes']                             ||'').trim(),
     }));
 
-  if (!rows.length) { showEmptyMonth(month, year); return; }
+  if (!rows.length) { showEmptyTab(tabName); return; }
 
   currentRows = rows;
-  rows.forEach(r => { if(r._who) whoColor(r._who); });
+  rows.forEach(r => { if (r._who) whoColor(r._who); });
   const s = calcStats(rows);
 
-  // Detect whether special columns actually exist in this sheet
-  // (case-insensitive so "uploaded" matches "Uploaded" etc.)
-  const hdrLower = (data.headers || []).map(h => h.toLowerCase().trim());
-  s.hasUplCol = hdrLower.includes('uploaded');
-  s.hasColCol = hdrLower.includes('collection');
-  s.hasDwnCol = hdrLower.includes('downloaded');
-
-  renderHero(s, sheetLabel);
+  renderHero(s, tabName);
   renderKPIs(s);
   renderPChart(rows);
   renderTChart(s.byType);
@@ -749,160 +691,159 @@ function renderSheetFromCache(year, month) {
   populateTypeFilter(s.byType);
   populateAssigneeFilter(s.byAssignee);
   applyFilter();
-
-  // Show all dashboard content
-  $('kpiGrid').style.display = '';
-  $('heroCard').style.display = '';
-  document.querySelector('.mid').style.display = '';
-  $('tbl-outer') && ($('tbl-outer').style.display='');
-  const empt = document.getElementById('emptyMonthBox');
-  if (empt) empt.remove();
+  ensureMidVisible();
+  renderNav();
 }
 
-// ── EMPTY MONTH STATE ──────────────────────────────────
-function showEmptyMonth(month, year) {
-  // ── Step 1: reset stale state ──────────────────────────
-  currentRows = [];   // prevent filters from showing last month's data
-
-  // ── Step 2: destroy all charts ─────────────────────────
-  ['p','t','a'].forEach(k => {
-    if (charts[k]) { charts[k].destroy(); charts[k] = null; }
-  });
-
-  // ── Step 3: clear every dynamic content area ───────────
-  $('kpiGrid').innerHTML  = '';
-  $('sOver').innerHTML    = '';
-  $('whoCards').innerHTML = '';
-  $('dailyLog').innerHTML = '';
-  $('tWrap').innerHTML    = '';
+// ── EMPTY TAB STATE ────────────────────────────────────────
+function showEmptyTab(tabName) {
+  currentRows = [];
+  ['p','t','a'].forEach(k => { if (charts[k]) { charts[k].destroy(); charts[k]=null; } });
+  $('kpiGrid').innerHTML = '';
+  $('sOver').innerHTML   = '';
+  $('whoCards').innerHTML= '';
+  $('dailyLog').innerHTML= '';
+  $('tWrap').innerHTML   = '';
   if ($('rCnt')) $('rCnt').textContent = '';
 
-  // ── Step 4: update hero to reflect empty month ─────────
-  const label = (typeof month === 'string' && year)
-    ? month + ' ' + year : String(month);
-  const ht = $('heroTitle'); if (ht) ht.textContent = label + ' Tasks';
-  const hs = $('heroSub');   if (hs) hs.textContent = 'No tasks recorded for this month yet';
-  const hp = $('heroPills'); if (hp) hp.innerHTML = '';
-  const hb = $('heroBig');   if (hb) hb.textContent = '0';
+  const ht=$('heroTitle'); if(ht) ht.textContent = tabName;
+  const hs=$('heroSub');   if(hs) hs.textContent  = 'No tasks recorded here yet';
+  const hp=$('heroPills'); if(hp) hp.innerHTML    = '';
+  const hb=$('heroBig');   if(hb) hb.textContent  = '0';
 
-  // ── Step 5: HIDE chart section AND task table completely ─
   const mid = document.querySelector('.mid');
   const tbl = document.querySelector('.tbl-outer');
   if (mid) mid.style.display = 'none';
   if (tbl) tbl.style.display = 'none';
 
-  // ── Step 6: show empty-state card ─────────────────────
-  const old = document.getElementById('emptyMonthBox');
+  const old = $('emptyMonthBox');
   if (old) old.remove();
 
-  const emptyEl = document.createElement('div');
-  emptyEl.id = 'emptyMonthBox';
-  emptyEl.className = 'card empty-month';
-  emptyEl.innerHTML = `
+  const el = document.createElement('div');
+  el.id = 'emptyMonthBox';
+  el.className = 'card empty-month';
+  el.innerHTML = `
     <div class="empty-month-icon">📋</div>
-    <div class="empty-month-title">${label} — No data yet</div>
+    <div class="empty-month-title">${tabName} — No data yet</div>
     <div class="empty-month-sub">
-      No tasks have been added for this month.<br>
-      Add a <strong>${label} Tasks</strong> tab to your Google Sheet,<br>
-      fill in some rows, and the dashboard will show them automatically.
+      This sheet tab exists but has no task rows.<br>
+      Fill in rows in your Google Sheet and the dashboard<br>
+      will update automatically on the next refresh.
     </div>`;
-
-  // Insert after hero (before .mid / .tbl-outer)
   const heroCard = $('heroCard');
   if (heroCard && heroCard.parentNode) {
-    heroCard.parentNode.insertBefore(emptyEl, heroCard.nextSibling);
+    heroCard.parentNode.insertBefore(el, heroCard.nextSibling);
   }
 }
 
-// Restore mid section and table when switching to a month with data
 function ensureMidVisible() {
-  // Restore all sections hidden by showEmptyMonth
   const mid = document.querySelector('.mid');
   const tbl = document.querySelector('.tbl-outer');
   if (mid) mid.style.removeProperty('display');
   if (tbl) tbl.style.removeProperty('display');
-  // Remove the "no data" placeholder card
-  const empt = document.getElementById('emptyMonthBox');
-  if (empt) empt.remove();
+  const e = $('emptyMonthBox');
+  if (e) e.remove();
 }
 
-// ── RENDER YEAR/MONTH NAV ──────────────────────────────
-function renderNav() {
-  const nav = $('tabsRow'); if (!nav) return;
-  nav.innerHTML = YEARS.map(year => {
-    const isOpen  = expandedYears.has(year);
-    const hdm     = hasDataMap[year] || new Set();
-    const dataCount = hdm.size;
-
-    const monthsHtml = isOpen ? `<div class="mo-list">${
-      MONTH_NAMES.map(month => {
-        const isActive  = activeYear===year && activeMonth===month;
-        const hasData   = hdm.has(month);
-        const mc        = getMonthClr(month);
-        const dotColor  = hasData ? mc.main : 'rgba(255,255,255,.12)';
-        return `<div class="mo-item${isActive?' mo-active':''}${!hasData?' mo-empty':''}" data-year="${year}" data-month="${month}">
-          <span class="mo-dot" style="background:${dotColor}${isActive?';box-shadow:0 0 0 2px rgba(255,255,255,.25)':''}"></span>
-          <span class="mo-name">${month.slice(0,3)}</span>
-          ${!hasData ? '<span class="mo-dash">—</span>' : ''}
-        </div>`;
-      }).join('')
-    }</div>` : '';
-
-    return `<div class="yr-group">
-      <div class="yr-item${isOpen?' yr-open':''}" data-year="${year}">
-        <span class="yr-chevron">
-          <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-            <path d="M3 2l4 3-4 3"/>
-          </svg>
-        </span>
-        <span class="yr-num">${year}</span>
-        ${dataCount > 0 ? `<span class="yr-badge">${dataCount}</span>` : ''}
-      </div>
-      ${monthsHtml}
-    </div>`;
-  }).join('');
-}
-
-// ── SET MONTH THEME ────────────────────────────────────
-function setMonthTheme(month) {
-  const mc = getMonthClr(month);
+// ── SET THEME FROM TAB NAME ────────────────────────────────
+function setTabTheme(tabName) {
+  const mc = getTabColor(tabName);
   activeMonthColor = mc.main;
   const r = document.documentElement;
   r.style.setProperty('--am',    mc.main);
   r.style.setProperty('--am-dk', mc.dk);
   r.style.setProperty('--am-lt', mc.light);
   r.style.setProperty('--am-bd', mc.border);
-  const tt=$('topTitle');  if(tt) tt.textContent = month + ' ' + activeYear;
+  const tt=$('topTitle');  if(tt) tt.textContent = tabName;
   const av=$('topAvatar'); if(av) av.style.background = mc.main;
   const lg=$('sbLogo');    if(lg) lg.style.background = mc.main;
 }
 
-// ── STATS ──────────────────────────────────────────────
+// ── RENDER NAV ─────────────────────────────────────────────
+function renderNav() {
+  const nav = $('tabsRow'); if (!nav) return;
+  let html = '';
+
+  // Year groups
+  const years = Object.keys(tabGroups).sort();
+  years.forEach(year => {
+    const isOpen = expandedGroups.has(year);
+    const tabs   = tabGroups[year];
+    const dataCount = tabs.filter(t => sheetsCache[t] && sheetsCache[t].rows && sheetsCache[t].rows.length > 0).length;
+
+    html += `<div class="yr-group">
+      <div class="yr-item${isOpen?' yr-open':''}" data-group="${year}">
+        <span class="yr-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 2l4 3-4 3"/></svg></span>
+        <span class="yr-num">${year}</span>
+        ${dataCount > 0 ? `<span class="yr-badge">${dataCount}</span>` : ''}
+      </div>`;
+
+    if (isOpen) {
+      html += `<div class="mo-list">`;
+      tabs.forEach(tab => {
+        const isActive = activeTab === tab;
+        const cached   = sheetsCache[tab];
+        const hasData  = cached && cached.rows && cached.rows.length > 0;
+        const mc       = getTabColor(tab);
+        const dotColor = hasData ? mc.main : 'rgba(255,255,255,.12)';
+        const label    = getTabLabel(tab, year);
+        html += `<div class="mo-item${isActive?' mo-active':''}${!hasData&&cached!==undefined?' mo-empty':''}" data-tab="${tab.replace(/"/g,'&quot;')}">
+          <span class="mo-dot" style="background:${dotColor}${isActive?';box-shadow:0 0 0 2.5px rgba(255,255,255,.25)':''}"></span>
+          <span class="mo-name">${label}</span>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
+  });
+
+  // Ungrouped tabs (no year detected in name)
+  if (ungroupedTabs.length > 0) {
+    const isOpen = expandedGroups.has('__general__');
+    html += `<div class="yr-group">
+      <div class="yr-item${isOpen?' yr-open':''}" data-group="__general__">
+        <span class="yr-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 2l4 3-4 3"/></svg></span>
+        <span class="yr-num">Other</span>
+      </div>`;
+    if (isOpen) {
+      html += `<div class="mo-list">`;
+      ungroupedTabs.forEach(tab => {
+        const isActive = activeTab === tab;
+        const cached   = sheetsCache[tab];
+        const hasData  = cached && cached.rows && cached.rows.length > 0;
+        const mc       = getTabColor(tab);
+        html += `<div class="mo-item${isActive?' mo-active':''}${!hasData&&cached!==undefined?' mo-empty':''}" data-tab="${tab.replace(/"/g,'&quot;')}">
+          <span class="mo-dot" style="background:${hasData?mc.main:'rgba(255,255,255,.12)'}"></span>
+          <span class="mo-name">${tab}</span>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
+  }
+
+  nav.innerHTML = html;
+}
+
+// ── STATS ──────────────────────────────────────────────────
 function calcStats(rows) {
   const byStatus={},byType={},byDate={},byAssignee={};
-  let total=0, totalUploaded=0, totalCollection=0, totalDownloaded=0;
+  let total=0;
   rows.forEach(r=>{
-    total          += r._qty;
-    totalUploaded  += r._upl  || 0;
-    totalCollection+= r._col  || 0;
-    totalDownloaded+= r._dwn  || 0;
+    total+=r._qty;
     byStatus[r._stat]=(byStatus[r._stat]||0)+1;
     if(!byType[r._task]) byType[r._task]={count:0,qty:0};
     byType[r._task].count++; byType[r._task].qty+=r._qty;
     if(r._start) byDate[r._start]=(byDate[r._start]||0)+r._qty;
-    if(r._who){
-      if(!byAssignee[r._who]) byAssignee[r._who]={count:0,qty:0};
-      byAssignee[r._who].count++; byAssignee[r._who].qty+=r._qty;
-    }
+    if(r._who){ if(!byAssignee[r._who]) byAssignee[r._who]={count:0,qty:0}; byAssignee[r._who].count++; byAssignee[r._who].qty+=r._qty; }
   });
-  return {total,totalUploaded,totalCollection,totalDownloaded,byStatus,byType,byDate,byAssignee,n:rows.length};
+  return {total,byStatus,byType,byDate,byAssignee,n:rows.length};
 }
 
-// ── HERO ───────────────────────────────────────────────
+// ── HERO ───────────────────────────────────────────────────
 function renderHero(s,label) {
-  const done=s.byStatus['Completed']||0;
-  const rate=s.n?Math.round(done/s.n*100):0;
-  const ht=$('heroTitle'); if(ht) ht.textContent=label+' Tasks';
+  const done=s.byStatus['Completed']||0, rate=s.n?Math.round(done/s.n*100):0;
+  const ht=$('heroTitle'); if(ht) ht.textContent=label;
   const hs=$('heroSub');   if(hs) hs.textContent=s.n+' tasks tracked · Refreshes every 30s';
   const hb=$('heroBig');   if(hb) hb.textContent=s.total.toLocaleString();
   const hp=$('heroPills');
@@ -910,163 +851,66 @@ function renderHero(s,label) {
     <div class="hero-pill"><div class="hero-pill-val">${done}</div><div class="hero-pill-lbl">Completed</div></div>
     <div class="hero-pill"><div class="hero-pill-val">${rate}%</div><div class="hero-pill-lbl">Rate</div></div>
     <div class="hero-pill"><div class="hero-pill-val">${s.byStatus['Blocked']||0}</div><div class="hero-pill-lbl">Blocked</div></div>`;
-  ensureMidVisible();
 }
 
-// ── KPI CARDS ──────────────────────────────────────────
+// ── KPI CARDS ──────────────────────────────────────────────
 function renderKPIs(s) {
-  // Status-based counts (same approach as Completed & Blocked)
-  const done = s.byStatus['Completed']   || 0;
-  const blk  = s.byStatus['Blocked']     || 0;
-  const prog = s.byStatus['In progress'] || 0;
-  const upl  = s.byStatus['Uploaded']    || 0;
-  const col  = s.byStatus['Collection']  || 0;
-  const dwn  = s.byStatus['Downloaded']  || 0;
-  const rate = s.n ? Math.round(done/s.n*100) : 0;
-  const ann  = s.byType['Annotations'] || {qty:0,count:0};
-  const sup  = s.byType['Supervision'] || {qty:0,count:0};
-
-  // Unique sparkline wave per card
+  const done=s.byStatus['Completed']||0, blk=s.byStatus['Blocked']||0, prog=s.byStatus['In progress']||0;
+  const upl=s.byStatus['Uploaded']||0, col=s.byStatus['Collection']||0, dwn=s.byStatus['Downloaded']||0;
+  const rate=s.n?Math.round(done/s.n*100):0;
+  const ann=s.byType['Annotations']||{qty:0,count:0}, sup=s.byType['Supervision']||{qty:0,count:0};
   const wave=(c,d)=>`<svg viewBox="0 0 120 28" xmlns="http://www.w3.org/2000/svg"><path d="${d}" fill="none" stroke="${c}" stroke-width="1.5" stroke-linecap="round" opacity=".4"/></svg>`;
   const w1=wave(activeMonthColor,'M0 22 Q20 8 40 16 Q60 24 80 10 Q100 2 120 14');
-  const w2=wave('#16a34a',       'M0 18 Q25 6 50 20 Q75 28 100 10 Q110 6 120 14');
-  const w3=wave('#dc2626',       'M0 14 Q30 26 60 8 Q90 2 120 18');
-  const w4=wave('#2563eb',       'M0 8 Q20 22 45 12 Q70 4 95 18 Q110 24 120 12');
-  const w5=wave('#f59e0b',       'M0 20 Q15 4 35 14 Q55 24 75 6 Q95 2 120 16');
-  const w6=wave('#7c3aed',       'M0 10 Q25 26 50 14 Q75 4 100 20 Q112 26 120 18');
-  const w7=wave('#0ea5e9',       'M0 24 Q20 10 40 18 Q60 26 85 8 Q105 4 120 12');
-
+  const w2=wave('#16a34a','M0 18 Q25 6 50 20 Q75 28 100 10 Q110 6 120 14');
+  const w3=wave('#dc2626','M0 14 Q30 26 60 8 Q90 2 120 18');
+  const w4=wave('#2563eb','M0 8 Q20 22 45 12 Q70 4 95 18 Q110 24 120 12');
+  const w5=wave('#f59e0b','M0 20 Q15 4 35 14 Q55 24 75 6 Q95 2 120 16');
+  const w6=wave('#7c3aed','M0 10 Q25 26 50 14 Q75 4 100 20 Q112 26 120 18');
+  const w7=wave('#0ea5e9','M0 24 Q20 10 40 18 Q60 26 85 8 Q105 4 120 12');
   const k=(color,icon,lbl,val,sub,pill,pcls,wv)=>
-    `<div class="kpi">
-      <div class="kpi-top">
-        <div class="kpi-lbl">${icon} ${lbl}</div>
-        ${pill?`<span class="kpi-pill ${pcls}">${pill}</span>`:''}
-      </div>
-      <div class="kpi-val" style="color:${color}">${val}</div>
-      <div class="kpi-sub">${sub}</div>
-      <div class="kpi-wave">${wv}</div>
-    </div>`;
-
-  $('kpiGrid').innerHTML =
-    // Row 1 — core production metrics
-    k(activeMonthColor,'📦','Total production',
-        s.total.toLocaleString(), 'items this month', '', '', w1) +
-    k('#16a34a','✅','Completed',
-        done, rate+'% completion rate', rate+'%', 'up', w2) +
-    k('#dc2626','🚫','Blocked',
-        blk, prog+' task'+(prog!==1?'s':'')+' in progress',
-        blk>0?blk:'0', blk>0?'down':'neu', w3) +
-    k('#2563eb','🔬','Supervision qty',
-        sup.qty.toLocaleString(), sup.count+' supv · '+ann.count+' annot', '', '', w4) +
-    // Row 2 — workflow status cards (read from Status column, same as Blocked/Completed)
-    k('#f59e0b','⬆️','Uploaded',
-        upl,
-        upl > 0 ? upl+' task'+(upl!==1?'s':'')+' marked Uploaded'
-                : 'No tasks with status Uploaded yet',
-        upl>0?upl:'0', upl>0?'up':'neu', w5) +
-    k('#7c3aed','🗂️','Collection',
-        col,
-        col > 0 ? col+' task'+(col!==1?'s':'')+' marked Collection'
-                : 'No tasks with status Collection yet',
-        col>0?col:'0', col>0?'up':'neu', w6) +
-    k('#0ea5e9','⬇️','Downloaded',
-        dwn,
-        dwn > 0 ? dwn+' task'+(dwn!==1?'s':'')+' marked Downloaded'
-                : 'No tasks with status Downloaded yet',
-        dwn>0?dwn:'0', dwn>0?'up':'neu', w7);
+    `<div class="kpi"><div class="kpi-top"><div class="kpi-lbl">${icon} ${lbl}</div>${pill?`<span class="kpi-pill ${pcls}">${pill}</span>`:''}</div><div class="kpi-val" style="color:${color}">${val}</div><div class="kpi-sub">${sub}</div><div class="kpi-wave">${wv}</div></div>`;
+  $('kpiGrid').innerHTML=
+    k(activeMonthColor,'📦','Total production',s.total.toLocaleString(),'items this sheet','','',w1)+
+    k('#16a34a','✅','Completed',done,rate+'% completion rate',rate+'%','up',w2)+
+    k('#dc2626','🚫','Blocked',blk,prog+' in progress',blk>0?blk:'0',blk>0?'down':'neu',w3)+
+    k('#2563eb','🔬','Supervision qty',sup.qty.toLocaleString(),sup.count+' supv · '+ann.count+' annot','','',w4)+
+    k('#f59e0b','⬆️','Uploaded',upl,upl>0?upl+' task'+(upl!==1?'s':'')+' uploaded':'No Uploaded status yet',upl>0?upl:'0',upl>0?'up':'neu',w5)+
+    k('#7c3aed','🗂️','Collection',col,col>0?col+' task'+(col!==1?'s':'')+' in collection':'No Collection status yet',col>0?col:'0',col>0?'up':'neu',w6)+
+    k('#0ea5e9','⬇️','Downloaded',dwn,dwn>0?dwn+' task'+(dwn!==1?'s':'')+' downloaded':'No Downloaded status yet',dwn>0?dwn:'0',dwn>0?'up':'neu',w7);
 }
 
-// ── PRODUCTION BAR CHART ───────────────────────────────
+// ── CHARTS ─────────────────────────────────────────────────
 function renderPChart(rows) {
   const map={};
-  rows.forEach(r=>{
-    if(!r._start) return;
-    if(!map[r._start]) map[r._start]={qty:0,sun:isSun(r._start)};
-    map[r._start].qty+=r._qty;
-  });
-  const labels=Object.keys(map);
-  const data=labels.map(l=>map[l].qty);
+  rows.forEach(r=>{ if(!r._start) return; if(!map[r._start]) map[r._start]={qty:0,sun:isSun(r._start)}; map[r._start].qty+=r._qty; });
+  const labels=Object.keys(map), data=labels.map(l=>map[l].qty);
   const bg=labels.map(l=>map[l].qty===0?'#d1d5db':map[l].sun?'#7c3aed':activeMonthColor);
   if(charts.p) charts.p.destroy();
-  charts.p=new Chart($('pchart').getContext('2d'),{
-    type:'bar',
-    data:{labels,datasets:[{data,backgroundColor:bg,borderRadius:5,borderSkipped:'bottom'}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{
-        title:i=>i[0].label+(map[i[0].label].sun?' (Sunday)':''),
-        label:i=>'Output: '+i.raw.toLocaleString()+' items'
-      }}},
-      scales:{
-        x:{grid:{display:false},ticks:{font:{size:10},maxRotation:45,autoSkip:false}},
-        y:{beginAtZero:true,ticks:{font:{size:11}},grid:{color:'#f0eef8'}}
-      }
-    }
-  });
+  charts.p=new Chart($('pchart').getContext('2d'),{type:'bar',data:{labels,datasets:[{data,backgroundColor:bg,borderRadius:5,borderSkipped:'bottom'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>i[0].label+(map[i[0].label].sun?' (Sunday)':''),label:i=>'Output: '+i.raw.toLocaleString()+' items'}}},scales:{x:{grid:{display:false},ticks:{font:{size:10},maxRotation:45,autoSkip:false}},y:{beginAtZero:true,ticks:{font:{size:11}},grid:{color:'#f0eef8'}}}}});
 }
-
-// ── TYPE DOUGHNUT ──────────────────────────────────────
 function renderTChart(byType) {
-  const labels=Object.keys(byType);
-  const data=labels.map(l=>byType[l].qty);
-  const colors=labels.map(l=>TYPE_CLR[l]||'#a8a29e');
+  const labels=Object.keys(byType), data=labels.map(l=>byType[l].qty), colors=labels.map(l=>TYPE_CLR[l]||'#a8a29e');
   if(charts.t) charts.t.destroy();
-  charts.t=new Chart($('tchart').getContext('2d'),{
-    type:'doughnut',
-    data:{labels:labels.map(l=>l+'  '+byType[l].qty.toLocaleString()),
-          datasets:[{data,backgroundColor:colors,borderWidth:2,borderColor:'#fff',hoverOffset:6}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',
-      plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:10,boxWidth:10,boxHeight:10}}}}
-  });
+  charts.t=new Chart($('tchart').getContext('2d'),{type:'doughnut',data:{labels:labels.map(l=>l+'  '+byType[l].qty.toLocaleString()),datasets:[{data,backgroundColor:colors,borderWidth:2,borderColor:'#fff',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:10,boxWidth:10,boxHeight:10}}}}});
 }
-
-// ── STATUS BARS ────────────────────────────────────────
 function renderStatusOver(byStatus,total) {
-  const order=['Completed','In progress','Blocked'];
+  const order=['Completed','In progress','Blocked','Uploaded','Downloaded','Collection'];
   const all=[...order,...Object.keys(byStatus).filter(k=>!order.includes(k))];
-  const items=all.filter(k=>byStatus[k]).map(k=>({
-    label:k,color:(STAT_CFG[k]||{color:'#a8a29e'}).color,
-    count:byStatus[k],pct:Math.round(byStatus[k]/total*100)
-  }));
-  $('sOver').innerHTML=
-    `<div class="pbar">${items.map(i=>`<div class="pb-s" style="width:${i.pct}%;background:${i.color}"></div>`).join('')}</div>`+
-    items.map(i=>`<div class="s-row"><span class="s-lbl"><span class="s-sq" style="background:${i.color}"></span>${i.label}</span><span class="s-val" style="color:${i.color}">${i.count}</span></div>`).join('');
+  const items=all.filter(k=>byStatus[k]).map(k=>({label:k,color:(STAT_CFG[k]||{color:'#a8a29e'}).color,count:byStatus[k],pct:Math.round(byStatus[k]/total*100)}));
+  $('sOver').innerHTML=`<div class="pbar">${items.map(i=>`<div class="pb-s" style="width:${i.pct}%;background:${i.color}"></div>`).join('')}</div>`+items.map(i=>`<div class="s-row"><span class="s-lbl"><span class="s-sq" style="background:${i.color}"></span>${i.label}</span><span class="s-val" style="color:${i.color}">${i.count}</span></div>`).join('');
 }
-
-// ── ASSIGNEE CARDS ─────────────────────────────────────
 function renderWhoCards(byAssignee) {
   const el=$('whoCards'); if(!el) return;
-  el.innerHTML=Object.entries(byAssignee).map(([n,d])=>`
-    <div class="who-card">
-      <div class="who-av" style="background:${whoColor(n)}">${n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
-      <div><div class="who-name">${n}</div><div class="who-stat">${d.qty.toLocaleString()} · ${d.count} tasks</div></div>
-    </div>`).join('');
+  el.innerHTML=Object.entries(byAssignee).map(([n,d])=>`<div class="who-card"><div class="who-av" style="background:${whoColor(n)}">${n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div><div><div class="who-name">${n}</div><div class="who-stat">${d.qty.toLocaleString()} · ${d.count} tasks</div></div></div>`).join('');
 }
-
-// ── ASSIGNEE BAR CHART ─────────────────────────────────
 function renderAChart(byAssignee) {
-  const labels=Object.keys(byAssignee);
-  const data=labels.map(l=>byAssignee[l].qty);
-  const colors=labels.map(l=>whoColor(l));
+  const labels=Object.keys(byAssignee), data=labels.map(l=>byAssignee[l].qty), colors=labels.map(l=>whoColor(l));
   if(charts.a) charts.a.destroy();
-  charts.a=new Chart($('achart').getContext('2d'),{
-    type:'bar',
-    data:{labels,datasets:[{data,backgroundColor:colors,borderRadius:5,borderSkipped:'bottom'}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:i=>'Output: '+i.raw.toLocaleString()+' ('+byAssignee[i.label].count+' tasks)'}}},
-      scales:{x:{beginAtZero:true,ticks:{font:{size:11}},grid:{color:'#f0eef8'}},y:{grid:{display:false},ticks:{font:{size:12},color:'#1a1928'}}}
-    }
-  });
+  charts.a=new Chart($('achart').getContext('2d'),{type:'bar',data:{labels,datasets:[{data,backgroundColor:colors,borderRadius:5,borderSkipped:'bottom'}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:i=>'Output: '+i.raw.toLocaleString()+' ('+byAssignee[i.label].count+' tasks)'}}},scales:{x:{beginAtZero:true,ticks:{font:{size:11}},grid:{color:'#f0eef8'}},y:{grid:{display:false},ticks:{font:{size:12},color:'#1a1928'}}}}});
 }
-
-// ── DAILY LOG ──────────────────────────────────────────
 function renderDailyLog(rows) {
   const dm={};
-  rows.forEach(r=>{
-    if(!r._start) return;
-    if(!dm[r._start]) dm[r._start]={who:new Set(),qty:0};
-    if(r._who) dm[r._start].who.add(r._who);
-    dm[r._start].qty+=r._qty;
-  });
+  rows.forEach(r=>{ if(!r._start) return; if(!dm[r._start]) dm[r._start]={who:new Set(),qty:0}; if(r._who) dm[r._start].who.add(r._who); dm[r._start].qty+=r._qty; });
   const el=$('dailyLog'); if(!el) return;
   el.innerHTML=Object.entries(dm).map(([date,d])=>{
     const sd=date.length>6?date.slice(0,6):date;
@@ -1075,38 +919,28 @@ function renderDailyLog(rows) {
   }).join('')||'<div style="color:var(--muted);padding:.5rem;font-size:12px">No data.</div>';
 }
 
-// ── FILTERS ────────────────────────────────────────────
+// ── FILTERS ────────────────────────────────────────────────
 function populateStatusFilter(byStatus) {
-  const sel = $('sfil'); if (!sel) return;
-  // Remove all except "All"
-  Array.from(sel.options).forEach(o => { if (o.value !== 'All') o.remove(); });
-  // Preferred display order — add any extra statuses at the end
-  const order = ['Completed','In progress','Blocked','Uploaded','Downloaded','Collection'];
-  const all   = [...order.filter(s => byStatus[s]),
-                 ...Object.keys(byStatus).filter(s => !order.includes(s) && byStatus[s])];
-  all.forEach(s => {
-    const o = document.createElement('option');
-    o.value = o.textContent = s;
-    sel.appendChild(o);
-  });
+  const sel=$('sfil'); if(!sel) return;
+  Array.from(sel.options).forEach(o=>{ if(o.value!=='All') o.remove(); });
+  const order=['Completed','In progress','Blocked','Uploaded','Downloaded','Collection'];
+  const all=[...order.filter(s=>byStatus[s]),...Object.keys(byStatus).filter(s=>!order.includes(s)&&byStatus[s])];
+  all.forEach(s=>{ const o=document.createElement('option'); o.value=o.textContent=s; sel.appendChild(o); });
 }
-
 function populateTypeFilter(byType) {
   const sel=$('tfil'); if(!sel) return;
-  Array.from(sel.options).forEach(o=>{if(o.value!=='All'&&!byType[o.value])o.remove();});
+  Array.from(sel.options).forEach(o=>{ if(o.value!=='All'&&!byType[o.value]) o.remove(); });
   const ex=Array.from(sel.options).map(o=>o.value);
-  Object.keys(byType).forEach(t=>{if(!ex.includes(t)){const o=document.createElement('option');o.value=o.textContent=t;sel.appendChild(o);}});
+  Object.keys(byType).forEach(t=>{ if(!ex.includes(t)){ const o=document.createElement('option'); o.value=o.textContent=t; sel.appendChild(o); } });
 }
 function populateAssigneeFilter(byAssignee) {
   const sel=$('afil'); if(!sel) return;
-  Array.from(sel.options).forEach(o=>{if(o.value!=='All'&&!byAssignee[o.value])o.remove();});
+  Array.from(sel.options).forEach(o=>{ if(o.value!=='All'&&!byAssignee[o.value]) o.remove(); });
   const ex=Array.from(sel.options).map(o=>o.value);
-  Object.keys(byAssignee).forEach(a=>{if(a&&!ex.includes(a)){const o=document.createElement('option');o.value=o.textContent=a;sel.appendChild(o);}});
+  Object.keys(byAssignee).forEach(a=>{ if(a&&!ex.includes(a)){ const o=document.createElement('option'); o.value=o.textContent=a; sel.appendChild(o); } });
 }
 function applyFilter() {
-  const sf=($('sfil')||{}).value||'All';
-  const tf=($('tfil')||{}).value||'All';
-  const af=($('afil')||{}).value||'All';
+  const sf=($('sfil')||{}).value||'All', tf=($('tfil')||{}).value||'All', af=($('afil')||{}).value||'All';
   let rows=currentRows;
   if(sf!=='All') rows=rows.filter(r=>r._stat===sf);
   if(tf!=='All') rows=rows.filter(r=>r._task===tf);
@@ -1114,58 +948,42 @@ function applyFilter() {
   renderTable(rows);
 }
 
-// ── TABLE ──────────────────────────────────────────────
+// ── TABLE ──────────────────────────────────────────────────
 function renderTable(rows) {
   const maxQ=Math.max(...currentRows.map(r=>r._qty),1);
   if($('rCnt')) $('rCnt').textContent=rows.length+' rows';
-  if(!rows.length){$('tWrap').innerHTML='<div class="state-msg">No tasks match filters.</div>';return;}
+  if(!rows.length){ $('tWrap').innerHTML='<div class="state-msg">No tasks match filters.</div>'; return; }
   const body=rows.map(r=>{
-    const qCell=r._qty>0
-      ?`<div class="qw"><span class="qn">${r._qty}</span><div class="qt"><div class="qf" style="width:${Math.round(r._qty/maxQ*100)}%"></div></div></div>`
-      :'<span style="color:#d1d5db">—</span>';
+    const qCell=r._qty>0?`<div class="qw"><span class="qn">${r._qty}</span><div class="qt"><div class="qf" style="width:${Math.round(r._qty/maxQ*100)}%"></div></div></div>`:'<span style="color:#d1d5db">—</span>';
     const res=r._res?`<span class="res-tag"><span class="res-dot"></span>${r._res}</span>`:'<span style="color:#d1d5db">—</span>';
     const who=r._who?`<span class="who-pill"><span class="who-dot" style="background:${whoColor(r._who)}"></span>${r._who}</span>`:'<span style="color:#d1d5db">—</span>';
     const note=r._note.length>50?r._note.slice(0,50)+'…':(r._note||'—');
-    return `<tr>
-      <td><span class="${TASK_CLS[r._task]||''}">${r._task}</span></td>
-      <td style="color:var(--muted)">${r._prio||'—'}</td>
-      <td>${res}</td><td>${qCell}</td>
-      <td><span class="badge ${BADGE_CLS[r._stat]||'b-def'}">${r._stat||'—'}</span></td>
-      <td style="color:var(--muted);font-size:12px">${r._start||'—'}</td>
-      <td style="color:var(--muted);font-size:12px">${r._end||'—'}</td>
-      <td>${who}</td>
-      <td style="color:#a8a29e;font-size:12px" title="${r._note}">${note}</td>
-    </tr>`;
+    return `<tr><td><span class="${TASK_CLS[r._task]||''}">${r._task}</span></td><td style="color:var(--muted)">${r._prio||'—'}</td><td>${res}</td><td>${qCell}</td><td><span class="badge ${BADGE_CLS[r._stat]||'b-def'}">${r._stat||'—'}</span></td><td style="color:var(--muted);font-size:12px">${r._start||'—'}</td><td style="color:var(--muted);font-size:12px">${r._end||'—'}</td><td>${who}</td><td style="color:#a8a29e;font-size:12px" title="${r._note}">${note}</td></tr>`;
   }).join('');
-  $('tWrap').innerHTML=`<table><thead><tr>
-    <th>Task</th><th>Priority</th><th>Resources</th>
-    <th style="min-width:110px">Production qty</th><th>Status</th>
-    <th>Start</th><th>End</th><th>Assignee</th><th>Notes</th>
-  </tr></thead><tbody>${body}</tbody></table>`;
+  $('tWrap').innerHTML=`<table><thead><tr><th>Task</th><th>Priority</th><th>Resources</th><th style="min-width:110px">Production qty</th><th>Status</th><th>Start</th><th>End</th><th>Assignee</th><th>Notes</th></tr></thead><tbody>${body}</tbody></table>`;
 }
 
-// ── TIMER ──────────────────────────────────────────────
+// ── TIMER ──────────────────────────────────────────────────
 function startTimer() {
   countdown=REFRESH_SEC;
   if(timerID) clearInterval(timerID);
   timerID=setInterval(()=>{
     countdown--;
     const c=$('cChip'); if(c) c.textContent=countdown+'s';
-    if(countdown<=0){countdown=REFRESH_SEC;refreshActive();}
+    if(countdown<=0){ countdown=REFRESH_SEC; refreshActive(); }
   },1000);
 }
 
-// ── ERROR ──────────────────────────────────────────────
+// ── ERROR ───────────────────────────────────────────────────
 function showErr(msg) {
   $('errBox').innerHTML='<strong>Could not load data.</strong> '+msg
-    +'<br><br>✓ Sheet shared: <em>Anyone with the link → Viewer</em><br>'
-    +'✓ <code>SHEET_ID</code> = the string between <code>/d/</code> and <code>/edit</code><br>'
-    +'✓ Tab names are exactly <em>June Tasks</em>, <em>July Tasks</em> …';
+    +'<br><br>✓ Sheet is shared: <em>File → Share → Anyone with the link → Viewer</em><br>'
+    +'✓ <code>SHEET_ID</code> is the string between <code>/d/</code> and <code>/edit</code> in your sheet URL';
   show('errBox'); hide('ldBox');
   setStatus('err','Error');
 }
 
-// ── HELPERS ────────────────────────────────────────────
+// ── HELPERS ─────────────────────────────────────────────────
 function isSun(s){try{const d=new Date(s);return !isNaN(d)&&d.getDay()===0;}catch{return false;}}
 function $(id){return document.getElementById(id);}
 function show(id){const e=$(id);if(e)e.style.removeProperty('display');}

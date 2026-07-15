@@ -460,18 +460,59 @@ document.addEventListener('DOMContentLoaded', () => {
   startTimer();
 });
 
-// ── AUTO-DISCOVER ALL SHEET TAB NAMES ────────────────────
-// Uses Google's public Sheets v3 Feeds API — works for publicly shared sheets.
+// ── AUTO-DISCOVER SHEET TABS via gviz API ───────────────────────────────────
+// The Feeds API is blocked by CORS. Instead we probe every common month/year
+// naming pattern via the same gviz endpoint used for data — no extra auth needed.
+// gviz returns status:'error' for non-existent tabs and status:'ok' for real ones.
+
+async function probeTab(name) {
+  try {
+    const url = 'https://docs.google.com/spreadsheets/d/'
+      + SHEET_ID + '/gviz/tq?tqx=out:json&sheet='
+      + encodeURIComponent(name) + '&t=' + Date.now();
+    const res  = await fetch(url);
+    if (!res.ok) return null;
+    const text = await res.text();
+    const jsonStr = text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1);
+    const json = JSON.parse(jsonStr);
+    if (json.status === 'error') return null;   // tab does not exist
+    return { name, table: json.table };
+  } catch(_) { return null; }
+}
+
 async function discoverSheets() {
-  const url = 'https://spreadsheets.google.com/feeds/worksheets/'
-    + SHEET_ID + '/public/full?alt=json&t=' + Date.now();
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('Could not discover sheets (HTTP ' + res.status
-    + '). Make sure the sheet is shared "Anyone with the link can view".');
-  const json = await res.json();
-  const entries = json.feed ? (json.feed.entry || []) : [];
-  if (!entries.length) throw new Error('No sheet tabs found in this spreadsheet.');
-  return entries.map(e => e.title['$t']);
+  const M = ['January','February','March','April','May','June',
+             'July','August','September','October','November','December'];
+  const Y = [2026, 2027, 2028, 2029, 2030];
+
+  // Phase 1 — try the two simplest patterns first (fast, 24 requests)
+  const phase1 = [];
+  M.forEach(m => { phase1.push(m); phase1.push(m + ' Tasks'); });
+  let found = (await Promise.all(phase1.map(probeTab))).filter(Boolean);
+
+  // Phase 2 — try all year-based patterns if phase 1 found nothing (120 requests)
+  if (!found.length) {
+    const phase2 = [];
+    M.forEach(m => {
+      Y.forEach(y => {
+        phase2.push(`${m} ${y}`);
+        phase2.push(`${m} ${y} Tasks`);
+        phase2.push(`${y} ${m}`);
+        phase2.push(`${y} ${m} Tasks`);
+        phase2.push(`${y}-${m}`);
+        phase2.push(`${m}-${y}`);
+      });
+    });
+    found = (await Promise.all(phase2.map(probeTab))).filter(Boolean);
+  }
+
+  if (!found.length) throw new Error(
+    'No sheet tabs found matching any month/year pattern. '
+    + 'Check: (1) sheet shared as "Anyone with the link → Viewer", '
+    + '(2) tab names include a month name like June, July, etc.'
+  );
+
+  return found; // [{name, table}, ...]
 }
 
 // ── GROUP TABS BY YEAR ────────────────────────────────────
@@ -510,41 +551,35 @@ function getTabLabel(tabName, year) {
 
 // ── INITIAL DATA LOAD ─────────────────────────────────────
 async function fetchData() {
-  setStatus('ld','Discovering sheets…');
+  setStatus('ld','Scanning your sheet tabs…');
   try {
-    // Step 1: discover all tab names from the spreadsheet
-    const discovered = await discoverSheets();
-    allTabs = discovered;
-    const { groups, ungrouped } = groupTabsByYear(discovered);
-    tabGroups    = groups;
+    // discoverSheets() probes all month/year name patterns via gviz
+    // and returns [{name, table}] only for tabs that actually exist.
+    const found = await discoverSheets();
+
+    // Cache the data that was already fetched during discovery
+    found.forEach(({ name, table }) => {
+      sheetsCache[name] = parseGvizTable(table);
+    });
+
+    const tabNames = found.map(f => f.name);
+    allTabs = tabNames;
+    const { groups, ungrouped } = groupTabsByYear(tabNames);
+    tabGroups     = groups;
     ungroupedTabs = ungrouped;
 
-    // Step 2: auto-expand the first (or most recent) year group
+    // Auto-expand the most recent year (or 'Other' group)
     const years = Object.keys(groups).sort();
-    const firstYear = years[years.length - 1] || null; // latest year
-    if (firstYear) expandedGroups.add(firstYear);
+    const latestYear = years[years.length - 1] || null;
+    if (latestYear) expandedGroups.add(latestYear);
     else if (ungrouped.length) expandedGroups.add('__general__');
 
-    // Step 3: render nav so user sees the tab list immediately
-    renderNav();
-
-    // Step 4: load all tabs in the first group in parallel (discover which have data)
-    const firstGroupTabs = firstYear ? groups[firstYear] : ungrouped;
-    await Promise.all(firstGroupTabs.map(async tab => {
-      if (sheetsCache[tab] !== undefined) return;
-      try {
-        sheetsCache[tab] = await fetchSheet(tab);
-      } catch(_) {
-        sheetsCache[tab] = {headers:[], rows:[]};
-      }
-    }));
-
-    // Step 5: select first tab that has data
+    // Auto-select first tab that has actual task rows
     if (!activeTab) {
-      activeTab = firstGroupTabs.find(t => {
+      activeTab = tabNames.find(t => {
         const d = sheetsCache[t];
-        return d && d.rows && d.rows.length > 0;
-      }) || firstGroupTabs[0] || discovered[0];
+        return d && d.rows && d.rows.some(r => (r['Task']||'').trim());
+      }) || tabNames[0];
     }
 
     if (activeTab) {
@@ -552,9 +587,6 @@ async function fetchData() {
       renderNav();
       renderFromCache(activeTab);
       hide('ldBox'); hide('errBox'); show('content');
-    } else {
-      hide('ldBox'); show('content');
-      showEmptyTab('No data found');
     }
 
     setStatus('ok','Live · ' + fmtTime(new Date().toISOString()));

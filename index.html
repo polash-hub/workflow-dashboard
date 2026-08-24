@@ -257,14 +257,14 @@
 </head>
 <body>
 <div class="app">
-
+  
   <aside class="sb">
     <div class="sb-top">
       <div class="sb-lr">
         <div class="sb-logo" id="sbLogo">
           <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
         </div>
-        <div><div class="sb-an">WorkFlow</div><div class="sb-as">Advanced AI Lab</div></div>
+        <div><div class="sb-an">WorkFlow Self Tracker</div><div class="sb-as">Advanced AI Lab</div></div>
       </div>
       <div class="sb-prof">
         <div class="sb-pt">Welcome</div>
@@ -288,7 +288,7 @@
     <div class="topbar">
       <div>
         <div class="tt" id="topTitle">Dashboard</div>
-        <div class="ts">Advanced AI Lab · Data Preparation Workflow</div>
+        <div class="ts">Advanced AI Lab · Data Preparation WorkflowSelf Tracker</div>
       </div>
       <div class="tr">
         <button class="rbtn" onclick="manualRefresh()">↻ Refresh</button>
@@ -610,6 +610,7 @@ function mapRow(r){
     _end  :g(r,'End date','End Date','end date','EndDate','End','end').trim(),
     _who  :g(r,'Assignee','assignee','Assignees').trim(),
     _note :g(r,'Notes','notes','Note','note').trim(),
+    _rev  :g(r,'Reviewer','reviewer','Reviewers').trim(),
   };
 }
 
@@ -817,7 +818,7 @@ function renderNav(){
 // ── STATS ───────────────────────────────────────────────
 function calcStats(rows){
   const byStatus={},byType={},byDate={},byAssignee={};
-  let total=0;
+  let total=0,reviewed=0,pendingReview=0;
   rows.forEach(r=>{
     total+=r._qty;
     if(r._stat)byStatus[r._stat]=(byStatus[r._stat]||0)+1;
@@ -825,8 +826,9 @@ function calcStats(rows){
     if(t){if(!byType[t])byType[t]={count:0,qty:0};byType[t].count++;byType[t].qty+=r._qty;}
     if(r._start)byDate[r._start]=(byDate[r._start]||0)+r._qty;
     if(r._who){if(!byAssignee[r._who])byAssignee[r._who]={count:0,qty:0};byAssignee[r._who].count++;byAssignee[r._who].qty+=r._qty;}
+    if(r._stat==='Completed'){if(r._rev)reviewed++;else pendingReview++;}
   });
-  return{total,byStatus,byType,byDate,byAssignee,n:rows.length};
+  return{total,byStatus,byType,byDate,byAssignee,reviewed,pendingReview,n:rows.length};
 }
 
 // ── HERO ────────────────────────────────────────────────
@@ -860,6 +862,7 @@ function renderKPIs(s){
     wave('#f59e0b','M0 20 Q15 4 35 14 Q55 24 75 6 Q95 2 120 16'),
     wave('#7c3aed','M0 10 Q25 26 50 14 Q75 4 100 20 Q112 26 120 18'),
     wave('#0ea5e9','M0 24 Q20 10 40 18 Q60 26 85 8 Q105 4 120 12'),
+    wave('#dc2626','M0 12 Q22 26 48 16 Q72 6 96 20 Q108 26 120 14'),
   ];
   const K=(c,ic,lb,vl,sb,pl,pc,wi)=>
     `<div class="kc"><div class="ktp"><div class="klb">${ic} ${lb}</div>${pl?`<span class="kp ${pc}">${pl}</span>`:''}</div><div class="kv" style="color:${c}">${vl}</div><div class="ks">${sb}</div><div class="kw">${W[wi]}</div></div>`;
@@ -870,7 +873,8 @@ function renderKPIs(s){
     K('#2563eb','🔬','Supervision qty',sup.qty.toLocaleString(),sup.count+' supv · '+ann.count+' annot','','',3)+
     K('#f59e0b','⬆️','Uploaded',upl,upl>0?upl+' tasks uploaded':'No Uploaded yet',upl>0?upl:'0',upl>0?'up':'nu',4)+
     K('#7c3aed','🗂️','Collection',col,col>0?col+' in collection':'No Collection yet',col>0?col:'0',col>0?'up':'nu',5)+
-    K('#0ea5e9','⬇️','Downloaded',dwn,dwn>0?dwn+' downloaded':'No Downloaded yet',dwn>0?dwn:'0',dwn>0?'up':'nu',6);
+    K('#0ea5e9','⬇️','Downloaded',dwn,dwn>0?dwn+' downloaded':'No Downloaded yet',dwn>0?dwn:'0',dwn>0?'up':'nu',6)+
+    K('#dc2626','🔎','Pending review',s.pendingReview,s.reviewed+' reviewed of '+(s.reviewed+s.pendingReview)+' completed',s.pendingReview>0?s.pendingReview:'0',s.pendingReview>0?'dn':'nu',7);
 }
 
 // ── CHARTS ──────────────────────────────────────────────
@@ -961,12 +965,13 @@ function renderTable(rows){
       <td style="color:var(--mu);font-size:12px">${r._end||'—'}</td>
       <td>${who}</td>
       <td style="color:#a8a29e;font-size:12px" title="${r._note}">${note}</td>
+      <td style="color:var(--mu);font-size:12px">${r._rev||'—'}</td>
     </tr>`;
   }).join('');
   $('tWrap').innerHTML=`<table><thead><tr>
     <th>Task</th><th>Priority</th><th>Resources</th>
     <th style="min-width:110px">Production qty</th><th>Status</th>
-    <th>Start</th><th>End</th><th>Assignee</th><th>Notes</th>
+    <th>Start</th><th>End</th><th>Assignee</th><th>Notes</th><th>Reviewer</th>
   </tr></thead><tbody>${body}</tbody></table>`;
 }
 
@@ -996,7 +1001,10 @@ function openDp(idx){
       <div class="df"><label>Start date</label><input class="di" id="dp_start" value="${esc(r._start)}"/></div>
       <div class="df"><label>End date</label><input class="di" id="dp_end" value="${esc(r._end)}"/></div>
     </div>
-    <div class="df"><label>Assignee</label><input class="di" id="dp_who" value="${esc(r._who)}" placeholder="e.g. Evan"/></div>
+    <div class="dr2">
+      <div class="df"><label>Assignee</label><input class="di" id="dp_who" value="${esc(r._who)}" placeholder="e.g. Evan"/></div>
+      <div class="df"><label>Reviewer</label><input class="di" id="dp_rev" value="${esc(r._rev)}" placeholder="e.g. Ahnaf bhai"/></div>
+    </div>
     <div class="df"><label>Notes</label><textarea class="dta" id="dp_note" rows="3">${esc(r._note)}</textarea></div>
     <div class="dtip"><strong>To save changes:</strong> edit fields above → <strong>Copy row</strong> → paste (Ctrl+V) into the matching row in your Google Sheet.</div>`;
   $('dpanel').classList.add('open');
@@ -1014,7 +1022,7 @@ function closeDp(){
   if(SEL){SEL.classList.remove('sel');SEL=null;}
 }
 function copyRow(){
-  const vals=['dp_task','dp_prio','dp_qty','dp_res','dp_stat','dp_start','dp_end','dp_who','dp_note'].map(id=>$(id)?$(id).value:'');
+  const vals=['dp_task','dp_prio','dp_qty','dp_res','dp_stat','dp_start','dp_end','dp_who','dp_note','dp_rev'].map(id=>$(id)?$(id).value:'');
   const t=vals.join('\t');
   try{navigator.clipboard.writeText(t).catch(()=>fb(t));}catch{fb(t);}
   const c=$('dpCp');if(c){c.classList.add('show');setTimeout(()=>c.classList.remove('show'),2600);}

@@ -849,7 +849,7 @@ function renderHero(s,yr,mo){
 // ── KPI CARDS ────────────────────────────────────────────
 function renderKPIs(s){
   const done=s.byStatus['Completed']||0,blk=s.byStatus['Blocked']||0,prg=s.byStatus['In progress']||0;
-  const upl=s.byStatus['Uploaded']||0,col=s.byStatus['Collection']||0,dwn=s.byStatus['Downloaded']||0;Spd=s.bystatus['Supervised']||0;
+  const upl=s.byStatus['Uploaded']||0,col=s.byStatus['Collection']||0,dwn=s.byStatus['Downloaded']||0;
   const rate=s.n?Math.round(done/s.n*100):0;
   const sup=s.byType['Supervision']||{qty:0,count:0};
   const ann=s.byType['Annotations']||{qty:0,count:0};
